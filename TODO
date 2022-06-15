@@ -41,8 +41,8 @@
     logging:
       ✔ fix it @done(22-06-11 12:24)
     publish placeholder on crates.io:
-      ☐ publish r3bl-cmdr crate as placeholder
-      ☐ move repo from: nazmulidris/rust-scratch/tui-layout-crossterm to: r3bl_org/r3bl-cmdr
+      ✔ publish r3bl-cmdr crate as placeholder @done(22-06-15 11:15)
+      ✔ move repo from: nazmulidris/rust-scratch/tui-layout-crossterm to: r3bl_org/r3bl-cmdr @done(22-06-15 11:15)
     lifecyle & organization:
       ☐ use electron architecture & terminology as baseline
       ☐ figure out how to bootstrap the entire tui framework
