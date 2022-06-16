@@ -18,36 +18,26 @@
 use async_trait::async_trait;
 use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
-use std::fmt::{Display, Formatter};
-
-/// Representation of the application state data.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct AppState {
-  pub focused: String,
-  pub msg1: String,
-  pub msg2: String,
-}
-
-/// For [ToString].
-impl Display for AppState {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "{:?}", self)
-  }
-}
+use std::fmt::{Display};
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default)]
-pub struct AppStateDraw;
+pub struct AppDraw;
 
 #[async_trait]
-impl<S> Draw<S> for AppStateDraw
+impl<S> Draw<S> for AppDraw
 where
-  S: Send + Sync,
-  S: Display, // For [ToString].
+  S: Sync + Send + 'static + Default + Display,
 {
-  async fn draw(&self, state: &S, input_event: &InputEvent) -> CommonResult<()> {
+  async fn draw(&self, state: &S) -> CommonResult<()> {
     throws!({
-      println!("{} {}\r", state, input_event);
+      println!("⛵ draw: {}\r", state);
+    });
+  }
+
+  async fn handle_event(&self, input_event: &InputEvent, state: &S) -> CommonResult<()> {
+    throws!({
+      println!("🚀 handle_event: {} state: {}\r", input_event, state);
     });
   }
 }

@@ -19,14 +19,9 @@ use crate::*;
 
 pub async fn run_app() -> CommonResult<()> {
   throws!({
-    let app_state = AppState {
-      focused: "none".to_string(),
-      msg1: "hello".to_string(),
-      msg2: "world".to_string(),
-    };
-
-    let box_draw = AppStateDraw::new();
-
-    TerminalWindow::start_event_loop(app_state, box_draw).await?
+    let mut store = Store::<State, Action>::default();
+    store.add_reducer(Reducer::new()).await;
+    let shared_draw = AppDraw::new_shared();
+    TerminalWindow::start_event_loop(&mut store, shared_draw).await?
   });
 }

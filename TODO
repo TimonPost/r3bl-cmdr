@@ -48,8 +48,14 @@
       ✔ figure out how to bootstrap the entire tui framework @done(22-06-15 15:40)
       ✔ separate concerns (terminal window, app, state, etc) @done(22-06-15 17:36)
       ✔ integrate Draw trait object @done(22-06-15 17:36)
-      ☐ integrate crossterm (generate a queue of commands?)
-      ☐ integrate redux
+      ✔ Draw -> separate draw(store) and handle_event(input_event, store) @done(22-06-16 14:59)
+      ☐ try not to pass state into trait methods & store instead
+    redux:
+      ☐ start_event_loop() add subscriber to store
+      ☐ create store, state, attach reducer and pass it (create_store.rs)
+    render:
+      ☐ CrosstermCmd figure out how to create VDOM like result
+      ☐ add crossterm (VDOM like result) into test_canvas.rs & AppDraw
     focus mgmt:
       ☐ figure out keyboard focus management 
       ☐ what does input event routing look like?

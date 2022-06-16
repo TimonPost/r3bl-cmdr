@@ -16,8 +16,13 @@
 */
 
 use crate::*;
+use async_trait::async_trait;
 use crossterm::event::*;
 use r3bl_rs_utils::*;
+use std::{
+  fmt::{Debug, Display},
+  hash::Hash,
+};
 
 pub struct TerminalWindow {
   pub terminal_size: Size,
@@ -32,12 +37,31 @@ impl TerminalWindow {
     })
   }
 
-  pub async fn start_event_loop<S>(app_state: S, box_draw: Box<dyn Draw<S>>) -> CommonResult<()>
+  /// The where clause needs to match up w/ the trait bounds for [Store].
+  ///
+  /// ```ignore
+  /// where
+  /// S: Default + Clone + PartialEq + Debug + Hash + Sync + Send,
+  /// A: Default + Clone + Sync + Send,
+  /// ```
+  pub async fn start_event_loop<S, A>(store: &mut Store<S, A>, shared_draw: ShareDraw<S>) -> CommonResult<()>
   where
-    S: Send + Sync,
+    S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
+    A: Display + Default + Clone + Sync + Send,
   {
     raw_mode!({
       let mut terminal_window = TerminalWindow::try_to_create_instance()?;
+
+      // Attach a subscriber to the store.
+      let subscriber = TerminalWindowSubscriber {
+        shared_draw: shared_draw.clone(),
+      };
+      subscriber.run(store.get_state().await).await;
+      store.add_subscriber(Box::new(subscriber)).await;
+
+      // Clone the shared_draw for use in the loop below.
+      let my_draw_clone: ShareDraw<S> = shared_draw.clone();
+
       call_if_true!(DEBUG, terminal_window.dump_state_to_log("Startup"));
 
       loop {
@@ -47,7 +71,13 @@ impl TerminalWindow {
           if let LoopContinuation::Exit = loop_continuation {
             break;
           } else {
-            box_draw.draw(&app_state, &input_event).await?;
+            // TODO: refactor this block into a function & add docs
+            // TODO: replace this w/ functioning logic
+            let my_rl_draw = my_draw_clone.read().await;
+            let my_state = store.get_state().await;
+            my_rl_draw.draw(&my_state).await?;
+            // TODO: pass a store to handle_event()
+            my_rl_draw.handle_event(&input_event, &my_state).await?;
           }
         }
       }
@@ -57,5 +87,26 @@ impl TerminalWindow {
   /// Dump the state of the terminal window to the log.
   pub fn dump_state_to_log(&self, msg: &str) {
     log_no_err!(INFO, "{} -> {}", msg, self.to_string());
+  }
+}
+
+// TODO: add docs
+struct TerminalWindowSubscriber<S> {
+  shared_draw: ShareDraw<S>,
+}
+
+#[async_trait]
+impl<S> AsyncSubscriber<S> for TerminalWindowSubscriber<S>
+where
+  S: Display + Send + Sync + 'static,
+{
+  async fn run(&self, state: S) {
+    println!("subscriber: {}", state);
+    let my_draw_clone: ShareDraw<S> = self.shared_draw.clone();
+    let my_rl_draw = my_draw_clone.read().await;
+    let draw_result = my_rl_draw.draw(&state).await;
+    if let Err(e) = draw_result {
+      log_no_err!(ERROR, "TerminalWindowSubscriber::run draw error: {}", e);
+    }
   }
 }
