@@ -44,9 +44,12 @@
       ✔ publish r3bl-cmdr crate as placeholder @done(22-06-15 11:15)
       ✔ move repo from: nazmulidris/rust-scratch/tui-layout-crossterm to: r3bl_org/r3bl-cmdr @done(22-06-15 11:15)
     lifecyle & organization:
-      ☐ use electron architecture & terminology as baseline
-      ☐ figure out how to bootstrap the entire tui framework
-      ☐ separate concerns (terminal window, app, state, etc)
+      ✔ use electron architecture & terminology as baseline @done(22-06-15 15:40)
+      ✔ figure out how to bootstrap the entire tui framework @done(22-06-15 15:40)
+      ✔ separate concerns (terminal window, app, state, etc) @done(22-06-15 17:36)
+      ✔ integrate Draw trait object @done(22-06-15 17:36)
+      ☐ integrate crossterm (generate a queue of commands?)
+      ☐ integrate redux
     focus mgmt:
       ☐ figure out keyboard focus management 
       ☐ what does input event routing look like?

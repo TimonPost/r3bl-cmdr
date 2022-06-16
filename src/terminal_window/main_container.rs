@@ -25,20 +25,20 @@ pub struct TerminalWindow {
 }
 
 impl TerminalWindow {
-  fn new_instance() -> CommonResult<Self> {
+  fn try_to_create_instance() -> CommonResult<Self> {
     Ok(Self {
       event_stream: EventStream::new(),
       terminal_size: Size::try_to_get_from_crossterm_terminal()?,
     })
   }
 
-  pub async fn start_event_loop<S>(mut_state: &mut S, box_draw: Box<dyn Draw<S>>) -> CommonResult<()>
+  pub async fn start_event_loop<S>(app_state: S, box_draw: Box<dyn Draw<S>>) -> CommonResult<()>
   where
     S: Send + Sync,
   {
     raw_mode!({
-      let mut terminal_window = TerminalWindow::new_instance()?;
-      call_if_true!(DEBUG, terminal_window.dump_to_log("Startup"));
+      let mut terminal_window = TerminalWindow::try_to_create_instance()?;
+      call_if_true!(DEBUG, terminal_window.dump_state_to_log("Startup"));
 
       loop {
         let maybe_input_event = terminal_window.event_stream.get_input_event().await;
@@ -47,15 +47,15 @@ impl TerminalWindow {
           if let LoopContinuation::Exit = loop_continuation {
             break;
           } else {
-            // TODO: replace this w/ something more meaningful.
-            println!("hello world\r");
+            box_draw.draw(&app_state, &input_event).await?;
           }
         }
       }
     })
   }
 
-  pub fn dump_to_log(&self, msg: &str) {
+  /// Dump the state of the terminal window to the log.
+  pub fn dump_state_to_log(&self, msg: &str) {
     log_no_err!(INFO, "{} -> {}", msg, self.to_string());
   }
 }

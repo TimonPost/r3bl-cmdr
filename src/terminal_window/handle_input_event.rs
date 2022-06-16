@@ -44,7 +44,7 @@ pub async fn handle_input_event(input_event: InputEvent, terminal_window: &mut T
 fn on_resize(size: Size, terminal_window_data: &mut TerminalWindow) {
   terminal_window_data.terminal_size = size;
   log_no_err!(INFO, "Resize: {:?}", (size.height, size.width));
-  call_if_true!(DEBUG, terminal_window_data.dump_to_log("Resize"));
+  call_if_true!(DEBUG, terminal_window_data.dump_state_to_log("Resize"));
 }
 
 pub enum LoopContinuation {

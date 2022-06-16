@@ -15,6 +15,8 @@
  *   limitations under the License.
 */
 
+use std::fmt::{Display, Formatter};
+
 use crate::*;
 use crossterm::event::{
   Event::{self, Key, Mouse, Resize},
@@ -29,6 +31,13 @@ pub enum InputEvent {
   Resize(Size),
   Mouse(MouseEvent),
   None,
+}
+
+/// For [ToString].
+impl Display for InputEvent {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{:?}", self)
+  }
 }
 
 impl Default for InputEvent {

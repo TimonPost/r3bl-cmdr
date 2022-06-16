@@ -187,15 +187,15 @@ impl PerformPositioningAndSizing for Canvas {
 
   /// This updates the `content_cursor_pos` of the current [Layout].
   fn calc_where_to_insert_new_content_in_layout(&mut self, content_size: Size) -> CommonResult<()> {
-    let current_layout = self.current_layout()?;
+    throws!({
+      let current_layout = self.current_layout()?;
 
-    let pos = unwrap_option_or_compute_if_none! {
-      current_layout.content_cursor_pos,
-      || (0, 0).into()
-    };
-    current_layout.content_cursor_pos = Some(pos + content_size);
-
-    Ok(())
+      let pos = unwrap_option_or_compute_if_none! {
+        current_layout.content_cursor_pos,
+        || (0, 0).into()
+      };
+      current_layout.content_cursor_pos = Some(pos + content_size);
+    });
   }
 
   /// Get the last layout on the stack (if none found then return Err).

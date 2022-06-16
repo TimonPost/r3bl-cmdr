@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul &mut Idris
+ *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
 
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,18 @@
  *   limitations under the License.
 */
 
-use r3bl_cmdr::*;
-use r3bl_rs_utils::*;
+use crate::*;
 
-// Attach sources.
-pub mod sample_app;
+pub async fn run_app() -> CommonResult<()> {
+  throws!({
+    let app_state = AppState {
+      focused: "none".to_string(),
+      msg1: "hello".to_string(),
+      msg2: "world".to_string(),
+    };
 
-// Use things from sources.
-pub use sample_app::*;
+    let box_draw = AppStateDraw::new();
 
-#[tokio::main]
-async fn main() -> CommonResult<()> {
-  throws!(run_app().await?);
+    TerminalWindow::start_event_loop(app_state, box_draw).await?
+  });
 }

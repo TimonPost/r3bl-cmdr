@@ -17,11 +17,22 @@
 
 use crate::*;
 use async_trait::async_trait;
+use r3bl_rs_utils::*;
 
 #[async_trait]
 pub trait Draw<S>
 where
   S: Send + Sync,
 {
-  async fn draw(&self, state: &S, input_event: &InputEvent);
+  /// Given the state and input_event, render the output (via crossterm). To change the
+  /// state, it is necessary to dispatch a redux action.
+  async fn draw(&self, state: &S, input_event: &InputEvent) -> CommonResult<()>;
+
+  /// https://doc.rust-lang.org/book/ch10-02-traits.html
+  fn new() -> Box<dyn Draw<S>>
+  where
+    Self: Default + Sync + Send + 'static,
+  {
+    Box::new(Self::default())
+  }
 }

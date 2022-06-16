@@ -17,6 +17,8 @@
 
 // Attach sources.
 pub mod app;
+pub mod launcher;
 
 // Re-export.
 pub use app::*;
+pub use launcher::*;
