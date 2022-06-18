@@ -73,7 +73,7 @@ impl TerminalWindow {
           if let Continuation::Exit = base_handle_event(input_event, &mut window).await {
             break;
           }
-          let my_state = shared_store.write().await.get_state().await;
+          let my_state = shared_store.read().await.get_state().await;
           shared_draw
             .read()
             .await
@@ -106,8 +106,6 @@ where
   A: Display + Default + Clone + Sync + Send,
 {
   async fn run(&self, state: S) {
-    // TODO: remove debug
-    println!("🍣 AsyncSubscriber -> run: {}", state);
     let draw_result = self.shared_draw.read().await.draw(&state, &self.shared_store).await;
     if let Err(e) = draw_result {
       log_no_err!(ERROR, "TerminalWindowSubscriber::run draw error: {}", e)

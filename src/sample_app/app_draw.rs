@@ -15,25 +15,17 @@
  *   limitations under the License.
 */
 
+use crate::*;
 use async_trait::async_trait;
-use r3bl_cmdr::*;
-use r3bl_rs_utils::*;
-use std::{
-  fmt::{Debug, Display},
-  hash::Hash,
-};
+use crossterm::event::*;
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default)]
 pub struct AppDraw;
 
 #[async_trait]
-impl<S, A> Draw<S, A> for AppDraw
-where
-  S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
-  A: Display + Default + Clone + Sync + Send,
-{
-  async fn draw(&self, state: &S, _shared_store: &ShareStore<S, A>) -> CommonResult<()> {
+impl Draw<State, Action> for AppDraw {
+  async fn draw(&self, state: &State, _shared_store: &ShareStore<State, Action>) -> CommonResult<()> {
     throws!({
       // TODO: remove debug
       println!("⛵ Draw -> draw: {}\r", state);
@@ -43,12 +35,29 @@ where
   async fn handle_event(
     &self,
     input_event: &InputEvent,
-    state: &S,
-    _shared_store: &ShareStore<S, A>,
+    _state: &State,
+    shared_store: &ShareStore<State, Action>,
   ) -> CommonResult<()> {
     throws!({
-      // TODO: remove debug
-      println!("🚀 handle_event: {} state: {}\r", input_event, state);
+      match input_event {
+        InputEvent::DisplayableKeypress(typed_char) => match typed_char {
+          '+' => shared_store.read().await.dispatch_spawn(Action::AddPop(1)),
+          '-' => shared_store.read().await.dispatch_spawn(Action::SubPop(1)),
+          _ => {}
+        },
+        InputEvent::NonDisplayableKeypress(key_event) => match key_event {
+          KeyEvent {
+            code: KeyCode::Up,
+            modifiers: KeyModifiers::NONE,
+          } => shared_store.read().await.dispatch_spawn(Action::AddPop(1)),
+          KeyEvent {
+            code: KeyCode::Down,
+            modifiers: KeyModifiers::NONE,
+          } => shared_store.read().await.dispatch_spawn(Action::SubPop(1)),
+          _ => {}
+        },
+        _ => {}
+      }
     });
   }
 }

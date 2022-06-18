@@ -54,8 +54,8 @@
       ✔ create store, state, attach reducer and pass it (create_store.rs) @done(22-06-17 18:04)
       ✔ in start_event_loop() add subscriber to store @done(22-06-17 18:04)
       ✔ `main_container.rs`: clean up TODOs & logic @done(22-06-18 09:29)
-      ☐ `app_draw.rs`: dispatch actions on certain keypresses
-      ☐ `main_container.rs` -> subscriber: state change results in draw() call
+      ✔ `app_draw.rs`: dispatch actions on certain keypresses @done(22-06-18 16:35)
+      ✔ `main_container.rs` -> subscriber: state change results in draw() call @done(22-06-18 16:35)
     render:
       ☐ CrosstermCmd figure out how to create VDOM like result
       ☐ add crossterm (VDOM like result) into test_canvas.rs & AppDraw

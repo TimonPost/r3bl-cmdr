@@ -20,11 +20,11 @@ use r3bl_rs_utils::redux::AsyncReducer;
 use std::fmt::{Display, Formatter};
 
 /// Action: Default + Clone + Sync + Send.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 #[non_exhaustive]
 pub enum Action {
-  Add(i32, i32),
   AddPop(i32),
+  SubPop(i32),
   Clear,
   Noop,
 }
@@ -37,12 +37,7 @@ impl Default for Action {
 
 impl Display for Action {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    match self {
-      Action::Add(a, b) => write!(f, "Add({}, {})", a, b),
-      Action::AddPop(a) => write!(f, "AddPop({})", a),
-      Action::Clear => write!(f, "Clear"),
-      Action::Noop => write!(f, "Noop"),
-    }
+    write!(f, "{:?}", self)
   }
 }
 
@@ -65,17 +60,34 @@ pub struct Reducer;
 #[async_trait]
 impl AsyncReducer<State, Action> for Reducer {
   async fn run(&self, action: &Action, state: &State) -> State {
+    let mut stack = state.stack.clone();
+
     match action {
-      Action::Add(a, b) => {
-        let sum = a + b;
-        State { stack: vec![sum] }
+      Action::AddPop(arg) => {
+        if stack.is_empty() {
+          stack.push(*arg)
+        } else {
+          let top = stack.pop().unwrap();
+          let sum = top + arg;
+          stack.push(sum);
+        }
       }
-      Action::AddPop(a) => {
-        let sum = a + state.stack[0];
-        State { stack: vec![sum] }
+
+      Action::SubPop(arg) => {
+        if stack.is_empty() {
+          stack.push(*arg)
+        } else {
+          let top = stack.pop().unwrap();
+          let sum = top - arg;
+          stack.push(sum);
+        }
       }
-      Action::Clear => State { stack: vec![] },
-      _ => state.clone(),
+
+      Action::Clear => stack = vec![],
+
+      _ => {}
     }
+
+    State { stack }
   }
 }

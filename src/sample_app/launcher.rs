@@ -19,9 +19,16 @@ use crate::*;
 
 pub async fn run_app() -> CommonResult<()> {
   throws!({
+    // Create store.
     let mut store = Store::<State, Action>::default();
+
+    // Attach reducer.
     store.add_reducer(Reducer::new()).await;
+
+    // Create a draw.
     let shared_draw = AppDraw::new_shared();
-    TerminalWindow::start_event_loop( store, shared_draw).await?
+
+    // Create a window.
+    TerminalWindow::start_event_loop(store, shared_draw).await?
   });
 }
