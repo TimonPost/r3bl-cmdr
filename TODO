@@ -49,10 +49,13 @@
       ✔ separate concerns (terminal window, app, state, etc) @done(22-06-15 17:36)
       ✔ integrate Draw trait object @done(22-06-15 17:36)
       ✔ Draw -> separate draw(store) and handle_event(input_event, store) @done(22-06-16 14:59)
-      ☐ try not to pass state into trait methods & store instead
+      ✔ also pass store to the draw trait methods @done(22-06-17 17:30)
     redux:
-      ☐ start_event_loop() add subscriber to store
-      ☐ create store, state, attach reducer and pass it (create_store.rs)
+      ✔ create store, state, attach reducer and pass it (create_store.rs) @done(22-06-17 18:04)
+      ✔ in start_event_loop() add subscriber to store @done(22-06-17 18:04)
+      ✔ `main_container.rs`: clean up TODOs & logic @done(22-06-18 09:29)
+      ☐ `app_draw.rs`: figure out how to dispatch action on certain keypresses
+      ☐ `main_container.rs` -> subscriber: state change results in draw() call
     render:
       ☐ CrosstermCmd figure out how to create VDOM like result
       ☐ add crossterm (VDOM like result) into test_canvas.rs & AppDraw

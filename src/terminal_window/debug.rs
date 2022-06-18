@@ -22,7 +22,7 @@ impl Debug for TerminalWindow {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     f.debug_struct("TerminalWindow")
       .field("event_stream", &DebugDisplay::Ok)
-      .field("terminal_size", &self.terminal_size)
+      .field("terminal_size", &self.size)
       .finish()
   }
 }

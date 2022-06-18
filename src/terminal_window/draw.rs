@@ -18,25 +18,33 @@
 use crate::*;
 use async_trait::async_trait;
 use r3bl_rs_utils::*;
-use std::sync::Arc;
+use std::{
+  fmt::{Debug, Display},
+  hash::Hash,
+  sync::Arc,
+};
 use tokio::sync::RwLock;
 
-/// https://doc.rust-lang.org/book/ch10-02-traits.html
+/// Async trait docs: https://doc.rust-lang.org/book/ch10-02-traits.html
 #[async_trait]
-pub trait Draw<S>
+pub trait Draw<S, A>
 where
-  S: Send + Sync,
+  S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
+  A: Display + Default + Clone + Sync + Send,
 {
-  // TODO: replace state -> store
   /// Use the state to render the output (via crossterm). To change the state, dispatch an action.
-  async fn draw(&self, state: &S) -> CommonResult<()>;
+  async fn draw(&self, state: &S, shared_store: &ShareStore<S, A>) -> CommonResult<()>;
 
-  // TODO: replace state -> store
   /// Use the input_event to dispatch an action to the store if needed.
-  async fn handle_event(&self, input_event: &InputEvent, state: &S) -> CommonResult<()>;
+  async fn handle_event(
+    &self,
+    input_event: &InputEvent,
+    state: &S,
+    shared_store: &ShareStore<S, A>,
+  ) -> CommonResult<()>;
 
   /// Wrap a new instance in [Box].
-  fn new_owned() -> Box<dyn Draw<S>>
+  fn new_owned() -> Box<dyn Draw<S, A>>
   where
     Self: Default + Sync + Send + 'static,
   {
@@ -44,25 +52,10 @@ where
   }
 
   /// Wrap a new instance in [std::sync::Arc] & [tokio::sync::RwLock].
-  fn new_shared() -> ShareDraw<S>
+  fn new_shared() -> ShareDraw<S, A>
   where
     Self: Default + Sync + Send + 'static,
   {
     Arc::new(RwLock::new(Self::default()))
   }
 }
-
-pub type SafeDraw<S> = dyn Draw<S> + Send + Sync;
-pub type ShareDraw<S> = Arc<RwLock<SafeDraw<S>>>;
-
-// TODO: decide if some useful methods should be added to ShareDraw
-
-// pub trait Foo {
-//   fn foo(&self);
-// }
-//
-// impl<S> Foo for ShareDraw<S> {
-//   fn foo(&self) {
-//     todo!()
-//   }
-// }

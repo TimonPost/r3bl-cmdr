@@ -62,12 +62,12 @@ pub trait EventStreamExt {
   /// Try and read an [Event] from the [EventStream], and convert it into an [InputEvent].
   /// This is a non-blocking call. It returns an [InputEvent] wrapped in a [Option].
   /// [None] is returned if there was an error.
-  async fn get_input_event(&mut self) -> Option<InputEvent>;
+  async fn try_to_get_input_event(&mut self) -> Option<InputEvent>;
 }
 
 #[async_trait]
 impl EventStreamExt for EventStream {
-  async fn get_input_event(&mut self) -> Option<InputEvent> {
+  async fn try_to_get_input_event(&mut self) -> Option<InputEvent> {
     let maybe_event = self.next().fuse().await;
     match maybe_event {
       Some(Ok(event)) => Some(event.into()),

@@ -15,17 +15,12 @@
  *   limitations under the License.
 */
 
-// Attach files.
-mod type_alias;
-mod main_container;
-mod debug;
-mod handle_input_event;
-mod draw;
+use crate::*;
+use r3bl_rs_utils::*;
+use std::sync::Arc;
+use tokio::sync::RwLock;
 
-// Re-export.
-pub use type_alias::*;
-pub use debug::*;
-pub use draw::*;
-pub use handle_input_event::*;
-pub use main_container::*;
-
+// Type aliases.
+pub type ShareStore<S, A> = Arc<RwLock<Store<S, A>>>;
+pub type SafeDraw<S, A> = dyn Draw<S, A> + Send + Sync;
+pub type ShareDraw<S, A> = Arc<RwLock<SafeDraw<S, A>>>;

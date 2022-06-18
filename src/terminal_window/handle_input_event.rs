@@ -19,10 +19,13 @@ use crate::*;
 use crossterm::event::*;
 use r3bl_rs_utils::*;
 
-pub async fn handle_input_event(input_event: InputEvent, terminal_window: &mut TerminalWindow) -> LoopContinuation {
+/// Check to see if the [InputEvent] matches one of the [EXIT_KEYS] & if so, return
+/// [Continuation::Exit]. Otherwise, return [Continuation::Continue]. Note that
+/// [InputEvent] implements [Copy] (no need to pass references).
+pub async fn check_for_exit(input_event: InputEvent, terminal_window: &mut TerminalWindow) -> Continuation {
   match input_event {
     InputEvent::NonDisplayableKeypress(key_event) => match EXIT_KEYS.contains(&key_event) {
-      true => return LoopContinuation::Exit,
+      true => return Continuation::Exit,
       _ => {
         let KeyEvent { modifiers, code } = key_event;
         log_no_err!(INFO, "KeyEvent: {:?} + {:?}", modifiers, code);
@@ -38,16 +41,16 @@ pub async fn handle_input_event(input_event: InputEvent, terminal_window: &mut T
     _ => log_no_err!(INFO, "Other: {:?}", input_event),
   }
 
-  return LoopContinuation::Continue;
+  return Continuation::Continue;
 }
 
 fn on_resize(size: Size, terminal_window_data: &mut TerminalWindow) {
-  terminal_window_data.terminal_size = size;
+  terminal_window_data.size = size;
   log_no_err!(INFO, "Resize: {:?}", (size.height, size.width));
-  call_if_true!(DEBUG, terminal_window_data.dump_state_to_log("Resize"));
+  call_if_true!(DEBUG, terminal_window_data.log_state("Resize"));
 }
 
-pub enum LoopContinuation {
+pub enum Continuation {
   Exit,
   Continue,
 }

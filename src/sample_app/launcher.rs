@@ -22,6 +22,6 @@ pub async fn run_app() -> CommonResult<()> {
     let mut store = Store::<State, Action>::default();
     store.add_reducer(Reducer::new()).await;
     let shared_draw = AppDraw::new_shared();
-    TerminalWindow::start_event_loop(&mut store, shared_draw).await?
+    TerminalWindow::start_event_loop( store, shared_draw).await?
   });
 }

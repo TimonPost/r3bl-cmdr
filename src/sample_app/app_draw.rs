@@ -18,25 +18,36 @@
 use async_trait::async_trait;
 use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
-use std::fmt::{Display};
+use std::{
+  fmt::{Debug, Display},
+  hash::Hash,
+};
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default)]
 pub struct AppDraw;
 
 #[async_trait]
-impl<S> Draw<S> for AppDraw
+impl<S, A> Draw<S, A> for AppDraw
 where
-  S: Sync + Send + 'static + Default + Display,
+  S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
+  A: Display + Default + Clone + Sync + Send,
 {
-  async fn draw(&self, state: &S) -> CommonResult<()> {
+  async fn draw(&self, state: &S, _shared_store: &ShareStore<S, A>) -> CommonResult<()> {
     throws!({
-      println!("⛵ draw: {}\r", state);
+      // TODO: remove debug
+      println!("⛵ Draw -> draw: {}\r", state);
     });
   }
 
-  async fn handle_event(&self, input_event: &InputEvent, state: &S) -> CommonResult<()> {
+  async fn handle_event(
+    &self,
+    input_event: &InputEvent,
+    state: &S,
+    _shared_store: &ShareStore<S, A>,
+  ) -> CommonResult<()> {
     throws!({
+      // TODO: remove debug
       println!("🚀 handle_event: {} state: {}\r", input_event, state);
     });
   }
