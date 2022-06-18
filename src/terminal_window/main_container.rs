@@ -67,15 +67,18 @@ impl TerminalWindow {
 
       call_if_true!(DEBUG, window.log_state("Startup"));
 
+      // Main event loop.
       loop {
-        // TODO: move this logic into a [From] trait impl
         if let Some(input_event) = window.stream.try_to_get_input_event().await {
-          if let Continuation::Exit = check_for_exit(input_event, &mut window).await {
+          if let Continuation::Exit = base_handle_event(input_event, &mut window).await {
             break;
           }
-          let my_rl_draw = shared_draw.read().await;
           let my_state = shared_store.write().await.get_state().await;
-          my_rl_draw.handle_event(&input_event, &my_state, &shared_store).await?;
+          shared_draw
+            .read()
+            .await
+            .handle_event(&input_event, &my_state, &shared_store)
+            .await?;
         }
       }
     })

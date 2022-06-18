@@ -19,13 +19,13 @@
 mod type_alias;
 mod main_container;
 mod debug;
-mod handle_input_event;
+mod base_handle_event;
 mod draw;
 
 // Re-export.
 pub use type_alias::*;
 pub use debug::*;
 pub use draw::*;
-pub use handle_input_event::*;
+pub use base_handle_event::*;
 pub use main_container::*;
 
