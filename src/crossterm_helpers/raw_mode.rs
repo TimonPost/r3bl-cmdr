@@ -73,22 +73,23 @@ pub struct RawMode;
 
 impl RawMode {
   pub fn start() -> Self {
-    enqueue_and_flush!({
-      CrosstermCmd::try_to_enable_raw_mode();
-      CrosstermCmd::try_to_enable_mouse_capture();
-      CrosstermCmd::try_to_enter_alternate_screen();
-      CrosstermCmd::reset_screen();
-    });
+    queue_and_flush!(
+      Command::EnableRawMode,
+      Command::EnableMouseCapture,
+      Command::EnterAlternateScreen,
+      Command::MoveCursorPosition(0, 0),
+      Command::ClearScreen
+    );
     RawMode
   }
 }
 
 impl Drop for RawMode {
   fn drop(&mut self) {
-    enqueue_and_flush!({
-      CrosstermCmd::try_to_leave_alternate_screen();
-      CrosstermCmd::try_to_disable_mouse_mode();
-      CrosstermCmd::try_to_disable_raw_mode();
-    });
+    queue_and_flush!(
+      Command::LeaveAlternateScreen,
+      Command::DisableMouseCapture,
+      Command::DisableRawMode
+    );
   }
 }

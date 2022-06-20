@@ -57,8 +57,9 @@
       ✔ `app_draw.rs`: dispatch actions on certain keypresses @done(22-06-18 16:35)
       ✔ `main_container.rs` -> subscriber: state change results in draw() call @done(22-06-18 16:35)
     render:
-      ☐ CrosstermCmd figure out how to create VDOM like result
+      ✔ figure out how to create VDOM like result -> CommandQueue @done(22-06-19 18:44)
       ☐ add crossterm (VDOM like result) into test_canvas.rs & AppDraw
+      ☐ add all the crossterm commands to Command
     focus mgmt:
       ☐ figure out keyboard focus management 
       ☐ what does input event routing look like?
