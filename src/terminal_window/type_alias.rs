@@ -22,5 +22,5 @@ use tokio::sync::RwLock;
 
 // Type aliases.
 pub type ShareStore<S, A> = Arc<RwLock<Store<S, A>>>;
-pub type SafeDraw<S, A> = dyn Draw<S, A> + Send + Sync;
+pub type SafeDraw<S, A> = dyn Render<S, A> + Send + Sync;
 pub type ShareDraw<S, A> = Arc<RwLock<SafeDraw<S, A>>>;

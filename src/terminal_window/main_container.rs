@@ -106,9 +106,16 @@ where
   A: Display + Default + Clone + Sync + Send,
 {
   async fn run(&self, state: S) {
-    let draw_result = self.shared_draw.read().await.draw(&state, &self.shared_store).await;
-    if let Err(e) = draw_result {
+    let render_result = self
+      .shared_draw
+      .read()
+      .await
+      .render(&state, &self.shared_store)
+      .await;
+    if let Err(e) = render_result {
       log_no_err!(ERROR, "TerminalWindowSubscriber::run draw error: {}", e)
+    } else {
+      // TODO: actually flush the CommandQueue to the terminal
     }
   }
 }

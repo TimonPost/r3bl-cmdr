@@ -26,7 +26,7 @@ pub async fn run_app() -> CommonResult<()> {
     store.add_reducer(Reducer::new()).await;
 
     // Create a draw.
-    let shared_draw = AppDraw::new_shared();
+    let shared_draw = App::new_shared();
 
     // Create a window.
     TerminalWindow::start_event_loop(store, shared_draw).await?

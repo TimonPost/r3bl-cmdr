@@ -27,13 +27,13 @@ use tokio::sync::RwLock;
 
 /// Async trait docs: https://doc.rust-lang.org/book/ch10-02-traits.html
 #[async_trait]
-pub trait Draw<S, A>
+pub trait Render<S, A>
 where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   A: Display + Default + Clone + Sync + Send,
 {
   /// Use the state to render the output (via crossterm). To change the state, dispatch an action.
-  async fn draw(&self, state: &S, shared_store: &ShareStore<S, A>) -> CommonResult<()>;
+  async fn render(&self, state: &S, shared_store: &ShareStore<S, A>) -> CommonResult<CommandQueue>;
 
   /// Use the input_event to dispatch an action to the store if needed.
   async fn handle_event(
@@ -44,11 +44,11 @@ where
   ) -> CommonResult<()>;
 
   /// Wrap a new instance in [Box].
-  fn new_owned() -> Box<dyn Draw<S, A>>
+  fn new_owned() -> Box<dyn Render<S, A>>
   where
     Self: Default + Sync + Send + 'static,
   {
-    Box::new(Self::default())    
+    Box::new(Self::default())
   }
 
   /// Wrap a new instance in [std::sync::Arc] & [tokio::sync::RwLock].

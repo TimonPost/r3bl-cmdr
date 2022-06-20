@@ -21,14 +21,20 @@ use crossterm::event::*;
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default)]
-pub struct AppDraw;
+pub struct App;
 
 #[async_trait]
-impl Draw<State, Action> for AppDraw {
-  async fn draw(&self, state: &State, _shared_store: &ShareStore<State, Action>) -> CommonResult<()> {
-    throws!({
+impl Render<State, Action> for App {
+  async fn render(
+    &self,
+    state: &State,
+    _shared_store: &ShareStore<State, Action>,
+  ) -> CommonResult<CommandQueue> {
+    throws_with_return!({
       // TODO: remove debug
       println!("⛵ Draw -> draw: {}\r", state);
+      // TODO: actually generate some commands to be rendered
+      CommandQueue::default()
     });
   }
 
