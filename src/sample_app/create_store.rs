@@ -19,35 +19,42 @@ use async_trait::async_trait;
 use r3bl_rs_utils::redux::AsyncReducer;
 use std::fmt::{Display, Formatter};
 
-/// Action: Default + Clone + Sync + Send.
+/// Action.
 #[derive(Clone, Debug)]
 #[non_exhaustive]
-pub enum Action {
+pub enum AppAction {
+  Startup,
   AddPop(i32),
   SubPop(i32),
   Clear,
   Noop,
 }
 
-impl Default for Action {
+impl Default for AppAction {
   fn default() -> Self {
-    Action::Noop
+    AppAction::Noop
   }
 }
 
-impl Display for Action {
+impl Display for AppAction {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     write!(f, "{:?}", self)
   }
 }
 
-/// State: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send.
-#[derive(Default, Clone, PartialEq, Debug, Hash)]
-pub struct State {
+/// State.
+#[derive(Clone, PartialEq, Debug, Hash)]
+pub struct AppState {
   pub stack: Vec<i32>,
 }
 
-impl Display for State {
+impl Default for AppState {
+  fn default() -> Self {
+    Self { stack: vec![0] }
+  }
+}
+
+impl Display for AppState {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     write!(f, "State {{ stack: {:?} }}", self.stack)
   }
@@ -55,15 +62,15 @@ impl Display for State {
 
 /// Reducer.
 #[derive(Default)]
-pub struct Reducer;
+pub struct AppReducer;
 
 #[async_trait]
-impl AsyncReducer<State, Action> for Reducer {
-  async fn run(&self, action: &Action, state: &State) -> State {
+impl AsyncReducer<AppState, AppAction> for AppReducer {
+  async fn run(&self, action: &AppAction, state: &AppState) -> AppState {
     let mut stack = state.stack.clone();
 
     match action {
-      Action::AddPop(arg) => {
+      AppAction::AddPop(arg) => {
         if stack.is_empty() {
           stack.push(*arg)
         } else {
@@ -73,7 +80,7 @@ impl AsyncReducer<State, Action> for Reducer {
         }
       }
 
-      Action::SubPop(arg) => {
+      AppAction::SubPop(arg) => {
         if stack.is_empty() {
           stack.push(*arg)
         } else {
@@ -83,11 +90,11 @@ impl AsyncReducer<State, Action> for Reducer {
         }
       }
 
-      Action::Clear => stack = vec![],
+      AppAction::Clear => stack = vec![],
 
       _ => {}
     }
 
-    State { stack }
+    AppState { stack }
   }
 }

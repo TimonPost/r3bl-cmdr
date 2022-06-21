@@ -37,7 +37,7 @@ where
     &self,
     state: &S,
     shared_store: &SharedStore<S, A>,
-    terminal_size: Size,
+    window_size: Size,
   ) -> CommonResult<CommandQueue>;
 
   /// Use the input_event to dispatch an action to the store if needed.
@@ -46,7 +46,7 @@ where
     input_event: &InputEvent,
     state: &S,
     shared_store: &SharedStore<S, A>,
-    terminal_size: Size,
+    window_size: Size,
   ) -> CommonResult<()>;
 
   /// Wrap a new instance in [Box].

@@ -60,8 +60,11 @@
       ✔ figure out how to create VDOM like result -> CommandQueue @done(22-06-19 18:44)
       ✔ rename Draw -> Render @done(22-06-20 15:35)
       ✔ accomodate Render returning CommandQueue @done(22-06-20 15:35)
-      ☐ app.rs render the state using CommandQueue (and crossterm commands)
-      ☐ main_container.rs actually flush CommandQueue in MySubscriber
+      ✔ app.rs render the state using CommandQueue (and crossterm commands) @done(22-06-21 17:51)
+      ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
+      ✔ do initial render in event loop @done(22-06-21 19:04)
+      ✔ fix bug in app.rs that doesn't capture first input_event @done(22-06-21 18:52)
+      ✔ fix the fix above (flaky) - flush both stdin & stdout @done(22-06-22 12:45)
       ☐ add layout from test_canvas.rs into app.rs
       ☐ add all the crossterm commands to Command
     focus mgmt:

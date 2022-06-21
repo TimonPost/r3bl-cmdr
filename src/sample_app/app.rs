@@ -17,27 +17,44 @@
 
 use crate::*;
 use async_trait::async_trait;
-use crossterm::event::*;
+use crossterm::{event::*, style::*};
+
+const DEBUG: bool = false;
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default)]
 pub struct App;
 
 #[async_trait]
-impl Render<State, Action> for App {
+impl Render<AppState, AppAction> for App {
   async fn render(
     &self,
-    state: &State,
-    _shared_store: &SharedStore<State, Action>,
-    _terminal_size: Size,
+    state: &AppState,
+    _shared_store: &SharedStore<AppState, AppAction>,
+    window_size: Size,
   ) -> CommonResult<CommandQueue> {
     throws_with_return!({
-      let mut queue = CommandQueue::default();
+      let content = format!("{}", state);
+      let content_size = content.len() as UnitType;
+      let x: UnitType = window_size.width / 2 - content_size / 2;
+      let y: UnitType = window_size.height / 2;
+      let state_stack_top = *state.stack.last().unwrap() as u8;
 
-      // FIXME: remove this block submitting
-      {
-        log_no_err!(INFO, "⛵ Draw -> draw: {}\r", state);
-      }
+      let queue = tw_queue!(
+        TWCommand::ClearScreen,
+        TWCommand::ResetColor,
+        TWCommand::MoveCursorPosition(x, y),
+        TWCommand::SetFgColor(Color::Rgb {
+          r: (100 + state_stack_top) as u8,
+          g: (50 + state_stack_top) as u8,
+          b: (10 + state_stack_top) as u8,
+        }),
+        TWCommand::Print(content),
+        TWCommand::ResetColor
+      );
+
+      call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::render -> state: {}\r", state));
+      call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::render -> queue: {}\r", queue));
 
       queue
     });
@@ -46,29 +63,76 @@ impl Render<State, Action> for App {
   async fn handle_event(
     &self,
     input_event: &InputEvent,
-    _state: &State,
-    shared_store: &SharedStore<State, Action>,
+    _state: &AppState,
+    shared_store: &SharedStore<AppState, AppAction>,
     _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
-      match input_event {
-        InputEvent::DisplayableKeypress(typed_char) => match typed_char {
-          '+' => shared_store.read().await.dispatch_spawn(Action::AddPop(1)),
-          '-' => shared_store.read().await.dispatch_spawn(Action::SubPop(1)),
+      call_if_true!(
+        DEBUG,
+        log_no_err!(INFO, "⛵ App::handle_event -> input_event: {}", input_event)
+      );
+
+      if let InputEvent::DisplayableKeypress(typed_char) = input_event {
+        match typed_char {
+          '+' => {
+            shared_store.read().await.dispatch_spawn(AppAction::AddPop(1));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(
+                INFO,
+                "⛵ App::handle_event -> + -> dispatch_spawn: {}",
+                AppAction::AddPop(1)
+              )
+            );
+          }
+          '-' => {
+            shared_store.read().await.dispatch_spawn(AppAction::SubPop(1));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(
+                INFO,
+                "⛵ App::handle_event -> - -> dispatch_spawn: {}",
+                AppAction::SubPop(1)
+              )
+            );
+          }
           _ => {}
-        },
-        InputEvent::NonDisplayableKeypress(key_event) => match key_event {
+        }
+      }
+
+      if let InputEvent::NonDisplayableKeypress(key_event) = input_event {
+        match key_event {
           KeyEvent {
             code: KeyCode::Up,
             modifiers: KeyModifiers::NONE,
-          } => shared_store.read().await.dispatch_spawn(Action::AddPop(1)),
+          } => {
+            shared_store.read().await.dispatch_spawn(AppAction::AddPop(1));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(
+                INFO,
+                "⛵ App::handle_event -> Up -> dispatch_spawn: {}",
+                AppAction::AddPop(1)
+              )
+            );
+          }
           KeyEvent {
             code: KeyCode::Down,
             modifiers: KeyModifiers::NONE,
-          } => shared_store.read().await.dispatch_spawn(Action::SubPop(1)),
+          } => {
+            shared_store.read().await.dispatch_spawn(AppAction::SubPop(1));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(
+                INFO,
+                "⛵ App::handle_event -> Down -> dispatch_spawn: {}",
+                AppAction::SubPop(1)
+              )
+            );
+          }
           _ => {}
-        },
-        _ => {}
+        }
       }
     });
   }

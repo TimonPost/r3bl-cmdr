@@ -46,7 +46,10 @@ impl TerminalWindow {
   /// S: Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   /// A: Default + Clone + Sync + Send,
   /// ```
-  pub async fn start_event_loop<S, A>(store: Store<S, A>, shared_draw: SharedRender<S, A>) -> CommonResult<()>
+  pub async fn start_event_loop<S, A>(
+    store: Store<S, A>,
+    shared_render: SharedRender<S, A>,
+  ) -> CommonResult<()>
   where
     S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
     A: Display + Default + Clone + Sync + Send,
@@ -59,12 +62,12 @@ impl TerminalWindow {
       // Move the store into an Arc & RwLock.
       let shared_store: SharedStore<S, A> = Arc::new(RwLock::new(store));
 
+      // Create a subscriber & perform the first render.
+      let subscriber = MySubscriber::new_box(&shared_render, &shared_store, &shared_window);
+      subscriber.run(shared_store.read().await.get_state().await).await;
+
       // Attach a subscriber to the store.
-      shared_store
-        .write()
-        .await
-        .add_subscriber(MySubscriber::new_box(&shared_draw, &shared_store, &shared_window))
-        .await;
+      shared_store.write().await.add_subscriber(subscriber).await;
 
       call_if_true!(DEBUG, shared_window.read().await.log_state("Startup"));
 
@@ -77,11 +80,13 @@ impl TerminalWindow {
           }
           let my_state = shared_store.read().await.get_state().await;
           let window_size = shared_window.read().await.size;
-          shared_draw
+          shared_render
             .read()
             .await
             .handle_event(&input_event, &my_state, &shared_store, window_size)
             .await?;
+          // This flush command is needed in order to keep stdout in sync w/ the event loop.
+          TWCommand::flush();
         }
       }
     })
@@ -111,17 +116,20 @@ where
 {
   async fn run(&self, state: S) {
     let window_size = self.shared_window.read().await.size;
-
     let render_result = self
       .shared_draw
       .read()
       .await
       .render(&state, &self.shared_store, window_size)
       .await;
-    if let Err(e) = render_result {
-      log_no_err!(ERROR, "TerminalWindowSubscriber::run draw error: {}", e)
-    } else {
-      // TODO: actually flush the CommandQueue to the terminal
+    match render_result {
+      Err(error) => {
+        log_no_err!(ERROR, "MySubscriber::run draw error: {}", error);
+        TWCommand::flush();
+      }
+      Ok(mut command_queue) => {
+        command_queue.flush();
+      }
     }
   }
 }
