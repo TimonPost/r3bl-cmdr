@@ -31,7 +31,7 @@ const EXIT_KEYS: [crossterm::event::KeyEvent; 1] = [KeyEvent {
 ///
 /// Note that [InputEvent] implements [Copy] (no need to pass references into this
 /// function).
-pub async fn base_handle_event(input_event: InputEvent, terminal_window: &mut TerminalWindow) -> Continuation {
+pub async fn base_handle_event(input_event: InputEvent, window: &SharedWindow) -> Continuation {
   // Early return if any exit key sequence is pressed.
   if let Continuation::Exit = input_event.into() {
     return Continuation::Exit;
@@ -46,7 +46,7 @@ pub async fn base_handle_event(input_event: InputEvent, terminal_window: &mut Te
       log_no_err!(INFO, "DisplayableKeypress: {:?}", character);
     }
     InputEvent::Resize(size) => {
-      on_resize(size, terminal_window);
+      on_resize(size, window).await;
     }
     InputEvent::Mouse(mouse_event) => {
       log_no_err!(INFO, "Mouse: {:?}", mouse_event);
@@ -79,8 +79,8 @@ pub enum Continuation {
   Continue,
 }
 
-fn on_resize(size: Size, terminal_window_data: &mut TerminalWindow) {
-  terminal_window_data.size = size;
+async fn on_resize(size: Size, window: &SharedWindow) {
+  window.write().await.size = size;
   log_no_err!(INFO, "Resize: {:?}", (size.height, size.width));
-  call_if_true!(DEBUG, terminal_window_data.log_state("Resize"));
+  call_if_true!(DEBUG, window.read().await.log_state("Resize"));
 }

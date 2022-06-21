@@ -20,12 +20,11 @@ mod type_alias;
 mod main_container;
 mod debug;
 mod base_handle_event;
-mod draw;
+mod render;
 
 // Re-export.
-pub use type_alias::*;
-pub use debug::*;
-pub use draw::*;
 pub use base_handle_event::*;
+pub use debug::*;
 pub use main_container::*;
-
+pub use render::*;
+pub use type_alias::*;

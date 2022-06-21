@@ -46,38 +46,41 @@ impl TerminalWindow {
   /// S: Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   /// A: Default + Clone + Sync + Send,
   /// ```
-  pub async fn start_event_loop<S, A>(store: Store<S, A>, shared_draw: ShareDraw<S, A>) -> CommonResult<()>
+  pub async fn start_event_loop<S, A>(store: Store<S, A>, shared_draw: SharedRender<S, A>) -> CommonResult<()>
   where
     S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
     A: Display + Default + Clone + Sync + Send,
   {
     raw_mode!({
       // Initialize the terminal window struct.
-      let mut window = TerminalWindow::try_to_create_instance()?;
+      let _window = TerminalWindow::try_to_create_instance()?;
+      let shared_window: SharedWindow = Arc::new(RwLock::new(_window));
 
       // Move the store into an Arc & RwLock.
-      let shared_store: ShareStore<S, A> = Arc::new(RwLock::new(store));
+      let shared_store: SharedStore<S, A> = Arc::new(RwLock::new(store));
 
       // Attach a subscriber to the store.
       shared_store
         .write()
         .await
-        .add_subscriber(MySubscriber::new_box(&shared_draw, &shared_store))
+        .add_subscriber(MySubscriber::new_box(&shared_draw, &shared_store, &shared_window))
         .await;
 
-      call_if_true!(DEBUG, window.log_state("Startup"));
+      call_if_true!(DEBUG, shared_window.read().await.log_state("Startup"));
 
       // Main event loop.
       loop {
-        if let Some(input_event) = window.stream.try_to_get_input_event().await {
-          if let Continuation::Exit = base_handle_event(input_event, &mut window).await {
+        let maybe_input_event = shared_window.write().await.stream.try_to_get_input_event().await;
+        if let Some(input_event) = maybe_input_event {
+          if let Continuation::Exit = base_handle_event(input_event, &shared_window).await {
             break;
           }
           let my_state = shared_store.read().await.get_state().await;
+          let window_size = shared_window.read().await.size;
           shared_draw
             .read()
             .await
-            .handle_event(&input_event, &my_state, &shared_store)
+            .handle_event(&input_event, &my_state, &shared_store, window_size)
             .await?;
         }
       }
@@ -95,8 +98,9 @@ where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static,
   A: Display + Default + Clone + Sync + Send + 'static,
 {
-  shared_draw: ShareDraw<S, A>,
-  shared_store: ShareStore<S, A>,
+  shared_draw: SharedRender<S, A>,
+  shared_store: SharedStore<S, A>,
+  shared_window: SharedWindow,
 }
 
 #[async_trait]
@@ -106,11 +110,13 @@ where
   A: Display + Default + Clone + Sync + Send,
 {
   async fn run(&self, state: S) {
+    let window_size = self.shared_window.read().await.size;
+
     let render_result = self
       .shared_draw
       .read()
       .await
-      .render(&state, &self.shared_store)
+      .render(&state, &self.shared_store, window_size)
       .await;
     if let Err(e) = render_result {
       log_no_err!(ERROR, "TerminalWindowSubscriber::run draw error: {}", e)
@@ -125,10 +131,15 @@ where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   A: Display + Default + Clone + Sync + Send,
 {
-  fn new_box(shared_draw: &ShareDraw<S, A>, shared_store: &ShareStore<S, A>) -> Box<Self> {
+  fn new_box(
+    shared_draw: &SharedRender<S, A>,
+    shared_store: &SharedStore<S, A>,
+    shared_window: &SharedWindow,
+  ) -> Box<Self> {
     Box::new(MySubscriber {
       shared_draw: shared_draw.clone(),
       shared_store: shared_store.clone(),
+      shared_window: shared_window.clone(),
     })
   }
 }

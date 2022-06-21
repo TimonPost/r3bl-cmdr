@@ -28,13 +28,19 @@ impl Render<State, Action> for App {
   async fn render(
     &self,
     state: &State,
-    _shared_store: &ShareStore<State, Action>,
+    _shared_store: &SharedStore<State, Action>,
+    _terminal_size: Size,
   ) -> CommonResult<CommandQueue> {
     throws_with_return!({
-      // TODO: remove debug
-      println!("⛵ Draw -> draw: {}\r", state);
-      // TODO: actually generate some commands to be rendered
-      CommandQueue::default()
+      let mut queue = CommandQueue::default();
+
+      {
+        // TODO: actually generate some commands to be rendered
+        // TODO: remove debug
+        println!("⛵ Draw -> draw: {}\r", state);
+      }
+
+      queue
     });
   }
 
@@ -42,7 +48,8 @@ impl Render<State, Action> for App {
     &self,
     input_event: &InputEvent,
     _state: &State,
-    shared_store: &ShareStore<State, Action>,
+    shared_store: &SharedStore<State, Action>,
+    _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
       match input_event {

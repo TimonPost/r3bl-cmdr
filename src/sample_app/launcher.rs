@@ -20,7 +20,7 @@ use crate::*;
 pub async fn run_app() -> CommonResult<()> {
   throws!({
     // Create store.
-    let mut store = Store::<State, Action>::default();
+    let mut store: Store<State, Action> = Store::default();
 
     // Attach reducer.
     store.add_reducer(Reducer::new()).await;

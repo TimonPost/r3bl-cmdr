@@ -33,14 +33,20 @@ where
   A: Display + Default + Clone + Sync + Send,
 {
   /// Use the state to render the output (via crossterm). To change the state, dispatch an action.
-  async fn render(&self, state: &S, shared_store: &ShareStore<S, A>) -> CommonResult<CommandQueue>;
+  async fn render(
+    &self,
+    state: &S,
+    shared_store: &SharedStore<S, A>,
+    terminal_size: Size,
+  ) -> CommonResult<CommandQueue>;
 
   /// Use the input_event to dispatch an action to the store if needed.
   async fn handle_event(
     &self,
     input_event: &InputEvent,
     state: &S,
-    shared_store: &ShareStore<S, A>,
+    shared_store: &SharedStore<S, A>,
+    terminal_size: Size,
   ) -> CommonResult<()>;
 
   /// Wrap a new instance in [Box].
@@ -52,7 +58,7 @@ where
   }
 
   /// Wrap a new instance in [std::sync::Arc] & [tokio::sync::RwLock].
-  fn new_shared() -> ShareDraw<S, A>
+  fn new_shared() -> SharedRender<S, A>
   where
     Self: Default + Sync + Send + 'static,
   {
