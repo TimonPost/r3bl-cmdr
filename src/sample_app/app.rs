@@ -34,10 +34,9 @@ impl Render<State, Action> for App {
     throws_with_return!({
       let mut queue = CommandQueue::default();
 
+      // FIXME: remove this block submitting
       {
-        // TODO: actually generate some commands to be rendered
-        // TODO: remove debug
-        println!("⛵ Draw -> draw: {}\r", state);
+        log_no_err!(INFO, "⛵ Draw -> draw: {}\r", state);
       }
 
       queue
