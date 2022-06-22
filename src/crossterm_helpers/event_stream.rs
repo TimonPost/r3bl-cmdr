@@ -73,12 +73,11 @@ impl EventStreamExt for EventStream {
       Some(Ok(event)) => Some(event.into()),
 
       Some(Err(e)) => {
-        log_no_err!(ERROR, "Error: {:?}", e);
+        call_if_true!(DEBUG, log_no_err!(ERROR, "Error: {:?}", e));
         None
       }
 
       _ => None,
     }
-    
   }
 }

@@ -63,7 +63,7 @@
       ✔ app.rs render the state using CommandQueue (and crossterm commands) @done(22-06-21 17:51)
       ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
       ✔ do initial render in event loop @done(22-06-21 19:04)
-      ☐ fix bug that drops input_events
+      ✔ fix bug that drops input_events @done(22-06-22 17:02)
         - skip a tick in the event loop
         - in app.rs, setting DEBUG to true fixes the issue!
       ☐ add layout from test_canvas.rs into app.rs

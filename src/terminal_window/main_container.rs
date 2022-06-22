@@ -26,15 +26,13 @@ use std::{
 };
 use tokio::sync::RwLock;
 
-pub struct TerminalWindow {
+pub struct TerminalWindowData {
   pub size: Size,
-  pub stream: EventStream,
 }
 
-impl TerminalWindow {
+impl TerminalWindowData {
   fn try_to_create_instance() -> CommonResult<Self> {
     Ok(Self {
-      stream: EventStream::new(),
       size: Size::try_to_get_from_crossterm_terminal()?,
     })
   }
@@ -55,35 +53,38 @@ impl TerminalWindow {
     A: Display + Default + Clone + Sync + Send,
   {
     raw_mode!({
-      // Initialize the terminal window struct.
-      let _window = TerminalWindow::try_to_create_instance()?;
-      let shared_window: SharedWindow = Arc::new(RwLock::new(_window));
+      // Initialize the terminal window data struct.
+      let tw_data = TerminalWindowData::try_to_create_instance()?;
+      let shared_tw_data: SharedWindow = Arc::new(RwLock::new(tw_data));
 
       // Move the store into an Arc & RwLock.
       let shared_store: SharedStore<S, A> = Arc::new(RwLock::new(store));
 
       // Create a subscriber & perform the first render.
-      let subscriber = MySubscriber::new_box(&shared_render, &shared_store, &shared_window);
+      let subscriber = MySubscriber::new_box(&shared_render, &shared_store, &shared_tw_data);
       subscriber.run(shared_store.read().await.get_state().await).await;
 
       // Attach a subscriber to the store.
       shared_store.write().await.add_subscriber(subscriber).await;
 
-      call_if_true!(DEBUG, shared_window.read().await.log_state("Startup"));
+      // Create a new event stream (async).
+      let mut stream = EventStream::new();
+
+      call_if_true!(DEBUG, shared_tw_data.read().await.log_state("Startup"));
 
       // Main event loop.
       loop {
         // Try and get the next event if available (asynchronously).
-        let maybe_input_event = shared_window.write().await.stream.try_to_get_input_event().await;
+        let maybe_input_event = stream.try_to_get_input_event().await;
 
         // Process the input_event.
         if let Some(input_event) = maybe_input_event {
           call_if_true!(DEBUG, log_no_err!(INFO, "Tick: ⏰ {}", input_event));
-          if let Continuation::Exit = base_handle_event(input_event, &shared_window).await {
+          if let Continuation::Exit = base_handle_event(input_event, &shared_tw_data).await {
             break;
           }
           let my_state = shared_store.read().await.get_state().await;
-          let window_size = shared_window.read().await.size;
+          let window_size = shared_tw_data.read().await.size;
           shared_render
             .read()
             .await
