@@ -47,4 +47,4 @@ pub use input_event::*;
 pub use raw_mode::*;
 
 /// If set to true, and the [log!] fails, then it will print the error to stderr.
-pub const DEBUG: bool = true;
+pub const DEBUG: bool = false;

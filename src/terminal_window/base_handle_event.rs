@@ -40,19 +40,22 @@ pub async fn base_handle_event(input_event: InputEvent, window: &SharedWindow) -
   // Default input event handling.
   match input_event {
     InputEvent::NonDisplayableKeypress(key_event) => {
-      log_no_err!(INFO, "NonDisplayableKeypress: {:?}", key_event);
+      call_if_true!(
+        DEBUG,
+        log_no_err!(INFO, "NonDisplayableKeypress: {:?}", key_event)
+      );
     }
     InputEvent::DisplayableKeypress(character) => {
-      log_no_err!(INFO, "DisplayableKeypress: {:?}", character);
+      call_if_true!(DEBUG, log_no_err!(INFO, "DisplayableKeypress: {:?}", character));
     }
     InputEvent::Resize(size) => {
       on_resize(size, window).await;
     }
     InputEvent::Mouse(mouse_event) => {
-      log_no_err!(INFO, "Mouse: {:?}", mouse_event);
+      call_if_true!(DEBUG, log_no_err!(INFO, "Mouse: {:?}", mouse_event));
     }
     _ => {
-      log_no_err!(INFO, "Other: {:?}", input_event);
+      call_if_true!(DEBUG, log_no_err!(INFO, "Other: {:?}", input_event));
     }
   }
 
@@ -81,6 +84,8 @@ pub enum Continuation {
 
 async fn on_resize(size: Size, window: &SharedWindow) {
   window.write().await.size = size;
-  log_no_err!(INFO, "Resize: {:?}", (size.height, size.width));
-  call_if_true!(DEBUG, window.read().await.log_state("Resize"));
+  call_if_true!(DEBUG, {
+    log_no_err!(INFO, "Resize: {:?}", (size.height, size.width));
+    window.read().await.log_state("Resize");
+  });
 }

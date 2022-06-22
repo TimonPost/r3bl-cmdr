@@ -73,8 +73,12 @@ impl TerminalWindow {
 
       // Main event loop.
       loop {
+        // Try and get the next event if available (asynchronously).
         let maybe_input_event = shared_window.write().await.stream.try_to_get_input_event().await;
+
+        // Process the input_event.
         if let Some(input_event) = maybe_input_event {
+          call_if_true!(DEBUG, log_no_err!(INFO, "Tick: ⏰ {}", input_event));
           if let Continuation::Exit = base_handle_event(input_event, &shared_window).await {
             break;
           }
@@ -85,9 +89,10 @@ impl TerminalWindow {
             .await
             .handle_event(&input_event, &my_state, &shared_store, window_size)
             .await?;
-          // This flush command is needed in order to keep stdout in sync w/ the event loop.
-          TWCommand::flush();
         }
+
+        // This flush command is needed in order to keep stdout in sync w/ the event loop.
+        TWCommand::flush();
       }
     })
   }

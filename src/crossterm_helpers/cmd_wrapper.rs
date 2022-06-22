@@ -40,9 +40,12 @@ macro_rules! exec {
     let _new_fn_name = || -> CommonResult<()> {
       throws!({
         if let Err(err) = $cmd {
-          log!(ERROR, "crossterm: ❌ Failed to {} due to {}", $msg, err);
+          call_if_true!(
+            DEBUG,
+            log!(ERROR, "crossterm: ❌ Failed to {} due to {}", $msg, err)
+          );
         } else {
-          log!(INFO, "crossterm: ✅ {} successfully", $msg);
+          call_if_true!(DEBUG, log!(INFO, "crossterm: ✅ {} successfully", $msg));
         }
       })
     };

@@ -63,8 +63,9 @@
       ✔ app.rs render the state using CommandQueue (and crossterm commands) @done(22-06-21 17:51)
       ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
       ✔ do initial render in event loop @done(22-06-21 19:04)
-      ✔ fix bug in app.rs that doesn't capture first input_event @done(22-06-21 18:52)
-      ✔ fix the fix above (flaky) - flush both stdin & stdout @done(22-06-22 12:45)
+      ☐ fix bug that drops input_events
+        - skip a tick in the event loop
+        - in app.rs, setting DEBUG to true fixes the issue!
       ☐ add layout from test_canvas.rs into app.rs
       ☐ add all the crossterm commands to Command
     focus mgmt:

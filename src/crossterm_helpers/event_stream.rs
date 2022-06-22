@@ -79,5 +79,6 @@ impl EventStreamExt for EventStream {
 
       _ => None,
     }
+    
   }
 }
