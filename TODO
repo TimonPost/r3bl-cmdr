@@ -68,7 +68,10 @@
       ✔ main_event_loop.rs - pass in mut vec of keyevents to exit on (gh-issues: #3) @done(22-06-23 13:31)
       ☐ add layout from test_canvas.rs into app.rs
       ☐ add all the crossterm commands to Command
-      ☐ stress test the app (figure out lolcat.rs src, color wheel algo, repaint on mouse move)
+      ☐ stress test the app
+        - figure out lolcat.rs src
+        - color wheel algo
+        - repaint on mouse move
     focus mgmt:
       ☐ figure out keyboard focus management 
       ☐ what does input event routing look like?

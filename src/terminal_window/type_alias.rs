@@ -21,7 +21,7 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 
 // Type aliases.
-pub type SharedWindow = Arc<RwLock<TerminalWindow>>;
+pub type SharedWindow = Arc<RwLock<TWData>>;
 pub type SharedStore<S, A> = Arc<RwLock<Store<S, A>>>;
 pub type SharedRender<S, A> = Arc<RwLock<SafeRender<S, A>>>;
 pub type SafeRender<S, A> = dyn Render<S, A> + Send + Sync;

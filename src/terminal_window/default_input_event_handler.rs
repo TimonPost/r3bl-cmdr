@@ -26,14 +26,14 @@ pub enum Continuation {
   ResizeAndContinue(Size),
 }
 
-pub struct DefaultEventHandler;
+pub struct DefaultInputEventHandler;
 
-impl DefaultEventHandler {
+impl DefaultInputEventHandler {
   /// This function does **not** consume the `input_event` argument. [InputEvent] implements
   /// [Copy] (no need to pass references into this function).
-  pub async fn handle_no_consume(input_event: InputEvent, exit_keys: &Vec<KeyEvent>) -> Continuation {
+  pub async fn no_consume(input_event: InputEvent, exit_keys: &Vec<KeyEvent>) -> Continuation {
     // Early return if any exit key sequence is pressed.
-    if let Continuation::Exit = DefaultEventHandler::from(input_event, exit_keys) {
+    if let Continuation::Exit = DefaultInputEventHandler::from(input_event, exit_keys) {
       return Continuation::Exit;
     }
 

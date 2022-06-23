@@ -15,9 +15,8 @@
  *   limitations under the License.
 */
 
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-
 use crate::*;
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 pub async fn run_app() -> CommonResult<()> {
   throws!({

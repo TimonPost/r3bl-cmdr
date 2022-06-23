@@ -18,13 +18,11 @@
 // Attach files.
 mod type_alias;
 mod main_event_loop;
-mod debug;
-mod default_event_handler;
+mod default_input_event_handler;
 mod render;
 
 // Re-export.
-pub use default_event_handler::*;
-pub use debug::*;
+pub use default_input_event_handler::*;
 pub use main_event_loop::*;
 pub use render::*;
 pub use type_alias::*;
