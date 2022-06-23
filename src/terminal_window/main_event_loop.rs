@@ -26,11 +26,12 @@ use std::{
 };
 use tokio::sync::RwLock;
 
-pub struct TerminalWindowData {
+#[derive(Clone)]
+pub struct TerminalWindow {
   pub size: Size,
 }
 
-impl TerminalWindowData {
+impl TerminalWindow {
   fn try_to_create_instance() -> CommonResult<Self> {
     Ok(Self {
       size: Size::try_to_get_from_crossterm_terminal()?,
@@ -44,7 +45,7 @@ impl TerminalWindowData {
   /// S: Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   /// A: Default + Clone + Sync + Send,
   /// ```
-  pub async fn start_event_loop<S, A>(
+  pub async fn main_event_loop<S, A>(
     store: Store<S, A>,
     shared_render: SharedRender<S, A>,
   ) -> CommonResult<()>
@@ -54,15 +55,15 @@ impl TerminalWindowData {
   {
     raw_mode!({
       // Initialize the terminal window data struct.
-      let tw_data = TerminalWindowData::try_to_create_instance()?;
-      let shared_tw_data: SharedWindow = Arc::new(RwLock::new(tw_data));
+      let tw_data = TerminalWindow::try_to_create_instance()?;
+      let init_size = tw_data.size;
+      let shared_window: SharedWindow = Arc::new(RwLock::new(tw_data));
 
       // Move the store into an Arc & RwLock.
       let shared_store: SharedStore<S, A> = Arc::new(RwLock::new(store));
 
-      // Create a subscriber & perform the first render.
-      let subscriber = MySubscriber::new_box(&shared_render, &shared_store, &shared_tw_data);
-      subscriber.run(shared_store.read().await.get_state().await).await;
+      // Create a subscriber.
+      let subscriber = MySubscriber::new_box(&shared_render, &shared_store, &shared_window);
 
       // Attach a subscriber to the store.
       shared_store.write().await.add_subscriber(subscriber).await;
@@ -70,7 +71,16 @@ impl TerminalWindowData {
       // Create a new event stream (async).
       let mut stream = EventStream::new();
 
-      call_if_true!(DEBUG, shared_tw_data.read().await.log_state("Startup"));
+      // Perform first render.
+      perform_render(&shared_store, &shared_render, init_size).await?;
+
+      call_if_true!(
+        DEBUG,
+        shared_window
+          .read()
+          .await
+          .log_state("main_event_loop -> Startup 🚀")
+      );
 
       // Main event loop.
       loop {
@@ -79,20 +89,36 @@ impl TerminalWindowData {
 
         // Process the input_event.
         if let Some(input_event) = maybe_input_event {
-          call_if_true!(DEBUG, log_no_err!(INFO, "Tick: ⏰ {}", input_event));
-          if let Continuation::Exit = base_handle_event(input_event, &shared_tw_data).await {
-            break;
-          }
-          let my_state = shared_store.read().await.get_state().await;
-          let window_size = shared_tw_data.read().await.size;
-          shared_render
-            .read()
-            .await
-            .handle_event(&input_event, &my_state, &shared_store, window_size)
-            .await?;
-        }
+          call_if_true!(
+            DEBUG,
+            log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event)
+          );
 
-        // This flush command is needed in order to keep stdout in sync w/ the event loop.
+          match handle_event_no_consume(input_event).await {
+            Continuation::Exit => {
+              break;
+            }
+            Continuation::ResizeAndContinue(new_size) => {
+              // Update size.
+              shared_window.write().await.size = new_size;
+              call_if_true!(
+                DEBUG,
+                shared_window.read().await.log_state("main_event_loop -> Resize")
+              );
+              perform_render(&shared_store, &shared_render, new_size).await?;
+            }
+            Continuation::Continue => {
+              // Pass the event to the shared_render for further processing.
+              let my_state = shared_store.read().await.get_state().await;
+              let window_size = shared_window.read().await.size;
+              shared_render
+                .read()
+                .await
+                .handle_event(&input_event, &my_state, &shared_store, window_size)
+                .await?
+            }
+          };
+        }
         TWCommand::flush();
       }
     })
@@ -104,12 +130,32 @@ impl TerminalWindowData {
   }
 }
 
+pub async fn perform_render<S, A>(
+  shared_store: &SharedStore<S, A>,
+  shared_render: &SharedRender<S, A>,
+  window_size: Size,
+) -> CommonResult<()>
+where
+  S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
+  A: Display + Default + Clone + Sync + Send,
+{
+  throws!({
+    let my_state = shared_store.read().await.get_state().await;
+    shared_render
+      .read()
+      .await
+      .render(&my_state, &shared_store, window_size)
+      .await?
+      .flush();
+  });
+}
+
 struct MySubscriber<S, A>
 where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static,
   A: Display + Default + Clone + Sync + Send + 'static,
 {
-  shared_draw: SharedRender<S, A>,
+  shared_render: SharedRender<S, A>,
   shared_store: SharedStore<S, A>,
   shared_window: SharedWindow,
 }
@@ -123,18 +169,25 @@ where
   async fn run(&self, state: S) {
     let window_size = self.shared_window.read().await.size;
     let render_result = self
-      .shared_draw
+      .shared_render
       .read()
       .await
       .render(&state, &self.shared_store, window_size)
       .await;
     match render_result {
       Err(error) => {
-        log_no_err!(ERROR, "MySubscriber::run draw error: {}", error);
         TWCommand::flush();
+        call_if_true!(
+          DEBUG,
+          log_no_err!(ERROR, "MySubscriber::run draw error: {}", error)
+        );
       }
       Ok(mut command_queue) => {
         command_queue.flush();
+        call_if_true!(
+          DEBUG,
+          log_no_err!(INFO, "MySubscriber::run draw: {}, {}", window_size, state)
+        );
       }
     }
   }
@@ -151,7 +204,7 @@ where
     shared_window: &SharedWindow,
   ) -> Box<Self> {
     Box::new(MySubscriber {
-      shared_draw: shared_draw.clone(),
+      shared_render: shared_draw.clone(),
       shared_store: shared_store.clone(),
       shared_window: shared_window.clone(),
     })

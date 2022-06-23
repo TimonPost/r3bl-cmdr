@@ -18,11 +18,11 @@
 use crate::*;
 use std::fmt::{Debug, Display, Formatter};
 
-impl Debug for TerminalWindowData {
+impl Debug for TerminalWindow {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     f.debug_struct("TerminalWindow")
-      .field("event_stream", &DebugDisplay::Ok)
-      .field("terminal_size", &self.size)
+      .field("EventStream", &DebugDisplay::Ok)
+      .field("size", &self.size)
       .finish()
   }
 }
@@ -41,7 +41,7 @@ impl Debug for DebugDisplay {
 }
 
 /// For [ToString].
-impl Display for TerminalWindowData {
+impl Display for TerminalWindow {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     write!(f, "{:?}", self)
   }

@@ -19,7 +19,7 @@ use crate::*;
 use crossterm::terminal::*;
 use r3bl_rs_utils::*;
 use std::{
-  fmt::{self, Debug},
+  fmt::{self, Debug, Display},
   ops::SubAssign,
 };
 
@@ -47,11 +47,14 @@ pub struct Size {
   pub height: UnitType, // number of rows (x).
 }
 
+impl Display for Size {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "Size: [{} u16, {} u16]", self.height, self.width)
+  }
+}
+
 impl SubAssign<UnitType> for Size {
-  fn sub_assign(
-    &mut self,
-    other: UnitType,
-  ) {
+  fn sub_assign(&mut self, other: UnitType) {
     self.width -= other;
     self.height -= other;
   }
@@ -109,10 +112,7 @@ impl Size {
 }
 
 impl Debug for Size {
-  fn fmt(
-    &self,
-    f: &mut fmt::Formatter<'_>,
-  ) -> fmt::Result {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "[width:{}, height:{}]", self.width, self.height)
   }
 }

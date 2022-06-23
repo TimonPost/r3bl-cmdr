@@ -38,11 +38,11 @@
 pub mod raw_mode;
 pub mod cmd_wrapper;
 pub mod input_event;
-pub mod event_stream;
+pub mod event_stream_ext;
 
 // Re-export everything from attached source files.
 pub use cmd_wrapper::*;
-pub use event_stream::*;
+pub use event_stream_ext::*;
 pub use input_event::*;
 pub use raw_mode::*;
 

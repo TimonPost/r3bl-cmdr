@@ -25,13 +25,16 @@ const EXIT_KEYS: [crossterm::event::KeyEvent; 1] = [KeyEvent {
   modifiers: KeyModifiers::CONTROL,
 }];
 
-/// Check to see if the [InputEvent] matches one of the [EXIT_KEYS] & if so, return
-/// [Continuation::Exit]. Otherwise, do some work w/ the `input_event` & return
-/// [Continuation::Continue].
-///
-/// Note that [InputEvent] implements [Copy] (no need to pass references into this
-/// function).
-pub async fn base_handle_event(input_event: InputEvent, window: &SharedWindow) -> Continuation {
+#[non_exhaustive]
+pub enum Continuation {
+  Exit,
+  Continue,
+  ResizeAndContinue(Size),
+}
+
+/// This function does **not** consume the `input_event` argument. [InputEvent] implements
+/// [Copy] (no need to pass references into this function).
+pub async fn handle_event_no_consume(input_event: InputEvent) -> Continuation {
   // Early return if any exit key sequence is pressed.
   if let Continuation::Exit = input_event.into() {
     return Continuation::Exit;
@@ -42,20 +45,21 @@ pub async fn base_handle_event(input_event: InputEvent, window: &SharedWindow) -
     InputEvent::NonDisplayableKeypress(key_event) => {
       call_if_true!(
         DEBUG,
-        log_no_err!(INFO, "NonDisplayableKeypress: {:?}", key_event)
+        log_no_err!(INFO, "default_event_handler -> NonDisplayableKeypress: {:?}", key_event)
       );
     }
     InputEvent::DisplayableKeypress(character) => {
-      call_if_true!(DEBUG, log_no_err!(INFO, "DisplayableKeypress: {:?}", character));
+      call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> DisplayableKeypress: {:?}", character));
     }
     InputEvent::Resize(size) => {
-      on_resize(size, window).await;
+      call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Resize: {:?}", size));
+      return Continuation::ResizeAndContinue(size);
     }
     InputEvent::Mouse(mouse_event) => {
-      call_if_true!(DEBUG, log_no_err!(INFO, "Mouse: {:?}", mouse_event));
+      call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Mouse: {:?}", mouse_event));
     }
     _ => {
-      call_if_true!(DEBUG, log_no_err!(INFO, "Other: {:?}", input_event));
+      call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Other: {:?}", input_event));
     }
   }
 
@@ -74,18 +78,4 @@ impl From<InputEvent> for Continuation {
     }
     Continuation::Continue
   }
-}
-
-#[non_exhaustive]
-pub enum Continuation {
-  Exit,
-  Continue,
-}
-
-async fn on_resize(size: Size, window: &SharedWindow) {
-  window.write().await.size = size;
-  call_if_true!(DEBUG, {
-    log_no_err!(INFO, "Resize: {:?}", (size.height, size.width));
-    window.read().await.log_state("Resize");
-  });
 }

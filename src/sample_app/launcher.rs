@@ -29,6 +29,6 @@ pub async fn run_app() -> CommonResult<()> {
     let shared_render = App::new_shared();
 
     // Create a window.
-    TerminalWindowData::start_event_loop(store, shared_render).await?
+    TerminalWindow::main_event_loop(store, shared_render).await?
   });
 }

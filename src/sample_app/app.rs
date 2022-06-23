@@ -19,7 +19,7 @@ use crate::*;
 use async_trait::async_trait;
 use crossterm::{event::*, style::*};
 
-const DEBUG: bool = false;
+const DEBUG: bool = true;
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default)]
@@ -38,23 +38,34 @@ impl Render<AppState, AppAction> for App {
       let content_size = content.len() as UnitType;
       let x: UnitType = window_size.width / 2 - content_size / 2;
       let y: UnitType = window_size.height / 2;
-      let state_stack_top = *state.stack.last().unwrap() as u8;
+
+      let state_stack_top: i32 = *state.stack.last().unwrap();
+      let green_color_value: u8 = if state_stack_top < 0 {
+        255
+      } else if state_stack_top > 255 {
+        0
+      } else {
+        state_stack_top as u8
+      };
 
       let queue = tw_queue!(
         TWCommand::ClearScreen,
         TWCommand::ResetColor,
         TWCommand::MoveCursorPosition(x, y),
         TWCommand::SetFgColor(Color::Rgb {
-          r: (100 + state_stack_top) as u8,
-          g: (50 + state_stack_top) as u8,
-          b: (10 + state_stack_top) as u8,
+          r: if state_stack_top < 0 { 100 } else { 200 },
+          g: green_color_value,
+          b: if state_stack_top < 0 { 100 } else { 200 },
         }),
         TWCommand::Print(content),
         TWCommand::ResetColor
       );
 
-      call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::render -> state: {}\r", state));
-      call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::render -> queue: {}\r", queue));
+      call_if_true!(
+        DEBUG,
+        log_no_err!(INFO, "⛵ App::render -> size, state: {} {}", window_size, state)
+      );
+      call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::render -> queue: {}", queue));
 
       queue
     });

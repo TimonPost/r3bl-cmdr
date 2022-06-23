@@ -64,8 +64,8 @@
       ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
       ✔ do initial render in event loop @done(22-06-21 19:04)
       ✔ fix bug that drops input_events @done(22-06-22 17:02)
-        - skip a tick in the event loop
-        - in app.rs, setting DEBUG to true fixes the issue!
+      ☐ fix bug - resize event does not trigger a redraw
+      ☐ main_event_loop.rs - pass in a mut vec of keypresses to exit on
       ☐ add layout from test_canvas.rs into app.rs
       ☐ add all the crossterm commands to Command
     focus mgmt:
