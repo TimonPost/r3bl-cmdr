@@ -15,6 +15,8 @@
  *   limitations under the License.
 */
 
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+
 use crate::*;
 
 pub async fn run_app() -> CommonResult<()> {
@@ -28,7 +30,13 @@ pub async fn run_app() -> CommonResult<()> {
     // Create an App (renders & responds to user input).
     let shared_render = App::new_shared();
 
+    // Exit if these keys are pressed.
+    let exit_keys: Vec<KeyEvent> = vec![KeyEvent {
+      code: KeyCode::Char('q'),
+      modifiers: KeyModifiers::CONTROL,
+    }];
+
     // Create a window.
-    TerminalWindow::main_event_loop(store, shared_render).await?
+    TerminalWindow::main_event_loop(store, shared_render, exit_keys).await?
   });
 }

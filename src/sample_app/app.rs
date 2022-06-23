@@ -61,12 +61,10 @@ impl Render<AppState, AppAction> for App {
         TWCommand::ResetColor
       );
 
-      call_if_true!(
-        DEBUG,
-        log_no_err!(INFO, "⛵ App::render -> size, state: {} {}", window_size, state)
-      );
-      call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::render -> queue: {}", queue));
-
+      call_if_true!(DEBUG, {
+        log_no_err!(INFO, "⛵ App::render -> size, state: {} {}", window_size, state);
+        log_no_err!(INFO, "⛵ App::render -> queue: {}", queue);
+      });
       queue
     });
   }

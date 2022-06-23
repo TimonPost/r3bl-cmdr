@@ -48,6 +48,7 @@ impl TerminalWindow {
   pub async fn main_event_loop<S, A>(
     store: Store<S, A>,
     shared_render: SharedRender<S, A>,
+    exit_keys: Vec<KeyEvent>,
   ) -> CommonResult<()>
   where
     S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
@@ -94,7 +95,7 @@ impl TerminalWindow {
             log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event)
           );
 
-          match handle_event_no_consume(input_event).await {
+          match DefaultEventHandler::handle_no_consume(input_event, &exit_keys).await {
             Continuation::Exit => {
               break;
             }

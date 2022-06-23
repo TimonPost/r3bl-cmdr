@@ -63,11 +63,12 @@
       ✔ app.rs render the state using CommandQueue (and crossterm commands) @done(22-06-21 17:51)
       ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
       ✔ do initial render in event loop @done(22-06-21 19:04)
-      ✔ fix bug that drops input_events @done(22-06-22 17:02)
-      ☐ fix bug - resize event does not trigger a redraw
-      ☐ main_event_loop.rs - pass in a mut vec of keypresses to exit on
+      ✔ fix bug that drops input_events (gh-issues: #1) @done(22-06-22 17:02)
+      ✔ fix bug - resize event does not trigger a redraw (gh-issues: #2) @done(22-06-23 10:05)
+      ✔ main_event_loop.rs - pass in mut vec of keyevents to exit on (gh-issues: #3) @done(22-06-23 13:31)
       ☐ add layout from test_canvas.rs into app.rs
       ☐ add all the crossterm commands to Command
+      ☐ stress test the app (figure out lolcat.rs src, color wheel algo, repaint on mouse move)
     focus mgmt:
       ☐ figure out keyboard focus management 
       ☐ what does input event routing look like?
