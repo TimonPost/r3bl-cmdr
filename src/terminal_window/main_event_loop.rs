@@ -64,8 +64,8 @@ impl TerminalWindow {
     exit_keys: Vec<KeyEvent>,
   ) -> CommonResult<()>
   where
-    S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
-    A: Display + Default + Clone + Sync + Send,
+    S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static,
+    A: Display + Default + Clone + Sync + Send + 'static,
   {
     raw_mode!({
       // Initialize the terminal window data struct.
@@ -186,7 +186,7 @@ where
     input_event: &InputEvent,
   ) -> CommonResult<()> {
     throws!({
-      let latest_state = shared_store.read().await.get_state().await;
+      let latest_state = shared_store.read().await.get_state();
       let window_size = shared_window.read().await.size;
       shared_render
         .read()
@@ -204,7 +204,7 @@ where
   ) -> CommonResult<()> {
     throws!({
       let state: S = if my_state.is_none() {
-        shared_store.read().await.get_state().await
+        shared_store.read().await.get_state()
       } else {
         my_state.unwrap()
       };

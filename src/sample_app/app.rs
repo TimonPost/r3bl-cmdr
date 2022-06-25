@@ -85,7 +85,7 @@ impl Render<AppState, AppAction> for App {
       if let InputEvent::DisplayableKeypress(typed_char) = input_event {
         match typed_char {
           '+' => {
-            shared_store.read().await.dispatch_spawn(AppAction::AddPop(1));
+            spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
@@ -96,7 +96,7 @@ impl Render<AppState, AppAction> for App {
             );
           }
           '-' => {
-            shared_store.read().await.dispatch_spawn(AppAction::SubPop(1));
+            spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
@@ -116,7 +116,7 @@ impl Render<AppState, AppAction> for App {
             code: KeyCode::Up,
             modifiers: KeyModifiers::NONE,
           } => {
-            shared_store.read().await.dispatch_spawn(AppAction::AddPop(1));
+            spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
@@ -130,7 +130,7 @@ impl Render<AppState, AppAction> for App {
             code: KeyCode::Down,
             modifiers: KeyModifiers::NONE,
           } => {
-            shared_store.read().await.dispatch_spawn(AppAction::SubPop(1));
+            spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
