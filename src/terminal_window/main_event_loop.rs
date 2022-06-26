@@ -210,7 +210,7 @@ where
       };
 
       let render_result = shared_render
-        .read()
+        .write()
         .await
         .render(&state, &shared_store, window_size)
         .await;

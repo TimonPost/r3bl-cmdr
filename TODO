@@ -66,33 +66,22 @@
       ✔ fix bug that drops input_events (gh-issues: #1) @done(22-06-22 17:02)
       ✔ fix bug - resize event does not trigger a redraw (gh-issues: #2) @done(22-06-23 10:05)
       ✔ main_event_loop.rs - pass in mut vec of keyevents to exit on (gh-issues: #3) @done(22-06-23 13:31)
+    add lolcat:
+      ✔ figure out lolcat.rs src @done(22-06-26 12:12)
+      ✔ color wheel algo @done(22-06-26 12:12)
+      ✔ draw text w/ different colors (look at lolcat crate) @done(22-06-26 12:12)
+      ✔ integrate `~/github/lolcat_rs` crate into tui project @done(22-06-26 12:12)
+    add layout engine:
+      ☐ create a 2 col layout TUI app using crossterm & layout engine
       ☐ add layout from test_canvas.rs into app.rs
       ☐ add all the crossterm commands to Command
-      ☐ stress test the app
-        - figure out lolcat.rs src
-        - color wheel algo
-        - repaint on mouse move
+      ☐ stress test app w/ full screen repaint on mouse move
     focus mgmt:
       ☐ figure out keyboard focus management 
       ☐ what does input event routing look like?
-    colors:
-      ☐ draw text w/ different colors (look at lolcat crate)
-      ☐ integrate `~/github/lolcat` crate into tui project
-  figure out how to accomodate focus management:
-    ☐ extend canvas to have a focus field (current id w/ focus)
-    ☐ how does this affect rendering of a layout (paint focus highlight?)
-  crossterm integration:
-    ☐ just crossterm: https://tinyurl.com/y5je8mvr
-    ☐ w/ tui: https://tinyurl.com/y56m5jgl
-    ☐ emit crossterm commands from `canvas.rs`
-    ☐ figure out how to use crossterm
-    ☐ emit crossterm commands from `canvas.rs`
-    ☐ write test for `canvas.rs` to ensure it emits correct crossterm commands
-  focus mgmt:
-    ☐ key input processing & state mgmt (redux?)
-  build app:
-    ☐ create a 2 col layout TUI app using crossterm & layout engine
-    ☐ write tests and add layout engine supports debug output in TUI
+      ☐ extend canvas to have a focus field (current id w/ focus)
+      ☐ how does this affect rendering of a layout (paint focus highlight?)
+      ☐ key input processing & state mgmt (redux?)
 
 ▶DONE:
   layout engine in lib:

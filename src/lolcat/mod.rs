@@ -15,17 +15,12 @@
  *   limitations under the License.
 */
 
-/// Use bitflags! macro.
-extern crate bitflags;
-
 // Attach source files.
-pub mod layout;
-pub mod crossterm_helpers;
-pub mod terminal_window;
-pub mod lolcat;
+pub mod cat;
+pub mod color_utils;
+pub mod control;
 
-// Re-export.
-pub use crossterm_helpers::*;
-pub use layout::*;
-pub use lolcat::*;
-pub use terminal_window::*;
+// Re-exports.
+pub use cat::*;
+pub use color_utils::*;
+pub use control::*;

@@ -17,47 +17,38 @@
 
 use crate::*;
 use async_trait::async_trait;
-use crossterm::{event::*, style::*};
+use crossterm::event::*;
 
 const DEBUG: bool = true;
 
 /// Async trait object that implements the [Draw] trait.
-#[derive(Default)]
-pub struct App;
+#[derive(Default, Debug, Clone, Copy)]
+pub struct App {
+  pub lolcat: Lolcat,
+}
 
 #[async_trait]
 impl Render<AppState, AppAction> for App {
   async fn render(
-    &self,
+    &mut self,
     state: &AppState,
     _shared_store: &SharedStore<AppState, AppAction>,
     window_size: Size,
   ) -> CommonResult<CommandQueue> {
     throws_with_return!({
       let content = format!("{}", state);
+
       let content_size = content.len() as UnitType;
       let x: UnitType = window_size.width / 2 - content_size / 2;
       let y: UnitType = window_size.height / 2;
 
-      let state_stack_top: i32 = *state.stack.last().unwrap();
-      let green_color_value: u8 = if state_stack_top < 0 {
-        255
-      } else if state_stack_top > 255 {
-        0
-      } else {
-        state_stack_top as u8
-      };
+      let colored_content = colorize!(self, "{}", state);
 
       let queue = tw_queue!(
         TWCommand::ClearScreen,
         TWCommand::ResetColor,
         TWCommand::MoveCursorPosition(x, y),
-        TWCommand::SetFgColor(Color::Rgb {
-          r: if state_stack_top < 0 { 100 } else { 200 },
-          g: green_color_value,
-          b: if state_stack_top < 0 { 100 } else { 200 },
-        }),
-        TWCommand::Print(content),
+        TWCommand::Print(colored_content),
         TWCommand::ResetColor
       );
 

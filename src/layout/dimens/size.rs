@@ -49,7 +49,7 @@ pub struct Size {
 
 impl Display for Size {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "Size: [{} u16, {} u16]", self.height, self.width)
+    write!(f, "Size: [{}, {}]", self.height, self.width)
   }
 }
 

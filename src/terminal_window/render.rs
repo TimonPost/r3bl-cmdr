@@ -34,7 +34,7 @@ where
 {
   /// Use the state to render the output (via crossterm). To change the state, dispatch an action.
   async fn render(
-    &self,
+    &mut self,
     state: &S,
     shared_store: &SharedStore<S, A>,
     window_size: Size,
