@@ -18,16 +18,16 @@
 // Attach source files.
 pub mod layout_error;
 pub mod dimens;
-pub mod layout;
-pub mod canvas;
+pub mod tw_box;
+pub mod tw_area;
 pub mod style;
 pub mod stylesheet;
 pub mod layout_management;
 
 // Re-export the public items.
-pub use canvas::*;
+pub use tw_area::*;
 pub use dimens::*;
-pub use layout::*;
+pub use tw_box::*;
 pub use layout_error::*;
 pub use layout_management::*;
 pub use style::*;

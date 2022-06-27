@@ -90,7 +90,7 @@ macro_rules! tw_queue {
       // Enclose the expansion in a block so that we can use
       // multiple statements.
       {
-          let mut queue = CommandQueue::default();
+          let mut queue = TWCommandQueue::default();
           // Start a repetition:
           $(
               // Each repeat will contain the following statement, with
@@ -102,7 +102,7 @@ macro_rules! tw_queue {
   };
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum TWCommand {
   EnableRawMode,
@@ -119,6 +119,7 @@ pub enum TWCommand {
   Print(String),
   CursorShow,
   CursorHide,
+  TODO,
 }
 
 impl TWCommand {
@@ -139,18 +140,18 @@ impl TWCommand {
 /// queue.add(Command::ClearScreen);
 /// queue.flush();
 /// ```
-#[derive(Default, Debug)]
-pub struct CommandQueue {
+#[derive(Default, Debug, Clone)]
+pub struct TWCommandQueue {
   pub queue: Vec<TWCommand>,
 }
 
-impl Display for CommandQueue {
+impl Display for TWCommandQueue {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(f, "{:?}", self)
   }
 }
 
-impl CommandQueue {
+impl TWCommandQueue {
   pub fn add(&mut self, cmd_wrapper: TWCommand) {
     self.queue.push(cmd_wrapper);
   }
@@ -210,6 +211,9 @@ impl CommandQueue {
       }
       TWCommand::CursorHide => {
         exec!(queue!(stdout(), Hide), "CursorHide")
+      }
+      _ => {
+        unimplemented!("TWCommandQueue::flush() 🧨 {:?} not implemented", cmd_wrapper)
       }
     });
 

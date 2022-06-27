@@ -38,7 +38,7 @@ where
     state: &S,
     shared_store: &SharedStore<S, A>,
     window_size: Size,
-  ) -> CommonResult<CommandQueue>;
+  ) -> CommonResult<TWCommandQueue>;
 
   /// Use the input_event to dispatch an action to the store if needed.
   async fn handle_event(

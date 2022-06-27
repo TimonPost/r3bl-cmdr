@@ -77,16 +77,16 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug integration test 'test_canvas'",
+      "name": "Debug integration test 'test_tw_area'",
       "cargo": {
         "args": [
           "test",
           "--no-run",
-          "--test=test_canvas",
+          "--test=test_tw_area",
           "--package=tui-layout-crossterm"
         ],
         "filter": {
-          "name": "test_canvas",
+          "name": "test_tw_area",
           "kind": "test"
         }
       },

@@ -26,19 +26,13 @@ pub struct Percent {
 }
 
 impl fmt::Display for Percent {
-  fn fmt(
-    &self,
-    f: &mut fmt::Formatter<'_>,
-  ) -> fmt::Result {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "{}%", self.value)
   }
 }
 
 impl Debug for Percent {
-  fn fmt(
-    &self,
-    f: &mut fmt::Formatter<'_>,
-  ) -> fmt::Result {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "PerCent value:{}%", self.value)
   }
 }
@@ -73,7 +67,7 @@ impl Percent {
     let second = pair.second.try_into();
     return if first.is_err() || second.is_err() {
       let err_msg = format!("Invalid percentage values in tuple: {:?}", pair);
-      LayoutError::new_err_with_msg(LayoutErrorType::InvalidLayoutSizePercentage, err_msg)
+      LayoutError::new_err_with_msg(LayoutErrorType::InvalidSizePercentage, err_msg)
     } else {
       Ok((first.unwrap(), second.unwrap()))
     };
@@ -95,10 +89,7 @@ impl Percent {
 }
 
 /// Return the calculated percentage of the given value.
-pub fn calc_percentage(
-  percentage: Percent,
-  value: UnitType,
-) -> UnitType {
+pub fn calc_percentage(percentage: Percent, value: UnitType) -> UnitType {
   type Integer = UnitType;
   let percentage_int = percentage.value;
   let percentage_f32 = f32::from(percentage_int) / 100.0;
@@ -146,10 +137,7 @@ impl RequestedSizePercent {
 }
 
 impl Debug for RequestedSizePercent {
-  fn fmt(
-    &self,
-    f: &mut fmt::Formatter<'_>,
-  ) -> fmt::Result {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "[width:{}, height:{}]", self.width, self.height)
   }
 }

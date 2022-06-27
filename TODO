@@ -1,104 +1,147 @@
-▶PENDING:
-  styling for layout engine:
-    ✔ create style struct @done(22-05-20 19:06)
-    ✔ impl lazy eval macro (in r3bl_rs_utils), and use it in Style @done(22-05-21 10:40)
-    ✔ impl lazy executor trait for r3bl_rs_utils @done(22-05-21 10:40)
-    ✔ concept of styling for layout (margin, fg color, bg color, focus highlight) @done(22-05-21 10:44)
-  stylesheets:
-      ✔ extend style to have an id field @done(22-05-22 09:55)
-      ✔ create a stylesheet struct @done(22-05-22 11:27)
-      ✔ write test @done(22-05-22 12:03)
-      ✔ attach it to canvas @done(22-05-23 16:07)
-      layout.rs:
-        ✔ extend it to have vec of style id's @done(22-05-24 12:50)
-      canvas.rs: Canvas, LayoutManager & their test:
-        ✔ pass stylesheet in to Canvas @done(22-05-24 13:04)
-        ✔ introduce BoundsProps (for LayoutManager) @done(22-05-24 14:56)
-        ✔ update LayoutProps to handle styles @done(22-05-24 16:08)
-        ✔ use LayoutProps in LayoutManager trait @done(22-05-24 16:08)
-        ✔ pass styles into LayoutManager @done(22-05-24 16:08)
-      style.rs, test_style.rs, & test_canvas.rs:
-        ✔ impl `Add` trait for `Style` @done(22-05-25 12:26)
-        ✔ update test_style.rs to use `Add` trait @done(22-05-25 14:59)
-        ✔ update test_canvas.rs to use cascading styles @done(22-05-26 13:07)
-  layout & position w/ styling support:
-    ✔ impl positioning of layouts w/ margin @done(22-05-29 11:13)
-      ✔ in test_canvas.rs, @done(22-05-29 11:13)
-      ✔ in layout.rs @done(22-05-29 11:13)
-    ✔ update tests to match above @done(22-05-29 11:13)
-  figure out how to use crossterm:
-    clean up:
-      ✔ rewrite dimens.rs using `From` and `TryFrom` @done(22-06-04 17:53)
-      ✔ log keypress (don't print) @done(22-06-07 15:07)
-    async vs blocking vs polling:
-      ✔ polling is inefficient and takes up tons of CPU @done(22-06-05 20:09)
-      ✔ try get async crossterm event read working w/ tokio @done(22-06-07 15:07)
-         https://github.com/crossterm-rs/crossterm/blob/master/examples/event-stream-tokio.rs
-    generate `output_commands` (in `Canvas`) for crossterm:
-      ✔ reset screen: clear & move cursor to top left @done(22-06-08 16:08)
-      ✔ support queueing commands vs immediate execution w/ macro @done(22-06-08 23:26)
-      ☐ draw text at various cursor positions
-    logging:
-      ✔ fix it @done(22-06-11 12:24)
-    publish placeholder on crates.io:
-      ✔ publish r3bl-cmdr crate as placeholder @done(22-06-15 11:15)
-      ✔ move repo from: nazmulidris/rust-scratch/tui-layout-crossterm to: r3bl_org/r3bl-cmdr @done(22-06-15 11:15)
-    lifecyle & organization:
-      ✔ use electron architecture & terminology as baseline @done(22-06-15 15:40)
-      ✔ figure out how to bootstrap the entire tui framework @done(22-06-15 15:40)
-      ✔ separate concerns (terminal window, app, state, etc) @done(22-06-15 17:36)
-      ✔ integrate Draw trait object @done(22-06-15 17:36)
-      ✔ Draw -> separate draw(store) and handle_event(input_event, store) @done(22-06-16 14:59)
-      ✔ also pass store to the draw trait methods @done(22-06-17 17:30)
-    redux:
-      ✔ create store, state, attach reducer and pass it (create_store.rs) @done(22-06-17 18:04)
-      ✔ in start_event_loop() add subscriber to store @done(22-06-17 18:04)
-      ✔ `main_container.rs`: clean up TODOs & logic @done(22-06-18 09:29)
-      ✔ `app_draw.rs`: dispatch actions on certain keypresses @done(22-06-18 16:35)
-      ✔ `main_container.rs` -> subscriber: state change results in draw() call @done(22-06-18 16:35)
-    render:
-      ✔ figure out how to create VDOM like result -> CommandQueue @done(22-06-19 18:44)
-      ✔ rename Draw -> Render @done(22-06-20 15:35)
-      ✔ accomodate Render returning CommandQueue @done(22-06-20 15:35)
-      ✔ app.rs render the state using CommandQueue (and crossterm commands) @done(22-06-21 17:51)
-      ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
-      ✔ do initial render in event loop @done(22-06-21 19:04)
-      ✔ fix bug that drops input_events (gh-issues: #1) @done(22-06-22 17:02)
-      ✔ fix bug - resize event does not trigger a redraw (gh-issues: #2) @done(22-06-23 10:05)
-      ✔ main_event_loop.rs - pass in mut vec of keyevents to exit on (gh-issues: #3) @done(22-06-23 13:31)
-    add lolcat:
-      ✔ figure out lolcat.rs src @done(22-06-26 12:12)
-      ✔ color wheel algo @done(22-06-26 12:12)
-      ✔ draw text w/ different colors (look at lolcat crate) @done(22-06-26 12:12)
-      ✔ integrate `~/github/lolcat_rs` crate into tui project @done(22-06-26 12:12)
-    add layout engine:
-      ☐ create a 2 col layout TUI app using crossterm & layout engine
-      ☐ add layout from test_canvas.rs into app.rs
-      ☐ add all the crossterm commands to Command
-      ☐ stress test app w/ full screen repaint on mouse move
-    focus mgmt:
-      ☐ figure out keyboard focus management 
-      ☐ what does input event routing look like?
-      ☐ extend canvas to have a focus field (current id w/ focus)
-      ☐ how does this affect rendering of a layout (paint focus highlight?)
-      ☐ key input processing & state mgmt (redux?)
+add layout engine:
+  ☐ impl `tw_area.rs::paint_inside_box()` to emit `TWCommand`
+  ☐ copy 2 col layout from `tw_area_test.rs` into `app_with_layout.rs`
 
-▶DONE:
-  layout engine in lib:
-    ✔ create `BoxPosition` and `BoxSize` structs @done(22-04-30 11:38)
-    ✔ test `BoxPosition` and `BoxSize` structs @done(22-05-01 19:03)
-    ✔ create `engine.rs` & `Canvas` interface @done(22-05-01 19:09)
-    ✔ create `Canvas` implementation `box_canvas.rs` @done(22-05-04 20:03)
-      ✔ use crate to implement `PerCent` bounded range unsigned integer type @done(22-05-02 11:30)
-      ✔ create `LayoutError` struct and `LayoutErrorType` enum @done(22-05-02 11:44)
-      ✔ implement `LayoutManager` for `Canvas` @done(22-05-04 20:01)
-        ✔ handle root layout @done(22-05-03 17:07)
-        ✔ handle normal layout @done(22-05-04 20:01)
-    ✔ create test for `box_canvas.rs` for a simple 2 column layout @done(22-05-17 16:23)
+routing:
+  ☐ introduce routing concept to switch between apps
+  ☐ add all the crossterm commands to `TWCommand`
+  ☐ stress test app w/ full screen repaint on mouse move
 
-  logging:
-    ✔ find suitable logging crates: `log` and `simple-logging` @done(22-04-25 09:48)
-    ✔ use file logging until layout engine supports debug output in TUI @done(22-04-27 21:16)
-  
-  fix simplelog crate fail when using Tokio:
-    ✔ https://github.com/r3bl-org/r3bl-rs-utils/commit/1a6308f5effd2504d60db2e896c431a0262db1a1 @done(22-04-30 08:11)
+focus mgmt:
+  ☐ figure out keyboard focus management
+  ☐ what does input event routing look like?
+  ☐ extend state to have a focus field (current id w/ focus)
+  ☐ how does this affect rendering of a layout (paint focus highlight?)
+  ☐ key input processing & state mgmt (redux?)
+  ☐ implement simplest editor component (single line text field)
+
+support for graphemes & text wrapping:
+  ☐ `unicode-width` crate
+  ☐ `textwrap` crate
+
+pre built components - multi select chooser:
+  ☐ TODO
+
+pre built components - editor:
+  ☐ TODO
+
+pre built components - autocompletion provider:
+  ☐ TODO
+
+mdns & p2p:
+  ☐ Ideate on what this might look like
+    - local service discovery
+    - easy authentication (cloud auth provider login?)
+
+flow editor:
+  ☐ Ideate on how to impl this
+    - 2+ col layout that allows text to be edited flowing LTR
+
+╭──────────────────────────────────────────────────────╮
+│ DONE                                                 │
+╰──────────────────────────────────────────────────────╯
+
+clean up naming:
+  ✔ rename [Canvas] to [TWArea] @done(22-06-27 19:51)
+  ✔ rename [Layout] to [TWBox] @done(22-06-27 19:51)
+  ✔ update all tests and comments to match @done(22-06-27 19:51)
+
+add lolcat:
+  ✔ figure out lolcat.rs src @done(22-06-26 12:12)
+  ✔ color wheel algo @done(22-06-26 12:12)
+  ✔ draw text w/ different colors (look at lolcat crate) @done(22-06-26 12:12)
+  ✔ integrate `~/github/lolcat_rs` crate into tui project @done(22-06-26 12:12)
+
+render:
+  ✔ figure out how to create VDOM like result -> CommandQueue @done(22-06-19 18:44)
+  ✔ rename Draw -> Render @done(22-06-20 15:35)
+  ✔ accomodate Render returning CommandQueue @done(22-06-20 15:35)
+  ✔ app.rs render the state using CommandQueue (and crossterm commands) @done(22-06-21 17:51)
+  ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
+  ✔ do initial render in event loop @done(22-06-21 19:04)
+  ✔ fix bug that drops input_events (gh-issues: #1) @done(22-06-22 17:02)
+  ✔ fix bug - resize event does not trigger a redraw (gh-issues: #2) @done(22-06-23 10:05)
+  ✔ main_event_loop.rs - pass in mut vec of keyevents to exit on (gh-issues: #3) @done(22-06-23 13:31)
+
+redux:
+  ✔ create store, state, attach reducer and pass it (create_store.rs) @done(22-06-17 18:04)
+  ✔ in start_event_loop() add subscriber to store @done(22-06-17 18:04)
+  ✔ `main_container.rs`: clean up TODOs & logic @done(22-06-18 09:29)
+  ✔ `app_draw.rs`: dispatch actions on certain keypresses @done(22-06-18 16:35)
+  ✔ `main_container.rs` -> subscriber: state change results in draw() call @done(22-06-18 16:35)
+
+lifecyle & organization:
+  ✔ use electron architecture & terminology as baseline @done(22-06-15 15:40)
+  ✔ figure out how to bootstrap the entire tui framework @done(22-06-15 15:40)
+  ✔ separate concerns (terminal window, app, state, etc) @done(22-06-15 17:36)
+  ✔ integrate Draw trait object @done(22-06-15 17:36)
+  ✔ Draw -> separate draw(store) and handle_event(input_event, store) @done(22-06-16 14:59)
+  ✔ also pass store to the draw trait methods @done(22-06-17 17:30)
+
+publish placeholder on crates.io:
+  ✔ publish r3bl-cmdr crate as placeholder @done(22-06-15 11:15)
+  ✔ move repo from: nazmulidris/rust-scratch/tui-layout-crossterm to: r3bl_org/r3bl-cmdr @done(22-06-15 11:15)
+
+logging:
+  ✔ fix it @done(22-06-11 12:24)
+
+figure out how to use crossterm:
+  clean up:
+    ✔ rewrite dimens.rs using `From` and `TryFrom` @done(22-06-04 17:53)
+    ✔ log keypress (don't print) @done(22-06-07 15:07)
+  async vs blocking vs polling:
+    ✔ polling is inefficient and takes up tons of CPU @done(22-06-05 20:09)
+    ✔ try get async crossterm event read working w/ tokio @done(22-06-07 15:07)
+       https://github.com/crossterm-rs/crossterm/blob/master/examples/event-stream-tokio.rs
+  generate `output_commands` (in `Canvas`) for crossterm:
+    ✔ reset screen: clear & move cursor to top left @done(22-06-08 16:08)
+    ✔ support queueing commands vs immediate execution w/ macro @done(22-06-08 23:26)
+
+layout & position w/ styling support:
+  ✔ impl positioning of layouts w/ margin @done(22-05-29 11:13)
+    ✔ in test_canvas.rs, @done(22-05-29 11:13)
+    ✔ in layout.rs @done(22-05-29 11:13)
+  ✔ update tests to match above @done(22-05-29 11:13)
+
+styling for layout engine:
+  ✔ create style struct @done(22-05-20 19:06)
+  ✔ impl lazy eval macro (in r3bl_rs_utils), and use it in Style @done(22-05-21 10:40)
+  ✔ impl lazy executor trait for r3bl_rs_utils @done(22-05-21 10:40)
+  ✔ concept of styling for layout (margin, fg color, bg color, focus highlight) @done(22-05-21 10:44)
+
+stylesheets:
+    ✔ extend style to have an id field @done(22-05-22 09:55)
+    ✔ create a stylesheet struct @done(22-05-22 11:27)
+    ✔ write test @done(22-05-22 12:03)
+    ✔ attach it to canvas @done(22-05-23 16:07)
+    layout.rs:
+      ✔ extend it to have vec of style id's @done(22-05-24 12:50)
+    canvas.rs: Canvas, LayoutManager & their test:
+      ✔ pass stylesheet in to Canvas @done(22-05-24 13:04)
+      ✔ introduce BoundsProps (for LayoutManager) @done(22-05-24 14:56)
+      ✔ update LayoutProps to handle styles @done(22-05-24 16:08)
+      ✔ use LayoutProps in LayoutManager trait @done(22-05-24 16:08)
+      ✔ pass styles into LayoutManager @done(22-05-24 16:08)
+    style.rs, test_style.rs, & test_canvas.rs:
+      ✔ impl `Add` trait for `Style` @done(22-05-25 12:26)
+      ✔ update test_style.rs to use `Add` trait @done(22-05-25 14:59)
+      ✔ update test_canvas.rs to use cascading styles @done(22-05-26 13:07)
+
+layout engine in lib:
+  ✔ create `BoxPosition` and `BoxSize` structs @done(22-04-30 11:38)
+  ✔ test `BoxPosition` and `BoxSize` structs @done(22-05-01 19:03)
+  ✔ create `engine.rs` & `Canvas` interface @done(22-05-01 19:09)
+  ✔ create `Canvas` implementation `box_canvas.rs` @done(22-05-04 20:03)
+    ✔ use crate to implement `PerCent` bounded range unsigned integer type @done(22-05-02 11:30)
+    ✔ create `LayoutError` struct and `LayoutErrorType` enum @done(22-05-02 11:44)
+    ✔ implement `LayoutManager` for `Canvas` @done(22-05-04 20:01)
+      ✔ handle root layout @done(22-05-03 17:07)
+      ✔ handle normal layout @done(22-05-04 20:01)
+  ✔ create test for `box_canvas.rs` for a simple 2 column layout @done(22-05-17 16:23)
+
+logging:
+  ✔ find suitable logging crates: `log` and `simple-logging` @done(22-04-25 09:48)
+  ✔ use file logging until layout engine supports debug output in TUI @done(22-04-27 21:16)
+
+fix simplelog crate fail when using Tokio:
+  ✔ https://github.com/r3bl-org/r3bl-rs-utils/commit/1a6308f5effd2504d60db2e896c431a0262db1a1 @done(22-04-30 08:11)

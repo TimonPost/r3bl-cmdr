@@ -23,18 +23,18 @@ const DEBUG: bool = true;
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default, Debug, Clone, Copy)]
-pub struct App {
+pub struct AppWithoutLayout {
   pub lolcat: Lolcat,
 }
 
 #[async_trait]
-impl Render<AppState, AppAction> for App {
+impl Render<AppState, AppAction> for AppWithoutLayout {
   async fn render(
     &mut self,
     state: &AppState,
     _shared_store: &SharedStore<AppState, AppAction>,
     window_size: Size,
-  ) -> CommonResult<CommandQueue> {
+  ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
       let content = format!("{}", state);
 

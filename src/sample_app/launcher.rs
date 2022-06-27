@@ -27,7 +27,7 @@ pub async fn run_app() -> CommonResult<()> {
     store.add_reducer(AppReducer::new()).await;
 
     // Create an App (renders & responds to user input).
-    let shared_render = App::new_shared();
+    let shared_render = AppWithoutLayout::new_shared();
 
     // Exit if these keys are pressed.
     let exit_keys: Vec<KeyEvent> = vec![KeyEvent {

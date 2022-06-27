@@ -19,74 +19,53 @@ use crate::*;
 use r3bl_rs_utils::{Builder, CommonResult};
 
 /// Public API interface to create nested & responsive layout based UIs.
-pub trait LayoutManager {
-  /// Set the origin pos (x, y) & canvas size (width, height) of our box (container).
-  fn canvas_start(
-    &mut self,
-    bounds_props: CanvasProps,
-  ) -> CommonResult<()>;
+pub trait LayoutManagement {
+  /// Set the origin pos (x, y) & tw_area size (width, height) of our box (container).
+  fn area_start(&mut self, bounds_props: TWAreaProps) -> CommonResult<()>;
 
-  fn canvas_end(&mut self) -> CommonResult<()>;
+  fn area_end(&mut self) -> CommonResult<()>;
 
   /// Add a new layout on the stack w/ the direction & (width, height) percentages.
-  fn layout_start(
-    &mut self,
-    layout_props: LayoutProps,
-  ) -> CommonResult<()>;
+  fn box_start(&mut self, layout_props: TWBoxProps) -> CommonResult<()>;
 
-  fn layout_end(&mut self) -> CommonResult<()>;
+  fn box_end(&mut self) -> CommonResult<()>;
 
   /// Painting operations.
-  fn paint(
-    &mut self,
-    text_vec: Vec<&str>,
-  ) -> CommonResult<()>;
+  fn paint_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()>;
 }
 
 /// Internal (semi-private) methods that actually perform the layout and positioning.
 pub(in crate::layout) trait PerformPositioningAndSizing {
   /// Update `content_cursor_pos`.
-  fn calc_where_to_insert_new_content_in_layout(
-    &mut self,
-    pos: Size,
-  ) -> CommonResult<()>;
+  fn calc_where_to_insert_new_content_in_box(&mut self, pos: Size) -> CommonResult<()>;
 
-  /// Update `layout_cursor_pos`. This needs to be called before adding a new [Layout].
-  fn calc_where_to_insert_new_layout_in_canvas(
-    &mut self,
-    allocated_size: Size,
-  ) -> CommonResult<Position>;
+  /// Update `box_cursor_pos`. This needs to be called before adding a new [TWBox].
+  fn calc_where_to_insert_new_box_in_tw_area(&mut self, allocated_size: Size) -> CommonResult<Position>;
 
-  /// Get the [Layout] at the "top" of the `layout_stack`.
-  fn current_layout(&mut self) -> CommonResult<&mut Layout>;
+  /// Get the [TWBox] at the "top" of the `stack`.
+  fn current_box(&mut self) -> CommonResult<&mut TWBox>;
 
-  /// Add the first [Layout] to the [Canvas].
+  /// Add the first [TWBox] to the [TWArea].
   /// 1. This one is explicitly sized.
   /// 2. there can be only one.
-  fn add_root_layout(
-    &mut self,
-    props: LayoutProps,
-  ) -> CommonResult<()>;
+  fn add_root_box(&mut self, props: TWBoxProps) -> CommonResult<()>;
 
-  /// Add non-root [Layout].
-  fn add_layout(
-    &mut self,
-    props: LayoutProps,
-  ) -> CommonResult<()>;
+  /// Add non-root [TWBox].
+  fn add_box(&mut self, props: TWBoxProps) -> CommonResult<()>;
 }
 
-/// Properties that are needed to create a [Layout].
+/// Properties that are needed to create a [TWBox].
 #[derive(Clone, Debug, Default, Builder)]
-pub struct LayoutProps {
+pub struct TWBoxProps {
   pub id: String,
   pub dir: Direction,
   pub req_size: RequestedSizePercent,
   pub styles: Option<Vec<Style>>,
 }
 
-/// Properties that are needed to create a [Canvas].
+/// Properties that are needed to create a [TWArea].
 #[derive(Clone, Debug, Default, Builder)]
-pub struct CanvasProps {
+pub struct TWAreaProps {
   pub pos: Position,
   pub size: Size,
 }

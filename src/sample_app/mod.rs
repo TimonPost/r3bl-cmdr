@@ -16,11 +16,11 @@
 */
 
 // Attach sources.
-pub mod app;
+pub mod app_without_layout;
 pub mod launcher;
 pub mod create_store;
 
 // Re-export.
-pub use app::*;
+pub use app_without_layout::*;
 pub use create_store::*;
 pub use launcher::*;

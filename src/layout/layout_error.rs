@@ -15,9 +15,8 @@
  *   limitations under the License.
 */
 
-use r3bl_rs_utils::CommonResult;
-
 use crate::*;
+use r3bl_rs_utils::CommonResult;
 use std::{
   error::Error,
   fmt::{Display, Result},
@@ -36,15 +35,15 @@ pub struct LayoutError {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy)]
 pub enum LayoutErrorType {
-  MismatchedCanvasEnd,
-  MismatchedCanvasStart,
-  MismatchedLayoutEnd,
-  LayoutStackShouldNotBeEmpty,
-  InvalidLayoutSizePercentage,
-  ErrorCalculatingNextLayoutPos,
-  ContainerBoundsNotDefined,
-  LayoutCursorPositionNotDefined,
-  ContentCursorPositionNotDefined,
+  MismatchedAreaEnd,
+  MismatchedAreaStart,
+  MismatchedBoxEnd,
+  StackShouldNotBeEmpty,
+  InvalidSizePercentage,
+  ErrorCalculatingNextBoxPos,
+  ContainerBoxBoundsUndefined,
+  BoxCursorPositionUndefined,
+  ContentCursorPositionUndefined,
 }
 
 /// Implement [`Error`] trait.
@@ -52,10 +51,7 @@ impl Error for LayoutError {}
 
 /// Implement [`Display`] trait (needed by [`Error`] trait).
 impl Display for LayoutError {
-  fn fmt(
-    &self,
-    f: &mut std::fmt::Formatter<'_>,
-  ) -> Result {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result {
     write!(f, "{:?}", self)
   }
 }
@@ -66,25 +62,16 @@ impl LayoutError {
     Err(LayoutError::new(err_type, None))
   }
 
-  pub fn new_err_with_msg<T>(
-    err_type: LayoutErrorType,
-    msg: String,
-  ) -> CommonResult<T> {
+  pub fn new_err_with_msg<T>(err_type: LayoutErrorType, msg: String) -> CommonResult<T> {
     Err(LayoutError::new(err_type, Some(msg)))
   }
 
-  pub fn new(
-    err_type: LayoutErrorType,
-    msg: Option<String>,
-  ) -> Box<Self> {
+  pub fn new(err_type: LayoutErrorType, msg: Option<String>) -> Box<Self> {
     Box::new(LayoutError { err_type, msg })
   }
 
-  pub fn format_msg_with_stack_len(
-    layout_stack: &Vec<Layout>,
-    msg: &str,
-  ) -> String {
-    format!("{}, layout_stack.len(): {}", msg, layout_stack.len())
+  pub fn format_msg_with_stack_len(stack: &Vec<TWBox>, msg: &str) -> String {
+    format!("{}, stack.len(): {}", msg, stack.len())
   }
 }
 
