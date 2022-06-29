@@ -27,6 +27,7 @@ use r3bl_rs_utils::*;
 use std::{
   fmt::Display,
   io::{stderr, stdout, Write},
+  ops::AddAssign,
 };
 
 /// Given a crossterm command, this will run it and [log!] the [Result] that is returned.
@@ -40,10 +41,7 @@ macro_rules! exec {
     let _new_fn_name = || -> CommonResult<()> {
       throws!({
         if let Err(err) = $cmd {
-          call_if_true!(
-            DEBUG,
-            log!(ERROR, "crossterm: ❌ Failed to {} due to {}", $msg, err)
-          );
+          call_if_true!(DEBUG, log!(ERROR, "crossterm: ❌ Failed to {} due to {}", $msg, err));
         } else {
           call_if_true!(DEBUG, log!(INFO, "crossterm: ✅ {} successfully", $msg));
         }
@@ -95,7 +93,7 @@ macro_rules! tw_queue {
           $(
               // Each repeat will contain the following statement, with
               // $element replaced with the corresponding expression.
-              queue.add($element);
+              queue.push($element);
           )*
           queue
       }
@@ -111,7 +109,8 @@ pub enum TWCommand {
   LeaveAlternateScreen,
   DisableRawMode,
   DisableMouseCapture,
-  MoveCursorPosition(UnitType, UnitType),
+  /// (column / x , row / y).
+  MoveCursorPosition((UnitType, UnitType)),
   ClearScreen,
   SetFgColor(Color),
   SetBgColor(Color),
@@ -151,8 +150,14 @@ impl Display for TWCommandQueue {
   }
 }
 
+impl AddAssign for TWCommandQueue {
+  fn add_assign(&mut self, other: TWCommandQueue) {
+    self.queue.extend(other.queue);
+  }
+}
+
 impl TWCommandQueue {
-  pub fn add(&mut self, cmd_wrapper: TWCommand) {
+  pub fn push(&mut self, cmd_wrapper: TWCommand) {
     self.queue.push(cmd_wrapper);
   }
 
@@ -176,10 +181,10 @@ impl TWCommandQueue {
       TWCommand::DisableMouseCapture => {
         exec!(queue!(stdout(), DisableMouseCapture), "DisableMouseCapture")
       }
-      TWCommand::MoveCursorPosition(first, second) => {
+      TWCommand::MoveCursorPosition((column, row)) => {
         exec!(
-          queue!(stdout(), cursor::MoveTo(*first, *second)),
-          format!("MoveCursorPosition({}, {})", first, second)
+          queue!(stdout(), cursor::MoveTo(*column, *row)),
+          format!("MoveCursorPosition(col: {}, row: {})", column, row)
         )
       }
       TWCommand::ClearScreen => {

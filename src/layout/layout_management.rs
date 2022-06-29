@@ -31,13 +31,14 @@ pub trait LayoutManagement {
   fn box_end(&mut self) -> CommonResult<()>;
 
   /// Painting operations.
-  fn paint_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()>;
+  fn print_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()>;
 }
 
 /// Internal (semi-private) methods that actually perform the layout and positioning.
 pub(in crate::layout) trait PerformPositioningAndSizing {
-  /// Update `content_cursor_pos`.
-  fn calc_where_to_insert_new_content_in_box(&mut self, pos: Size) -> CommonResult<()>;
+  /// Update `content_cursor_pos`. If it hasn't been set yet, it will be initialized to
+  /// `(0, 0)`.
+  fn calc_where_to_insert_new_content_in_box(&mut self, pos: Size) -> CommonResult<Position>;
 
   /// Update `box_cursor_pos`. This needs to be called before adding a new [TWBox].
   fn calc_where_to_insert_new_box_in_tw_area(&mut self, allocated_size: Size) -> CommonResult<Position>;

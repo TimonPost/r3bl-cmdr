@@ -77,8 +77,8 @@ fn create_left_col(tw_area: &mut TWArea) -> CommonResult<()> {
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    tw_area.paint_inside_box(vec!["col 1 - Hello"])?;
-    tw_area.paint_inside_box(vec!["col 1 - World"])?;
+    tw_area.print_inside_box(vec!["col 1 - Hello"])?;
+    tw_area.print_inside_box(vec!["col 1 - World"])?;
     make_left_col_assertions(tw_area)?;
     tw_area.box_end()?;
   });
@@ -112,8 +112,8 @@ fn create_right_col(tw_area: &mut TWArea) -> CommonResult<()> {
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    tw_area.paint_inside_box(vec!["col 2 - Hello"])?;
-    tw_area.paint_inside_box(vec!["col 2 - World"])?;
+    tw_area.print_inside_box(vec!["col 2 - Hello"])?;
+    tw_area.print_inside_box(vec!["col 2 - World"])?;
     make_right_col_assertions(tw_area)?;
     tw_area.box_end()?;
   });

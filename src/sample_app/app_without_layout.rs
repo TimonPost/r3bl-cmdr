@@ -47,7 +47,7 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
       let queue = tw_queue!(
         TWCommand::ClearScreen,
         TWCommand::ResetColor,
-        TWCommand::MoveCursorPosition(x, y),
+        TWCommand::MoveCursorPosition((x, y)),
         TWCommand::Print(colored_content),
         TWCommand::ResetColor
       );

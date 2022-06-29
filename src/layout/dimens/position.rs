@@ -46,10 +46,7 @@ pub struct Position {
 }
 
 impl AddAssign<UnitType> for Position {
-  fn add_assign(
-    &mut self,
-    other: UnitType,
-  ) {
+  fn add_assign(&mut self, other: UnitType) {
     self.x += other;
     self.y += other;
   }
@@ -70,6 +67,12 @@ impl From<(UnitType, UnitType)> for Position {
   }
 }
 
+impl From<Position> for (UnitType, UnitType) {
+  fn from(position: Position) -> Self {
+    (position.x, position.y)
+  }
+}
+
 impl Position {
   /// Return an `Option` with `self`.
   pub fn as_some(&self) -> Option<Self> {
@@ -77,20 +80,14 @@ impl Position {
   }
 
   /// Add given `x` value to `self`.
-  pub fn add_x(
-    &mut self,
-    value: usize,
-  ) -> Self {
+  pub fn add_x(&mut self, value: usize) -> Self {
     let value: UnitType = value as UnitType;
     self.x = self.x + value;
     *self
   }
 
   /// Add given `y` value to `self`.
-  pub fn add_y(
-    &mut self,
-    value: usize,
-  ) -> Self {
+  pub fn add_y(&mut self, value: usize) -> Self {
     let value = value as UnitType;
     self.y = self.y + value;
     *self
@@ -98,10 +95,7 @@ impl Position {
 }
 
 impl Debug for Position {
-  fn fmt(
-    &self,
-    f: &mut fmt::Formatter<'_>,
-  ) -> fmt::Result {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "[x:{}, y:{}]", self.x, self.y)
   }
 }
@@ -110,10 +104,7 @@ impl Debug for Position {
 /// https://doc.rust-lang.org/book/ch19-03-advanced-traits.html
 impl Add<Size> for Position {
   type Output = Position;
-  fn add(
-    self,
-    other: Size,
-  ) -> Self {
+  fn add(self, other: Size) -> Self {
     Self {
       x: self.x + other.width,
       y: self.y + other.height,
@@ -125,10 +116,7 @@ impl Add<Size> for Position {
 /// https://doc.rust-lang.org/book/ch19-03-advanced-traits.html
 impl Mul<Pair> for Position {
   type Output = Position;
-  fn mul(
-    self,
-    other: Pair,
-  ) -> Self {
+  fn mul(self, other: Pair) -> Self {
     Self {
       x: self.x * other.first,
       y: self.y * other.second,

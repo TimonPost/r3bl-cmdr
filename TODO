@@ -1,11 +1,14 @@
 add layout engine:
-  ☐ impl `tw_area.rs::paint_inside_box()` to emit `TWCommand`
+  ✔ impl `tw_area.rs::paint_inside_box()` to emit `TWCommand::Print` @done(22-06-28 20:40)
+  ☐ impl `tw_area.rs::paint_inside_box()` to emit styling commands
   ☐ copy 2 col layout from `tw_area_test.rs` into `app_with_layout.rs`
+  ☐ save `app_without_layout.rs` for future use w/ routing below
+  ☐ test 2 col layout!
+  ☐ stress test app w/ full screen repaint on mouse move
+  ☐ add all the crossterm commands to `TWCommand`
 
 routing:
   ☐ introduce routing concept to switch between apps
-  ☐ add all the crossterm commands to `TWCommand`
-  ☐ stress test app w/ full screen repaint on mouse move
 
 focus mgmt:
   ☐ figure out keyboard focus management

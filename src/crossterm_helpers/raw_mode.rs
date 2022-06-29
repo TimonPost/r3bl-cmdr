@@ -77,7 +77,7 @@ impl RawMode {
       TWCommand::EnableRawMode,
       TWCommand::EnableMouseCapture,
       TWCommand::EnterAlternateScreen,
-      TWCommand::MoveCursorPosition(0, 0),
+      TWCommand::MoveCursorPosition((0, 0)),
       TWCommand::ClearScreen,
       TWCommand::CursorHide
     )

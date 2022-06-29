@@ -37,7 +37,11 @@ impl LayoutManagement for TWArea {
       if !self.stack.is_empty() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedAreaStart,
-          LayoutError::format_msg_with_stack_len(&self.stack, "Layout stack should be empty"),
+          LayoutError::format_msg_with_stack_len(
+            &self.stack,
+            "Layout
+            stack should be empty",
+          ),
         )?
       }
       self.origin = pos;
@@ -79,9 +83,27 @@ impl LayoutManagement for TWArea {
     });
   }
 
-  // TODO: implement this by outputting [TWCommand]s to `self.render_buffer`
-  fn paint_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()> {
-    throws!({ self.calc_where_to_insert_new_content_in_box((0, text_vec.len()).into())? });
+  fn print_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()> {
+    throws!({
+      for text in text_vec {
+        // Get the line of text.
+        let content_x = 0;
+        let _content_x = text.len().try_into().unwrap_or(text.len() as UnitType);
+        let content_y = 1;
+
+        // Update the content_cursor_pos (will be initialized for `self.current_box()` if
+        // it doesn't exist yet).
+        let content_size = (content_x, content_y).into();
+        let new_pos = self.calc_where_to_insert_new_content_in_box(content_size)?;
+
+        // Queue a bunch of TWCommand to paint the text.
+        let move_to = TWCommand::MoveCursorPosition(new_pos.into());
+        // TODO: handle styling
+        let print = TWCommand::Print(text.to_string());
+
+        self.render_buffer += tw_queue!(move_to, print);
+      }
+    });
   }
 }
 
@@ -187,15 +209,23 @@ impl PerformPositioningAndSizing for TWArea {
   }
 
   /// This updates the `content_cursor_pos` of the current [TWBox].
-  fn calc_where_to_insert_new_content_in_box(&mut self, content_size: Size) -> CommonResult<()> {
-    throws!({
+  fn calc_where_to_insert_new_content_in_box(&mut self, content_size: Size) -> CommonResult<Position> {
+    throws_with_return!({
+      // Get current content_cursor_pos or initialize it to (0, 0).
       let current_box = self.current_box()?;
-
-      let pos = unwrap_option_or_compute_if_none! {
+      let current_pos = unwrap_option_or_compute_if_none! {
         current_box.content_cursor_pos,
         || (0, 0).into()
       };
-      current_box.content_cursor_pos = Some(pos + content_size);
+
+      // Calculate new_pos based on content_size.
+      let new_pos = current_pos + content_size;
+
+      // Update the content_cursor_pos.
+      current_box.content_cursor_pos = Some(new_pos);
+
+      // Return new_pos
+      new_pos
     });
   }
 
