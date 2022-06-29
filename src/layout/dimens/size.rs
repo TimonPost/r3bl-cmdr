@@ -83,8 +83,8 @@ impl From<(UnitType, UnitType)> for Size {
 impl From<(usize, usize)> for Size {
   fn from(pair: (usize, usize)) -> Self {
     Self {
-      width: pair.0.try_into().unwrap_or(pair.0 as UnitType),
-      height: pair.1.try_into().unwrap_or(pair.1 as UnitType),
+      width: convert_to_base_unit!(pair.0),
+      height: convert_to_base_unit!(pair.1),
     }
   }
 }
@@ -92,8 +92,8 @@ impl From<(usize, usize)> for Size {
 impl From<(i32, i32)> for Size {
   fn from(pair: (i32, i32)) -> Self {
     Self {
-      width: pair.0.try_into().unwrap_or(pair.0 as UnitType),
-      height: pair.1.try_into().unwrap_or(pair.1 as UnitType),
+      width: convert_to_base_unit!(pair.0),
+      height: convert_to_base_unit!(pair.1),
     }
   }
 }

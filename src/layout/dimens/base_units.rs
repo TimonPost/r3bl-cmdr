@@ -17,3 +17,11 @@
 
 /// Maps to whatever base units `crossterm` uses.
 pub type UnitType = u16;
+
+/// Converts a variety of types ([i32], [usize]) to a [UnitType].
+#[macro_export]
+macro_rules! convert_to_base_unit {
+  ($self:expr) => {
+    $self.try_into().unwrap_or($self as UnitType)
+  };
+}

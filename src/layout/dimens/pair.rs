@@ -26,10 +26,7 @@ pub struct Pair {
 }
 
 impl Debug for Pair {
-  fn fmt(
-    &self,
-    f: &mut fmt::Formatter<'_>,
-  ) -> fmt::Result {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "Pair [first:{}, second:{}]", self.first, self.second)
   }
 }
@@ -55,8 +52,8 @@ impl From<(u8, u8)> for Pair {
 impl From<(i32, i32)> for Pair {
   fn from(pair: (i32, i32)) -> Self {
     Self {
-      first: pair.0.try_into().unwrap_or(pair.0 as UnitType),
-      second: pair.1.try_into().unwrap_or(pair.1 as UnitType),
+      first: convert_to_base_unit!(pair.0),
+      second: convert_to_base_unit!(pair.1),
     }
   }
 }
@@ -65,8 +62,8 @@ impl From<(i32, i32)> for Pair {
 impl From<(usize, usize)> for Pair {
   fn from(pair: (usize, usize)) -> Self {
     Self {
-      first: pair.0.try_into().unwrap_or(pair.0 as UnitType),
-      second: pair.1.try_into().unwrap_or(pair.1 as UnitType),
+      first: convert_to_base_unit!(pair.0),
+      second: convert_to_base_unit!(pair.1),
     }
   }
 }

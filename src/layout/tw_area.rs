@@ -88,7 +88,7 @@ impl LayoutManagement for TWArea {
       for text in text_vec {
         // Get the line of text.
         let content_x = 0;
-        let _content_x = text.len().try_into().unwrap_or(text.len() as UnitType);
+        let _content_x = convert_to_base_unit!(text.len());
         let content_y = 1;
 
         // Update the content_cursor_pos (will be initialized for `self.current_box()` if
