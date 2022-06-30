@@ -4,12 +4,12 @@
 			"path": "src/layout/tw_area.rs",
 			"bookmarks": [
 				{
-					"line": 93,
+					"line": 94,
 					"column": 0,
 					"label": ""
 				},
 				{
-					"line": 111,
+					"line": 113,
 					"column": 0,
 					"label": ""
 				}
@@ -19,13 +19,23 @@
 			"path": "src/crossterm_helpers/cmd_wrapper.rs",
 			"bookmarks": [
 				{
-					"line": 209,
+					"line": 210,
 					"column": 10,
 					"label": ""
 				},
 				{
-					"line": 219,
-					"column": 10,
+					"line": 232,
+					"column": 0,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/layout/tw_box.rs",
+			"bookmarks": [
+				{
+					"line": 85,
+					"column": 8,
 					"label": ""
 				}
 			]
