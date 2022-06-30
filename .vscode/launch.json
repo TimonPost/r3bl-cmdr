@@ -7,72 +7,58 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug unit tests in library 'tui-layout-crossterm'",
+      "name": "Debug unit tests in library 'r3bl-cmdr'",
       "cargo": {
-        "args": ["test", "--no-run", "--lib", "--package=tui-layout-crossterm"],
+        "args": [
+          "test",
+          "--no-run",
+          "--lib",
+          "--package=r3bl-cmdr"
+        ],
         "filter": {
-          "name": "tui-layout-crossterm",
+          "name": "r3bl-cmdr",
           "kind": "lib"
         }
       },
       "args": [],
-      "cwd": "${workspaceFolder}",
-      "sourceLanguages": ["rust"]
+      "cwd": "${workspaceFolder}"
     },
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug executable 'tui-layout-crossterm'",
+      "name": "Debug executable 'r3bl-cmdr'",
       "cargo": {
-        "args": ["build", "--bin=tui-layout-crossterm", "--package=tui-layout-crossterm"],
+        "args": [
+          "build",
+          "--bin=r3bl-cmdr",
+          "--package=r3bl-cmdr"
+        ],
         "filter": {
-          "name": "tui-layout-crossterm",
+          "name": "r3bl-cmdr",
           "kind": "bin"
         }
       },
       "args": [],
-      "cwd": "${workspaceFolder}",
-      "sourceLanguages": ["rust"]
+      "cwd": "${workspaceFolder}"
     },
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug unit tests in executable 'tui-layout-crossterm'",
+      "name": "Debug unit tests in executable 'r3bl-cmdr'",
       "cargo": {
         "args": [
           "test",
           "--no-run",
-          "--bin=tui-layout-crossterm",
-          "--package=tui-layout-crossterm"
+          "--bin=r3bl-cmdr",
+          "--package=r3bl-cmdr"
         ],
         "filter": {
-          "name": "tui-layout-crossterm",
+          "name": "r3bl-cmdr",
           "kind": "bin"
         }
       },
       "args": [],
-      "cwd": "${workspaceFolder}",
-      "sourceLanguages": ["rust"]
-    },
-    {
-      "type": "lldb",
-      "request": "launch",
-      "name": "Debug integration test 'test_dimens'",
-      "cargo": {
-        "args": [
-          "test",
-          "--no-run",
-          "--test=test_dimens",
-          "--package=tui-layout-crossterm"
-        ],
-        "filter": {
-          "name": "test_dimens",
-          "kind": "test"
-        }
-      },
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "sourceLanguages": ["rust"]
+      "cwd": "${workspaceFolder}"
     },
     {
       "type": "lldb",
@@ -83,7 +69,7 @@
           "test",
           "--no-run",
           "--test=test_tw_area",
-          "--package=tui-layout-crossterm"
+          "--package=r3bl-cmdr"
         ],
         "filter": {
           "name": "test_tw_area",
@@ -91,8 +77,26 @@
         }
       },
       "args": [],
-      "cwd": "${workspaceFolder}",
-      "sourceLanguages": ["rust"]
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug integration test 'test_dimens'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--test=test_dimens",
+          "--package=r3bl-cmdr"
+        ],
+        "filter": {
+          "name": "test_dimens",
+          "kind": "test"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
     },
     {
       "type": "lldb",
@@ -103,7 +107,7 @@
           "test",
           "--no-run",
           "--test=test_style",
-          "--package=tui-layout-crossterm"
+          "--package=r3bl-cmdr"
         ],
         "filter": {
           "name": "test_style",
@@ -111,8 +115,7 @@
         }
       },
       "args": [],
-      "cwd": "${workspaceFolder}",
-      "sourceLanguages": ["rust"]
+      "cwd": "${workspaceFolder}"
     }
   ]
 }
