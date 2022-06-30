@@ -52,7 +52,7 @@ impl TryFrom<UnitType> for Percent {
 impl TryFrom<i32> for Percent {
   type Error = String;
   fn try_from(arg: i32) -> Result<Self, Self::Error> {
-    match Percent::try_and_convert(arg.into()) {
+    match Percent::try_and_convert(arg) {
       Some(percent) => Ok(percent),
       None => Err("Invalid percentage value".to_string()),
     }
@@ -65,21 +65,23 @@ impl Percent {
   pub fn try_from_pair(pair: Pair) -> CommonResult<(Percent, Percent)> {
     let first = pair.first.try_into();
     let second = pair.second.try_into();
-    return if first.is_err() || second.is_err() {
-      let err_msg = format!("Invalid percentage values in tuple: {:?}", pair);
-      LayoutError::new_err_with_msg(LayoutErrorType::InvalidSizePercentage, err_msg)
-    } else {
-      Ok((first.unwrap(), second.unwrap()))
-    };
+
+    match (first, second) {
+      (Ok(first), Ok(second)) => Ok((first, second)),
+      _ => {
+        let err_msg = format!("Invalid percentage values in tuple: {:?}", pair);
+        LayoutError::new_err_with_msg(LayoutErrorType::InvalidSizePercentage, err_msg)
+      }
+    }
   }
 
   /// Try and convert given `UnitType` value to `Percent`. Return `None` if given value is
   /// not between 0 and 100.
   fn try_and_convert(item: i32) -> Option<Percent> {
-    if item < 0 || item > 100 {
+    if !(0..=100).contains(&item) {
       return None;
     }
-    return Some(Percent { value: item as u8 });
+    Some(Percent { value: item as u8 })
   }
 
   /// Wrap `self` in `Option`.
@@ -94,8 +96,8 @@ pub fn calc_percentage(percentage: Percent, value: UnitType) -> UnitType {
   let percentage_int = percentage.value;
   let percentage_f32 = f32::from(percentage_int) / 100.0;
   let result_f32 = percentage_f32 * f32::from(value);
-  let result_int = unsafe { result_f32.to_int_unchecked::<Integer>() };
-  result_int
+
+  unsafe { result_f32.to_int_unchecked::<Integer>() }
 }
 
 /// Size, defined as [height, width].
@@ -113,10 +115,10 @@ impl TryFrom<(i32, i32)> for RequestedSizePercent {
       return Err("Problem converting pair to requested size percentage".to_string());
     }
     let pair = pair.unwrap();
-    return Ok(RequestedSizePercent {
+    Ok(RequestedSizePercent {
       width: pair.0,
       height: pair.1,
-    });
+    })
   }
 }
 

@@ -160,7 +160,7 @@ where
       shared_render
         .read()
         .await
-        .handle_event(input_event, &latest_state, &shared_store, window_size)
+        .handle_event(input_event, &latest_state, shared_store, window_size)
         .await?
     });
   }
@@ -178,7 +178,7 @@ where
         my_state.unwrap()
       };
 
-      let render_result = shared_render.write().await.render(&state, &shared_store, window_size).await;
+      let render_result = shared_render.write().await.render(&state, shared_store, window_size).await;
       match render_result {
         Err(error) => {
           TWCommand::flush();

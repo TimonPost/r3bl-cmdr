@@ -82,14 +82,14 @@ impl Position {
   /// Add given `x` value to `self`.
   pub fn add_x(&mut self, value: usize) -> Self {
     let value: UnitType = value as UnitType;
-    self.x = self.x + value;
+    self.x += value;
     *self
   }
 
   /// Add given `y` value to `self`.
   pub fn add_y(&mut self, value: usize) -> Self {
     let value = value as UnitType;
-    self.y = self.y + value;
+    self.y += value;
     *self
   }
 }

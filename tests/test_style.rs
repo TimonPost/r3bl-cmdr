@@ -18,8 +18,8 @@
 //! https://docs.rs/bitmask/latest/bitmask/macro.bitmask.html
 
 use crossterm::style::Color;
-use r3bl_rs_utils::{debug, with_mut};
 use r3bl_cmdr::{Style, StyleBuilder, StyleFlag, Stylesheet};
+use r3bl_rs_utils::{debug, with_mut};
 
 #[test]
 fn test_bitflags() {
@@ -51,7 +51,7 @@ fn test_bitflags() {
     }
   }
 
-  assert_eq!(mask1.contains(mask2), false);
+  assert!(!mask1.contains(mask2));
 }
 
 #[test]
@@ -62,41 +62,30 @@ fn test_style() {
   debug!(bitflags);
   assert!(bitflags.contains(StyleFlag::BOLD_SET));
   assert!(bitflags.contains(StyleFlag::ITALIC_SET));
-  assert_eq!(bitflags.contains(StyleFlag::UNDERLINE_SET), false);
+  assert!(!bitflags.contains(StyleFlag::UNDERLINE_SET));
 }
 
 #[test]
 fn test_cascade_style() {
-  let style_bold_green_fg = StyleBuilder::new()
-    .set_bold(true)
-    .set_color_fg(Some(Color::Green))
-    .build();
+  let style_bold_green_fg = StyleBuilder::new().set_bold(true).set_color_fg(Some(Color::Green)).build();
   let style_italic = StyleBuilder::new().set_italic(true).build();
-  let style_yellow_bg = StyleBuilder::new()
-    .set_color_bg(Some(Color::Yellow))
-    .build();
+  let style_yellow_bg = StyleBuilder::new().set_color_bg(Some(Color::Yellow)).build();
   let style_margin = StyleBuilder::new().set_margin(Some(2)).build();
   let style_red_fg = StyleBuilder::new().set_color_fg(Some(Color::Red)).build();
 
-  let mut computed_style =
-    style_bold_green_fg + style_italic + style_yellow_bg + style_margin + style_red_fg;
+  let mut computed_style = style_bold_green_fg + style_italic + style_yellow_bg + style_margin + style_red_fg;
 
   assert!(computed_style.get_bitflags().contains(
-    StyleFlag::COLOR_FG_SET
-      | StyleFlag::COLOR_BG_SET
-      | StyleFlag::BOLD_SET
-      | StyleFlag::ITALIC_SET
-      | StyleFlag::MARGIN_SET
-      | StyleFlag::COMPUTED_SET
+    StyleFlag::COLOR_FG_SET | StyleFlag::COLOR_BG_SET | StyleFlag::BOLD_SET | StyleFlag::ITALIC_SET | StyleFlag::MARGIN_SET | StyleFlag::COMPUTED_SET
   ));
 
   assert_eq!(computed_style.color_bg.unwrap(), Color::Yellow);
   assert_eq!(computed_style.color_fg.unwrap(), Color::Red);
-  assert_eq!(computed_style.bold, true);
-  assert_eq!(computed_style.italic, true);
-  assert_eq!(computed_style.computed, true);
+  assert!(computed_style.bold);
+  assert!(computed_style.italic);
+  assert!(computed_style.computed);
   assert_eq!(computed_style.margin.unwrap(), 2);
-  assert_eq!(computed_style.underline, false);
+  assert!(!computed_style.underline);
 }
 
 #[test]
@@ -121,21 +110,17 @@ fn test_stylesheet() {
   assert_eq!(result.as_ref().unwrap().len(), 2);
   assert_eq!(result.as_ref().unwrap()[0].id, "style1");
   assert_eq!(result.as_ref().unwrap()[1].id, "style2");
-  assert_eq!(
-    stylesheet.find_styles_by_ids(vec!["style3", "style4"]),
-    None
-  );
+  assert_eq!(stylesheet.find_styles_by_ids(vec!["style3", "style4"]), None);
 }
 
 /// Helper function.
 fn make_a_style(id: &str) -> Style {
   let black = Color::Rgb { r: 0, g: 0, b: 0 };
-  let style = StyleBuilder::new()
+  StyleBuilder::new()
     .set_id(id.to_string())
     .set_color_bg(Some(black))
     .set_color_fg(Some(black))
     .set_italic(true)
     .set_bold(true)
-    .build();
-  style
+    .build()
 }

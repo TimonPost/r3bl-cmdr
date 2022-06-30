@@ -209,7 +209,7 @@ impl TWCommandQueue {
         if style.is_some() {
           // TODO: Use `style` to set `Attribute`:
           // Docs: https://docs.rs/crossterm/latest/crossterm/style/index.html#attributes
-          let mut style = style.clone().unwrap();
+          let _style = style.clone().unwrap();
           exec!(queue!(stdout(), style::Print(text.clone())), format!("Print({:?})", text))
         } else {
           exec!(queue!(stdout(), style::Print(text.clone())), format!("Print({:?})", text))

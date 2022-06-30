@@ -31,7 +31,7 @@ pub struct DefaultInputEventHandler;
 impl DefaultInputEventHandler {
   /// This function does **not** consume the `input_event` argument. [InputEvent] implements
   /// [Copy] (no need to pass references into this function).
-  pub async fn no_consume(input_event: InputEvent, exit_keys: &Vec<KeyEvent>) -> Continuation {
+  pub async fn no_consume(input_event: InputEvent, exit_keys: &[KeyEvent]) -> Continuation {
     // Early return if any exit key sequence is pressed.
     if let Continuation::Exit = DefaultInputEventHandler::from(input_event, exit_keys) {
       return Continuation::Exit;
@@ -42,48 +42,28 @@ impl DefaultInputEventHandler {
       InputEvent::NonDisplayableKeypress(key_event) => {
         call_if_true!(
           DEBUG,
-          log_no_err!(
-            INFO,
-            "default_event_handler -> NonDisplayableKeypress: {:?}",
-            key_event
-          )
+          log_no_err!(INFO, "default_event_handler -> NonDisplayableKeypress: {:?}", key_event)
         );
       }
       InputEvent::DisplayableKeypress(character) => {
-        call_if_true!(
-          DEBUG,
-          log_no_err!(
-            INFO,
-            "default_event_handler -> DisplayableKeypress: {:?}",
-            character
-          )
-        );
+        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> DisplayableKeypress: {:?}", character));
       }
       InputEvent::Resize(size) => {
-        call_if_true!(
-          DEBUG,
-          log_no_err!(INFO, "default_event_handler -> Resize: {:?}", size)
-        );
+        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Resize: {:?}", size));
         return Continuation::ResizeAndContinue(size);
       }
       InputEvent::Mouse(mouse_event) => {
-        call_if_true!(
-          DEBUG,
-          log_no_err!(INFO, "default_event_handler -> Mouse: {:?}", mouse_event)
-        );
+        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Mouse: {:?}", mouse_event));
       }
       _ => {
-        call_if_true!(
-          DEBUG,
-          log_no_err!(INFO, "default_event_handler -> Other: {:?}", input_event)
-        );
+        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Other: {:?}", input_event));
       }
     }
 
     Continuation::Continue
   }
 
-  fn from(input_event: InputEvent, exit_keys: &Vec<KeyEvent>) -> Continuation {
+  fn from(input_event: InputEvent, exit_keys: &[KeyEvent]) -> Continuation {
     if let InputEvent::NonDisplayableKeypress(key_event) = input_event {
       if exit_keys.contains(&key_event) {
         return Continuation::Exit;

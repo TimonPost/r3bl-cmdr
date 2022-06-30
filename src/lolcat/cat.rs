@@ -18,6 +18,7 @@
 use crate::*;
 use rand::thread_rng;
 use rand::Rng;
+use std::fmt::Display;
 use std::io::stdout;
 use std::io::Write;
 use std::thread::sleep;
@@ -76,9 +77,11 @@ impl OutputCollector {
   pub fn from(output_vec: OutputCollectorType) -> OutputCollector {
     OutputCollector { output_vec }
   }
+}
 
-  pub fn to_string(self) -> String {
-    String::from_iter(self.output_vec)
+impl Display for OutputCollector {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}", String::from_iter(self.output_vec.clone()))
   }
 }
 
@@ -88,7 +91,7 @@ pub trait LolcatStringExt {
 
 impl LolcatStringExt for String {
   fn color_with(&self, lolcat: &mut Lolcat) -> String {
-    lolcat.format_str(&self).to_string()
+    lolcat.format_str(self).to_string()
   }
 }
 
@@ -123,7 +126,7 @@ impl Lolcat {
   }
 
   pub fn format_str(&mut self, input_str: &str) -> OutputCollector {
-    let chars_iter: std::str::Chars = input_str.chars().into_iter();
+    let chars_iter: std::str::Chars = input_str.chars();
     self.format_iter(chars_iter, true)
   }
 
@@ -135,11 +138,7 @@ impl Lolcat {
   /// - Duplicates escape sequences, otherwise prints printable characters with colored_print.
   /// - Print newlines correctly, resetting background.
   /// - If constantly_flush is on, it won't wait till a newline to flush stdout.
-  fn format_iter<I: Iterator<Item = char>>(
-    &mut self,
-    mut iter: I,
-    constantly_flush: bool,
-  ) -> OutputCollector {
+  fn format_iter<I: Iterator<Item = char>>(&mut self, mut iter: I, constantly_flush: bool) -> OutputCollector {
     let mut original_seed = self.color_wheel_control.seed;
     let mut ignore_whitespace = self.color_wheel_control.background_mode;
     let mut output_vec: OutputCollectorType = vec![];
@@ -165,9 +164,7 @@ impl Lolcat {
           // We will consume up to, but not through, the next printable character
           // In addition, we my_print everything in the escape sequence, even if it is a color (that will be overridden)
           my_print!(&mut output_vec, "\x1b");
-          let mut escape_sequence_character = iter
-            .next()
-            .expect("Escape character with no escape sequence after it");
+          let mut escape_sequence_character = iter.next().expect("Escape character with no escape sequence after it");
           my_print!(&mut output_vec, "{}", escape_sequence_character);
           match escape_sequence_character {
             '[' => loop {

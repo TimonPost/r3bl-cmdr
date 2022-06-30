@@ -30,12 +30,6 @@ pub struct TWArea {
   pub render_buffer: TWCommandQueue,
 }
 
-impl TWArea {
-  pub fn get_origin_pos(&mut self) -> Position {
-    self.origin_pos.clone()
-  }
-}
-
 impl LayoutManagement for TWArea {
   fn area_start(&mut self, TWAreaProps { pos, size }: TWAreaProps) -> CommonResult<()> {
     throws!({
@@ -135,7 +129,7 @@ impl PerformPositioningAndSizing for TWArea {
   ) -> CommonResult<()> {
     throws!({
       self.stack_of_boxes.push(TWBox::make_root_box(
-        id.to_string(),
+        id,
         self.box_size,
         self.origin_pos,
         width_pc,
@@ -177,7 +171,7 @@ impl PerformPositioningAndSizing for TWArea {
       self.calc_where_to_insert_new_box_in_tw_area(requested_size_allocation)?;
 
       self.stack_of_boxes.push(TWBox::make_box(
-        id.to_string(),
+        id,
         dir,
         container_bounds,
         old_position,

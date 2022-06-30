@@ -101,38 +101,36 @@ impl Style {
 impl Add<Self> for Style {
   type Output = Self;
 
-  fn add(self, other: Self) -> Self {
-    let mut new_style = self.clone();
-
+  fn add(mut self, other: Self) -> Self {
     // Computed style has no id.
-    new_style.computed = true;
-    new_style.id = "".to_string();
+    self.computed = true;
+    self.id = "".to_string();
 
     // other (if set) overrides self.
     if let Some(color_fg) = other.color_fg {
-      new_style.color_fg = Some(color_fg);
+      self.color_fg = Some(color_fg);
     }
     if let Some(color_bg) = other.color_bg {
-      new_style.color_bg = Some(color_bg);
+      self.color_bg = Some(color_bg);
     }
     if let Some(margin) = other.margin {
-      new_style.margin = Some(margin);
+      self.margin = Some(margin);
     }
     if other.bold {
-      new_style.bold = true;
+      self.bold = true;
     }
     if other.italic {
-      new_style.italic = true;
+      self.italic = true;
     }
     if other.underline {
-      new_style.underline = true;
+      self.underline = true;
     }
 
     // Recalculate the bitflags.
-    new_style.reset_bitflags();
-    new_style.get_bitflags();
+    self.reset_bitflags();
+    self.get_bitflags();
 
-    new_style
+    self
   }
 }
 

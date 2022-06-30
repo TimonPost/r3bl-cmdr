@@ -22,8 +22,10 @@ use r3bl_rs_utils::*;
 #[test]
 fn test_simple_2_col_layout() -> CommonResult<()> {
   throws!({
-    let mut tw_area = TWArea::default();
-    tw_area.stylesheet = create_stylesheet()?;
+    let mut tw_area = TWArea {
+      stylesheet: create_stylesheet()?,
+      ..TWArea::default()
+    };
     tw_area.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size((500, 500).into()).build())?;
     create_main_container(&mut tw_area)?;
     tw_area.area_end()?;
@@ -141,13 +143,12 @@ fn create_stylesheet() -> CommonResult<Stylesheet> {
 /// Create a style.
 fn create_style(id: &str) -> Style {
   let black = Color::Rgb { r: 0, g: 0, b: 0 };
-  let style = StyleBuilder::new()
+  StyleBuilder::new()
     .set_id(id.to_string())
     .set_color_bg(Some(black))
     .set_color_fg(Some(black))
     .set_italic(true)
     .set_bold(true)
     .set_margin(Some(2))
-    .build();
-  style
+    .build()
 }

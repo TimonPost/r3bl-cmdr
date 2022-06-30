@@ -58,8 +58,7 @@ impl Stylesheet {
     self
       .styles
       .iter()
-      .find(|style| style.id == id)
-      .map(|style| style.clone())
+      .find(|style| style.id == id).cloned()
   }
 
   /// Returns [None] if no style in `ids` [Vec] is found.
