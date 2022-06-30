@@ -26,7 +26,7 @@ pub trait LayoutManagement {
   fn area_end(&mut self) -> CommonResult<()>;
 
   /// Add a new layout on the stack w/ the direction & (width, height) percentages.
-  fn box_start(&mut self, layout_props: TWBoxProps) -> CommonResult<()>;
+  fn box_start(&mut self, tw_box_props: TWBoxProps) -> CommonResult<()>;
 
   fn box_end(&mut self) -> CommonResult<()>;
 

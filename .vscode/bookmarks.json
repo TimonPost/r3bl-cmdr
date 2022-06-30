@@ -1,0 +1,34 @@
+{
+	"files": [
+		{
+			"path": "src/layout/tw_area.rs",
+			"bookmarks": [
+				{
+					"line": 93,
+					"column": 0,
+					"label": ""
+				},
+				{
+					"line": 111,
+					"column": 0,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/crossterm_helpers/cmd_wrapper.rs",
+			"bookmarks": [
+				{
+					"line": 209,
+					"column": 10,
+					"label": ""
+				},
+				{
+					"line": 219,
+					"column": 10,
+					"label": ""
+				}
+			]
+		}
+	]
+}

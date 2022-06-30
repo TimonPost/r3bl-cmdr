@@ -100,6 +100,16 @@ impl Debug for Position {
   }
 }
 
+impl Add<Position> for Position {
+    type Output = Position;
+    fn add(self, other: Position) -> Self::Output {
+      Position {
+        x: self.x + other.x,
+        y: self.y + other.y,
+      }
+    }
+}
+
 /// Add: BoxPosition + BoxSize = BoxPosition.
 /// https://doc.rust-lang.org/book/ch19-03-advanced-traits.html
 impl Add<Size> for Position {

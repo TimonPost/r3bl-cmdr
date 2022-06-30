@@ -101,10 +101,7 @@ impl Style {
 impl Add<Self> for Style {
   type Output = Self;
 
-  fn add(
-    self,
-    other: Self,
-  ) -> Self {
+  fn add(self, other: Self) -> Self {
     let mut new_style = self.clone();
 
     // Computed style has no id.
@@ -140,10 +137,7 @@ impl Add<Self> for Style {
 }
 
 impl AddAssign<&Style> for Style {
-  fn add_assign(
-    &mut self,
-    other: &Style,
-  ) {
+  fn add_assign(&mut self, other: &Style) {
     *self = self.clone() + other.clone();
   }
 }

@@ -23,49 +23,51 @@ use r3bl_rs_utils::*;
 /// terminal screen.
 #[derive(Clone, Debug, Default)]
 pub struct TWArea {
-  pub origin: Position,
-  pub size: Size,
-  pub stack: Vec<TWBox>,
+  pub origin_pos: Position,
+  pub box_size: Size,
+  pub stack_of_boxes: Vec<TWBox>,
   pub stylesheet: Stylesheet,
   pub render_buffer: TWCommandQueue,
+}
+
+impl TWArea {
+  pub fn get_origin_pos(&mut self) -> Position {
+    self.origin_pos.clone()
+  }
 }
 
 impl LayoutManagement for TWArea {
   fn area_start(&mut self, TWAreaProps { pos, size }: TWAreaProps) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
-      if !self.stack.is_empty() {
+      if !self.stack_of_boxes.is_empty() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedAreaStart,
-          LayoutError::format_msg_with_stack_len(
-            &self.stack,
-            "Layout
-            stack should be empty",
-          ),
+          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
         )?
       }
-      self.origin = pos;
-      self.size = size;
+      self.origin_pos = pos;
+      self.box_size = size;
     });
   }
 
   fn area_end(&mut self) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
-      if !self.stack.is_empty() {
+      if !self.stack_of_boxes.is_empty() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedAreaEnd,
-          LayoutError::format_msg_with_stack_len(&self.stack, "Layout stack should be empty"),
+          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
         )?
       }
     });
   }
 
-  fn box_start(&mut self, layout_props: TWBoxProps) -> CommonResult<()> {
+  fn box_start(&mut self, tw_box_props: TWBoxProps) -> CommonResult<()> {
     throws!({
-      match self.stack.is_empty() {
-        true => self.add_root_box(layout_props),
-        false => self.add_box(layout_props),
+      match self.stack_of_boxes.is_empty() {
+        true => self.add_root_box(tw_box_props),
+        false => self.add_box(tw_box_props),
       }?
     });
   }
@@ -73,13 +75,13 @@ impl LayoutManagement for TWArea {
   fn box_end(&mut self) -> CommonResult<()> {
     throws!({
       // Expect stack not to be empty!
-      if self.stack.is_empty() {
+      if self.stack_of_boxes.is_empty() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedBoxEnd,
-          LayoutError::format_msg_with_stack_len(&self.stack, "Layout stack should not be empty"),
+          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should not be empty"),
         )?
       }
-      self.stack.pop();
+      self.stack_of_boxes.pop();
     });
   }
 
@@ -87,28 +89,38 @@ impl LayoutManagement for TWArea {
     throws!({
       for text in text_vec {
         // Get the line of text.
-        let content_x = 0;
-        let _content_x = convert_to_base_unit!(text.len());
-        let content_y = 1;
+        let content_y: UnitType = 1;
 
-        // Update the content_cursor_pos (will be initialized for `self.current_box()` if
-        // it doesn't exist yet).
+        // TODO: Use `convert_to_base_unit!(text.len());` w/ graphemes & text wrapping.
+        let content_x: UnitType = 0;
+
+        // Update the `content_cursor_pos` (will be initialized for `self.current_box()?` if it
+        // doesn't exist yet).
         let content_size = (content_x, content_y).into();
-        let new_pos = self.calc_where_to_insert_new_content_in_box(content_size)?;
+        let content_relative_pos = self.calc_where_to_insert_new_content_in_box(content_size)?;
 
-        // Queue a bunch of TWCommand to paint the text.
-        let move_to = TWCommand::MoveCursorPosition(new_pos.into());
-        // TODO: handle styling
-        let print = TWCommand::Print(text.to_string());
+        // Get the current box & its style.
+        let current_box = self.current_box()?;
+        let box_origin_pos = current_box.origin_pos;
 
-        self.render_buffer += tw_queue!(move_to, print);
+        // TODO: Take `self.current_box()?.origin` into account when calculating the `new_pos`.
+        let new_absolute_pos = box_origin_pos + content_relative_pos;
+
+        // Queue a bunch of `TWCommand` to paint the text.
+        let move_to_cmd = TWCommand::MoveCursorPosition(new_absolute_pos.into());
+
+        // Handle styling via `Attributes` and `Color`s.
+        let style_cmd = TWCommand::ApplyStyle(current_box.get_computed_style());
+        let print_cmd = TWCommand::Print(text.to_string(), current_box.get_computed_style());
+
+        self.render_buffer += tw_queue!(move_to_cmd, style_cmd, print_cmd);
       }
     });
   }
 }
 
 impl PerformPositioningAndSizing for TWArea {
-  /// 🌳 Root: Handle first layout to add to stack, explicitly sized & positioned.
+  /// 🌳 Root: Handle first box to add to stack of boxes, explicitly sized & positioned.
   fn add_root_box(
     &mut self,
     TWBoxProps {
@@ -122,10 +134,10 @@ impl PerformPositioningAndSizing for TWArea {
     }: TWBoxProps,
   ) -> CommonResult<()> {
     throws!({
-      self.stack.push(TWBox::make_root_box(
+      self.stack_of_boxes.push(TWBox::make_root_box(
         id.to_string(),
-        self.size,
-        self.origin,
+        self.box_size,
+        self.origin_pos,
         width_pc,
         height_pc,
         dir,
@@ -134,7 +146,7 @@ impl PerformPositioningAndSizing for TWArea {
     });
   }
 
-  /// 🍀 Non-root: Handle layout to add to stack. [Position] and [Size] will be calculated.
+  /// 🍀 Non-root: Handle non-root box to add to stack of boxes. [Position] and [Size] will be calculated.
   fn add_box(
     &mut self,
     TWBoxProps {
@@ -150,10 +162,7 @@ impl PerformPositioningAndSizing for TWArea {
     throws!({
       let current_box = self.current_box()?;
 
-      let container_bounds = unwrap_or_err! {
-        current_box.bounds_size,
-        LayoutErrorType::ContainerBoxBoundsUndefined
-      };
+      let container_bounds = current_box.bounds_size;
 
       let requested_size_allocation = Size::from((
         calc_percentage(width_pc, container_bounds.width),
@@ -167,7 +176,7 @@ impl PerformPositioningAndSizing for TWArea {
 
       self.calc_where_to_insert_new_box_in_tw_area(requested_size_allocation)?;
 
-      self.stack.push(TWBox::make_box(
+      self.stack_of_boxes.push(TWBox::make_box(
         id.to_string(),
         dir,
         container_bounds,
@@ -179,12 +188,12 @@ impl PerformPositioningAndSizing for TWArea {
     });
   }
 
-  /// Must be called *before* the new [TWBox] is added to the stack otherwise
+  /// Must be called *before* the new [TWBox] is added to the stack of boxes otherwise
   /// [LayoutErrorType::ErrorCalculatingNextLayoutPos] error is returned.
   ///
   /// This updates the `box_cursor_pos` of the current [TWBox].
   ///
-  /// Returns the [Position] where the next [TWBox] can be added to the stack.
+  /// Returns the [Position] where the next [TWBox] can be added to the stack of boxes.
   fn calc_where_to_insert_new_box_in_tw_area(&mut self, allocated_size: Size) -> CommonResult<Position> {
     let current_box = self.current_box()?;
     let box_cursor_pos = current_box.box_cursor_pos;
@@ -229,12 +238,12 @@ impl PerformPositioningAndSizing for TWArea {
     });
   }
 
-  /// Get the last layout on the stack (if none found then return Err).
+  /// Get the last box on the stack (if none found then return Err).
   fn current_box(&mut self) -> CommonResult<&mut TWBox> {
-    // Expect stack not to be empty!
-    if self.stack.is_empty() {
-      LayoutError::new_err(LayoutErrorType::StackShouldNotBeEmpty)?
+    // Expect stack of boxes not to be empty!
+    if self.stack_of_boxes.is_empty() {
+      LayoutError::new_err(LayoutErrorType::StackOfBoxesShouldNotBeEmpty)?
     }
-    Ok(self.stack.last_mut().unwrap())
+    Ok(self.stack_of_boxes.last_mut().unwrap())
   }
 }

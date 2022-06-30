@@ -24,12 +24,7 @@ fn test_simple_2_col_layout() -> CommonResult<()> {
   throws!({
     let mut tw_area = TWArea::default();
     tw_area.stylesheet = create_stylesheet()?;
-    tw_area.area_start(
-      TWAreaPropsBuilder::new()
-        .set_pos((0, 0).into())
-        .set_size((500, 500).into())
-        .build(),
-    )?;
+    tw_area.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size((500, 500).into()).build())?;
     create_main_container(&mut tw_area)?;
     tw_area.area_end()?;
   });
@@ -53,15 +48,15 @@ fn create_main_container(tw_area: &mut TWArea) -> CommonResult<()> {
 
   fn make_container_assertions(tw_area: &TWArea) -> CommonResult<()> {
     throws!({
-      let layout_item = tw_area.stack.first().unwrap();
+      let layout_item = tw_area.stack_of_boxes.first().unwrap();
       assert_eq!(layout_item.id, "container");
       assert_eq!(layout_item.dir, Direction::Horizontal);
-      assert_eq!(layout_item.origin, Some((0, 0).into()));
-      assert_eq!(layout_item.bounds_size, Some((500, 500).into()));
-      assert_eq!(layout_item.req_size_percent, Some((100, 100).try_into()?));
+      assert_eq!(layout_item.origin_pos, (0, 0).into());
+      assert_eq!(layout_item.bounds_size, (500, 500).into());
+      assert_eq!(layout_item.req_size_percent, (100, 100).try_into()?);
       assert_eq!(layout_item.box_cursor_pos, Some((0, 0).into()));
       assert_eq!(layout_item.content_cursor_pos, None);
-      assert_eq!(layout_item.styles, None);
+      assert_eq!(layout_item.get_computed_style(), None);
     });
   }
 }
@@ -85,16 +80,16 @@ fn create_left_col(tw_area: &mut TWArea) -> CommonResult<()> {
 
   fn make_left_col_assertions(tw_area: &TWArea) -> CommonResult<()> {
     throws!({
-      let layout_item = tw_area.stack.last().unwrap();
+      let layout_item = tw_area.stack_of_boxes.last().unwrap();
       assert_eq!(layout_item.id, "col_1");
       assert_eq!(layout_item.dir, Direction::Vertical);
-      assert_eq!(layout_item.origin, Some((2, 2).into())); // Take margin into account.
-      assert_eq!(layout_item.bounds_size, Some((246, 496).into())); // Take margin into account.
-      assert_eq!(layout_item.req_size_percent, Some((50, 100).try_into()?));
+      assert_eq!(layout_item.origin_pos, (2, 2).into()); // Take margin into account.
+      assert_eq!(layout_item.bounds_size, (246, 496).into()); // Take margin into account.
+      assert_eq!(layout_item.req_size_percent, (50, 100).try_into()?);
       assert_eq!(layout_item.box_cursor_pos, None);
       assert_eq!(layout_item.content_cursor_pos, Some((0, 2).into()));
       assert_eq!(
-        layout_item.styles.clone(),
+        layout_item.get_computed_style(),
         Stylesheet::compute(tw_area.stylesheet.find_styles_by_ids(vec!["style1"]))
       );
     });
@@ -120,16 +115,16 @@ fn create_right_col(tw_area: &mut TWArea) -> CommonResult<()> {
 
   fn make_right_col_assertions(tw_area: &TWArea) -> CommonResult<()> {
     throws!({
-      let layout_item = tw_area.stack.last().unwrap();
-      assert_eq!(layout_item.id, "col_2");
-      assert_eq!(layout_item.dir, Direction::Vertical);
-      assert_eq!(layout_item.origin, Some((252, 2).into())); // Take margin into account.
-      assert_eq!(layout_item.bounds_size, Some((246, 496).into())); // Take margin into account.
-      assert_eq!(layout_item.req_size_percent, Some((50, 100).try_into()?));
-      assert_eq!(layout_item.box_cursor_pos, None);
-      assert_eq!(layout_item.content_cursor_pos, Some((0, 2).into()));
+      let current_box = tw_area.stack_of_boxes.last().unwrap();
+      assert_eq!(current_box.id, "col_2");
+      assert_eq!(current_box.dir, Direction::Vertical);
+      assert_eq!(current_box.origin_pos, (252, 2).into()); // Take margin into account.
+      assert_eq!(current_box.bounds_size, (246, 496).into()); // Take margin into account.
+      assert_eq!(current_box.req_size_percent, (50, 100).try_into()?);
+      assert_eq!(current_box.box_cursor_pos, None);
+      assert_eq!(current_box.content_cursor_pos, Some((0, 2).into()));
       assert_eq!(
-        layout_item.styles.clone(),
+        current_box.get_computed_style(),
         Stylesheet::compute(tw_area.stylesheet.find_styles_by_ids(vec!["style2"]))
       );
     });

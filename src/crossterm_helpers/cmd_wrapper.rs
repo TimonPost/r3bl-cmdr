@@ -115,10 +115,10 @@ pub enum TWCommand {
   SetFgColor(Color),
   SetBgColor(Color),
   ResetColor,
-  Print(String),
+  Print(String, Option<Style>),
   CursorShow,
   CursorHide,
-  TODO,
+  ApplyStyle(Option<Style>),
 }
 
 impl TWCommand {
@@ -161,7 +161,7 @@ impl TWCommandQueue {
     self.queue.push(cmd_wrapper);
   }
 
-  pub fn flush(&mut self) {
+  pub fn flush(&self) {
     self.queue.iter().for_each(|cmd_wrapper| match cmd_wrapper {
       TWCommand::EnableRawMode => {
         exec!(terminal::enable_raw_mode(), "EnableRawMode")
@@ -191,31 +191,39 @@ impl TWCommandQueue {
         exec!(queue!(stdout(), terminal::Clear(ClearType::All)), "ClearScreen")
       }
       TWCommand::SetFgColor(color) => {
-        exec!(
-          queue!(stdout(), style::SetForegroundColor(*color)),
-          format!("SetFgColor({:?})", color)
-        )
+        exec!(queue!(stdout(), style::SetForegroundColor(*color)), format!("SetFgColor({:?})", color))
       }
       TWCommand::SetBgColor(color) => {
-        exec!(
-          queue!(stdout(), style::SetBackgroundColor(*color)),
-          format!("SetBgColor({:?})", color)
-        )
+        exec!(queue!(stdout(), style::SetBackgroundColor(*color)), format!("SetBgColor({:?})", color))
       }
       TWCommand::ResetColor => {
         exec!(queue!(stdout(), style::ResetColor), "ResetColor")
-      }
-      TWCommand::Print(content) => {
-        exec!(
-          queue!(stdout(), style::Print(content.clone())),
-          format!("Print({:?})", content)
-        )
       }
       TWCommand::CursorShow => {
         exec!(queue!(stdout(), Show), "CursorShow")
       }
       TWCommand::CursorHide => {
         exec!(queue!(stdout(), Hide), "CursorHide")
+      }
+      TWCommand::Print(text, style) => {
+        if style.is_some() {
+          // TODO: Use `style` to set `Attribute`:
+          // Docs: https://docs.rs/crossterm/latest/crossterm/style/index.html#attributes
+          let mut style = style.clone().unwrap();
+          exec!(queue!(stdout(), style::Print(text.clone())), format!("Print({:?})", text))
+        } else {
+          exec!(queue!(stdout(), style::Print(text.clone())), format!("Print({:?})", text))
+        }
+      }
+      TWCommand::ApplyStyle(style) => {
+        if style.is_some() {
+          // TODO: Use `style` to set `Color`s:
+          // Docs: https://docs.rs/crossterm/latest/crossterm/style/index.html#colors
+          let mut style = style.clone().unwrap();
+          let mask = style.get_bitflags();
+          if mask.contains(StyleFlag::COLOR_BG_SET) {}
+          if mask.contains(StyleFlag::COLOR_FG_SET) {}
+        }
       }
       _ => {
         unimplemented!("TWCommandQueue::flush() 🧨 {:?} not implemented", cmd_wrapper)

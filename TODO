@@ -1,6 +1,13 @@
-add layout engine:
+impl styling support:
   ✔ impl `tw_area.rs::paint_inside_box()` to emit `TWCommand::Print` @done(22-06-28 20:40)
+  ✔ clean up `base_units.rs` w/ macro @done(22-06-29 11:07)
+  ✔ clean up `tw_box.rs` and remove needless `Option` wrapper for properties @done(22-06-29 20:23)
+  ✔ fix position calc `tw_area.rs::paint_inside_box()` using origin @done(22-06-29 20:26)
+  ☐ impl `cmd_wrapper.rs::TWCommand::Print(..., style)` -> Attribute
+  ☐ impl `cmd_wrapper.rs::TWCommand::ApplyStyle(style)` -> Color
   ☐ impl `tw_area.rs::paint_inside_box()` to emit styling commands
+
+add layout engine:
   ☐ copy 2 col layout from `tw_area_test.rs` into `app_with_layout.rs`
   ☐ save `app_without_layout.rs` for future use w/ routing below
   ☐ test 2 col layout!
@@ -21,6 +28,7 @@ focus mgmt:
 support for graphemes & text wrapping:
   ☐ `unicode-width` crate
   ☐ `textwrap` crate
+  ☐ Update `tw_area.rs::print_inside_box()` to support graphemes & text wrapping
 
 pre built components - multi select chooser:
   ☐ TODO

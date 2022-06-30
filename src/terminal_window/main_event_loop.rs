@@ -58,11 +58,7 @@ impl TerminalWindow {
   /// S: Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   /// A: Default + Clone + Sync + Send,
   /// ```
-  pub async fn main_event_loop<S, A>(
-    store: Store<S, A>,
-    shared_render: SharedRender<S, A>,
-    exit_keys: Vec<KeyEvent>,
-  ) -> CommonResult<()>
+  pub async fn main_event_loop<S, A>(store: Store<S, A>, shared_render: SharedRender<S, A>, exit_keys: Vec<KeyEvent>) -> CommonResult<()>
   where
     S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static,
     A: Display + Default + Clone + Sync + Send + 'static,
@@ -83,21 +79,9 @@ impl TerminalWindow {
       let mut stream = EventStream::new();
 
       // Perform first render.
-      TWSubscriber::render(
-        &shared_store,
-        &shared_render,
-        shared_window.read().await.size,
-        None,
-      )
-      .await?;
+      TWSubscriber::render(&shared_store, &shared_render, shared_window.read().await.size, None).await?;
 
-      call_if_true!(
-        DEBUG,
-        shared_window
-          .read()
-          .await
-          .log_state("main_event_loop -> Startup 🚀")
-      );
+      call_if_true!(DEBUG, shared_window.read().await.log_state("main_event_loop -> Startup 🚀"));
 
       // Main event loop.
       loop {
@@ -106,10 +90,7 @@ impl TerminalWindow {
 
         // Process the input_event.
         if let Some(input_event) = maybe_input_event {
-          call_if_true!(
-            DEBUG,
-            log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event)
-          );
+          call_if_true!(DEBUG, log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event));
 
           match DefaultInputEventHandler::no_consume(input_event, &exit_keys).await {
             Continuation::Exit => {
@@ -119,9 +100,7 @@ impl TerminalWindow {
               shared_window.write().await.set_size(new_size);
               TWSubscriber::render(&shared_store, &shared_render, new_size, None).await?;
             }
-            Continuation::Continue => {
-              TWSubscriber::handle_input(&shared_window, &shared_store, &shared_render, &input_event).await?
-            }
+            Continuation::Continue => TWSubscriber::handle_input(&shared_window, &shared_store, &shared_render, &input_event).await?,
           };
         }
         TWCommand::flush();
@@ -148,13 +127,7 @@ where
 {
   async fn run(&self, my_state: S) {
     let window_size = self.shared_window.read().await.size;
-    let result = TWSubscriber::render(
-      &self.shared_store,
-      &self.shared_render,
-      window_size,
-      Some(my_state),
-    )
-    .await;
+    let result = TWSubscriber::render(&self.shared_store, &self.shared_render, window_size, Some(my_state)).await;
     if let Err(e) = result {
       log_no_err!(ERROR, "MySubscriber::run -> Error: {}", e);
     }
@@ -166,11 +139,7 @@ where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   A: Display + Default + Clone + Sync + Send,
 {
-  fn new_box(
-    shared_draw: &SharedRender<S, A>,
-    shared_store: &SharedStore<S, A>,
-    shared_window: &SharedWindow,
-  ) -> Box<Self> {
+  fn new_box(shared_draw: &SharedRender<S, A>, shared_store: &SharedStore<S, A>, shared_window: &SharedWindow) -> Box<Self> {
     Box::new(TWSubscriber {
       shared_render: shared_draw.clone(),
       shared_store: shared_store.clone(),
@@ -209,25 +178,15 @@ where
         my_state.unwrap()
       };
 
-      let render_result = shared_render
-        .write()
-        .await
-        .render(&state, &shared_store, window_size)
-        .await;
+      let render_result = shared_render.write().await.render(&state, &shared_store, window_size).await;
       match render_result {
         Err(error) => {
           TWCommand::flush();
-          call_if_true!(
-            DEBUG,
-            log_no_err!(ERROR, "MySubscriber::run draw error: {}", error)
-          );
+          call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::run draw error: {}", error));
         }
-        Ok(mut command_queue) => {
+        Ok(command_queue) => {
           command_queue.flush();
-          call_if_true!(
-            DEBUG,
-            log_no_err!(INFO, "MySubscriber::run draw: {}, {}", window_size, state)
-          );
+          call_if_true!(DEBUG, log_no_err!(INFO, "MySubscriber::run draw: {}, {}", window_size, state));
         }
       }
     });
