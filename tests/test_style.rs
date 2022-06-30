@@ -28,9 +28,9 @@ fn test_bitflags() {
     as mask1,
     run {
       mask1.insert(StyleFlag::UNDERLINE_SET);
-      mask1.insert(StyleFlag::ITALIC_SET);
+      mask1.insert(StyleFlag::DIM_SET);
       assert!(mask1.contains(StyleFlag::UNDERLINE_SET));
-      assert!(mask1.contains(StyleFlag::ITALIC_SET));
+      assert!(mask1.contains(StyleFlag::DIM_SET));
       assert!(!mask1.contains(StyleFlag::COLOR_FG_SET));
       assert!(!mask1.contains(StyleFlag::COLOR_BG_SET));
       assert!(!mask1.contains(StyleFlag::BOLD_SET));
@@ -39,11 +39,11 @@ fn test_bitflags() {
   };
 
   with_mut! {
-    StyleFlag::BOLD_SET | StyleFlag::ITALIC_SET,
+    StyleFlag::BOLD_SET | StyleFlag::DIM_SET,
     as mask2,
     run {
       assert!(mask2.contains(StyleFlag::BOLD_SET));
-      assert!(mask2.contains(StyleFlag::ITALIC_SET));
+      assert!(mask2.contains(StyleFlag::DIM_SET));
       assert!(!mask2.contains(StyleFlag::UNDERLINE_SET));
       assert!(!mask2.contains(StyleFlag::COLOR_FG_SET));
       assert!(!mask2.contains(StyleFlag::COLOR_BG_SET));
@@ -61,28 +61,28 @@ fn test_style() {
   debug!(style);
   debug!(bitflags);
   assert!(bitflags.contains(StyleFlag::BOLD_SET));
-  assert!(bitflags.contains(StyleFlag::ITALIC_SET));
+  assert!(bitflags.contains(StyleFlag::DIM_SET));
   assert!(!bitflags.contains(StyleFlag::UNDERLINE_SET));
 }
 
 #[test]
 fn test_cascade_style() {
   let style_bold_green_fg = StyleBuilder::new().set_bold(true).set_color_fg(Some(Color::Green)).build();
-  let style_italic = StyleBuilder::new().set_italic(true).build();
+  let style_italic = StyleBuilder::new().set_dim(true).build();
   let style_yellow_bg = StyleBuilder::new().set_color_bg(Some(Color::Yellow)).build();
   let style_margin = StyleBuilder::new().set_margin(Some(2)).build();
   let style_red_fg = StyleBuilder::new().set_color_fg(Some(Color::Red)).build();
 
   let mut computed_style = style_bold_green_fg + style_italic + style_yellow_bg + style_margin + style_red_fg;
 
-  assert!(computed_style.get_bitflags().contains(
-    StyleFlag::COLOR_FG_SET | StyleFlag::COLOR_BG_SET | StyleFlag::BOLD_SET | StyleFlag::ITALIC_SET | StyleFlag::MARGIN_SET | StyleFlag::COMPUTED_SET
-  ));
+  assert!(computed_style
+    .get_bitflags()
+    .contains(StyleFlag::COLOR_FG_SET | StyleFlag::COLOR_BG_SET | StyleFlag::BOLD_SET | StyleFlag::DIM_SET | StyleFlag::MARGIN_SET | StyleFlag::COMPUTED_SET));
 
   assert_eq!(computed_style.color_bg.unwrap(), Color::Yellow);
   assert_eq!(computed_style.color_fg.unwrap(), Color::Red);
   assert!(computed_style.bold);
-  assert!(computed_style.italic);
+  assert!(computed_style.dim);
   assert!(computed_style.computed);
   assert_eq!(computed_style.margin.unwrap(), 2);
   assert!(!computed_style.underline);
@@ -120,7 +120,7 @@ fn make_a_style(id: &str) -> Style {
     .set_id(id.to_string())
     .set_color_bg(Some(black))
     .set_color_fg(Some(black))
-    .set_italic(true)
+    .set_dim(true)
     .set_bold(true)
     .build()
 }

@@ -4,27 +4,32 @@
 			"path": "src/layout/tw_area.rs",
 			"bookmarks": [
 				{
-					"line": 94,
-					"column": 0,
+					"line": 81,
+					"column": 2,
 					"label": ""
 				},
 				{
-					"line": 113,
-					"column": 0,
+					"line": 87,
+					"column": 8,
+					"label": ""
+				},
+				{
+					"line": 101,
+					"column": 8,
 					"label": ""
 				}
 			]
 		},
 		{
-			"path": "src/crossterm_helpers/cmd_wrapper.rs",
+			"path": "src/crossterm_helpers/tw_command.rs",
 			"bookmarks": [
 				{
-					"line": 210,
+					"line": 215,
 					"column": 10,
 					"label": ""
 				},
 				{
-					"line": 232,
+					"line": 237,
 					"column": 0,
 					"label": ""
 				}
@@ -34,7 +39,7 @@
 			"path": "src/layout/tw_box.rs",
 			"bookmarks": [
 				{
-					"line": 85,
+					"line": 79,
 					"column": 8,
 					"label": ""
 				}

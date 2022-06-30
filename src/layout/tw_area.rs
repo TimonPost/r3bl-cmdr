@@ -86,26 +86,28 @@ impl LayoutManagement for TWArea {
         let content_y: UnitType = 1;
 
         // TODO: Use `convert_to_base_unit!(text.len());` w/ graphemes & text wrapping.
+        let _content_x = convert_to_base_unit!(text.len());
         let content_x: UnitType = 0;
 
-        // Update the `content_cursor_pos` (will be initialized for `self.current_box()?` if it
+        // Update the `content_cursor_pos` (will be initialized for `self.current_box()` if it
         // doesn't exist yet).
         let content_size = (content_x, content_y).into();
         let content_relative_pos = self.calc_where_to_insert_new_content_in_box(content_size)?;
 
         // Get the current box & its style.
         let current_box = self.current_box()?;
-        let box_origin_pos = current_box.origin_pos;
+        let box_origin_pos = current_box.origin_pos; // Adjusted for style margin.
+        let _box_bound_size = current_box.bounds_size; // Adjusted for style margin.
 
-        // TODO: Take `self.current_box()?.origin` into account when calculating the `new_pos`.
+        // TODO: Use `_box_bound_size` and `_content_x` to wrap or clip text.
+
+        // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
         let new_absolute_pos = box_origin_pos + content_relative_pos;
 
-        // Queue a bunch of `TWCommand` to paint the text.
+        // Queue a bunch of `TWCommand`s to paint the text.
         let move_to_cmd = TWCommand::MoveCursorPosition(new_absolute_pos.into());
-
-        // Handle styling via `Attributes` and `Color`s.
-        let style_cmd = TWCommand::ApplyStyle(current_box.get_computed_style());
-        let print_cmd = TWCommand::Print(text.to_string(), current_box.get_computed_style());
+        let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
+        let print_cmd = TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
 
         self.render_buffer += tw_queue!(move_to_cmd, style_cmd, print_cmd);
       }
@@ -158,10 +160,7 @@ impl PerformPositioningAndSizing for TWArea {
 
       let container_bounds = current_box.bounds_size;
 
-      let requested_size_allocation = Size::from((
-        calc_percentage(width_pc, container_bounds.width),
-        calc_percentage(height_pc, container_bounds.height),
-      ));
+      let requested_size_allocation = Size::from((calc_percentage(width_pc, container_bounds.width), calc_percentage(height_pc, container_bounds.height)));
 
       let old_position = unwrap_or_err! {
         current_box.box_cursor_pos,

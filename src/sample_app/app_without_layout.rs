@@ -43,7 +43,7 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
         TWCommand::ClearScreen,
         TWCommand::ResetColor,
         TWCommand::MoveCursorPosition((x, y)),
-        TWCommand::Print(colored_content, None),
+        TWCommand::PrintWithAttributes(colored_content, None),
         TWCommand::ResetColor
       );
 

@@ -53,13 +53,13 @@ use crate::*;
 #[macro_export]
 macro_rules! raw_mode {
   ($code_block: stmt) => {{
-    use crate::*;
+    use $crate::*;
     let _raw_mode = RawMode::start();
     $code_block
     Ok(())
   }};
   ($code_block: block) => {{
-    use crate::*;
+    use $crate::*;
     let _raw_mode = RawMode::start();
     $code_block
     Ok(())

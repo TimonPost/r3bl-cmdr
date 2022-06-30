@@ -3,9 +3,11 @@ impl styling support:
   ✔ clean up `base_units.rs` w/ macro @done(22-06-29 11:07)
   ✔ clean up `tw_box.rs` and remove needless `Option` wrapper for properties @done(22-06-29 20:23)
   ✔ fix position calc `tw_area.rs::paint_inside_box()` using origin @done(22-06-29 20:26)
-  ☐ impl `cmd_wrapper.rs::TWCommand::Print(..., style)` -> Attribute
-  ☐ impl `cmd_wrapper.rs::TWCommand::ApplyStyle(style)` -> Color
-  ☐ impl `tw_area.rs::paint_inside_box()` to emit styling commands
+  ✔ impl `cmd_wrapper.rs::TWCommand::Print(..., style)` -> Attribute @done(22-06-30 19:21)
+  ✔ impl `cmd_wrapper.rs::TWCommand::ApplyStyle(style)` -> Color @done(22-06-30 19:21)
+  ✔ impl `tw_area.rs::paint_inside_box()` to emit styling commands @done(22-06-30 19:21)
+  ✔ update test_tw_area.rs to pretty print `TWCommandQueue` @done(22-06-30 19:22)
+  ☐ update test_tw_area.rs w/ real styles (different margins, colors, attributes)
 
 add layout engine:
   ☐ copy 2 col layout from `tw_area_test.rs` into `app_with_layout.rs`

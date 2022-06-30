@@ -56,3 +56,6 @@ readonly = "0.2.1"
 # For lolcat.
 rand = "0.8.5"
 atty = "0.2.14"
+
+# Lazy static macro.
+lazy_static = "1.4.0"

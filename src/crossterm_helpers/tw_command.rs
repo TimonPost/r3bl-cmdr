@@ -23,8 +23,10 @@ use crossterm::{
   terminal::{self, *},
   *,
 };
+use lazy_static::lazy_static;
 use r3bl_rs_utils::*;
 use std::{
+  collections::HashMap,
   fmt::Display,
   io::{stderr, stdout, Write},
   ops::AddAssign,
@@ -115,10 +117,10 @@ pub enum TWCommand {
   SetFgColor(Color),
   SetBgColor(Color),
   ResetColor,
-  Print(String, Option<Style>),
+  ApplyColors(Option<Style>),
+  PrintWithAttributes(String, Option<Style>),
   CursorShow,
   CursorHide,
-  ApplyStyle(Option<Style>),
 }
 
 impl TWCommand {
@@ -139,14 +141,17 @@ impl TWCommand {
 /// queue.add(Command::ClearScreen);
 /// queue.flush();
 /// ```
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct TWCommandQueue {
   pub queue: Vec<TWCommand>,
 }
 
 impl Display for TWCommandQueue {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    write!(f, "{:?}", self)
+    for cmd in &self.queue {
+      writeln!(f, "{:?}", cmd)?;
+    }
+    Ok(())
   }
 }
 
@@ -161,6 +166,7 @@ impl TWCommandQueue {
     self.queue.push(cmd_wrapper);
   }
 
+  #[allow(unreachable_patterns)]
   pub fn flush(&self) {
     self.queue.iter().for_each(|cmd_wrapper| match cmd_wrapper {
       TWCommand::EnableRawMode => {
@@ -205,24 +211,56 @@ impl TWCommandQueue {
       TWCommand::CursorHide => {
         exec!(queue!(stdout(), Hide), "CursorHide")
       }
-      TWCommand::Print(text, style) => {
+      TWCommand::ApplyColors(style) => {
         if style.is_some() {
-          // TODO: Use `style` to set `Attribute`:
-          // Docs: https://docs.rs/crossterm/latest/crossterm/style/index.html#attributes
-          let _style = style.clone().unwrap();
-          exec!(queue!(stdout(), style::Print(text.clone())), format!("Print({:?})", text))
-        } else {
-          exec!(queue!(stdout(), style::Print(text.clone())), format!("Print({:?})", text))
-        }
-      }
-      TWCommand::ApplyStyle(style) => {
-        if style.is_some() {
-          // TODO: Use `style` to set `Color`s:
+          // Use Style to set crossterm Colors.
           // Docs: https://docs.rs/crossterm/latest/crossterm/style/index.html#colors
           let mut style = style.clone().unwrap();
           let mask = style.get_bitflags();
-          if mask.contains(StyleFlag::COLOR_BG_SET) {}
-          if mask.contains(StyleFlag::COLOR_FG_SET) {}
+          if mask.contains(StyleFlag::COLOR_BG_SET) {
+            let color_bg = style.color_bg.unwrap();
+            exec!(
+              queue!(stdout(), style::SetBackgroundColor(color_bg)),
+              format!("ApplyColors -> SetBackgroundColor({:?})", color_bg)
+            )
+          }
+          if mask.contains(StyleFlag::COLOR_FG_SET) {
+            let color_fg = style.color_fg.unwrap();
+            exec!(
+              queue!(stdout(), style::SetForegroundColor(color_fg)),
+              format!("ApplyColors -> SetForegroundColor({:?})", color_fg)
+            )
+          }
+        }
+      }
+      TWCommand::PrintWithAttributes(text, style) => {
+        if style.is_some() {
+          // Use Style to set crossterm Attributes.
+          // Docs: https://docs.rs/crossterm/latest/crossterm/style/index.html#attributes
+          let mut style = style.clone().unwrap();
+          let mask = style.get_bitflags();
+          let mut needs_reset = false;
+
+          STYLE_TO_ATTRIBUTE_MAP.iter().for_each(|(flag, attr)| {
+            if mask.contains(*flag) {
+              exec!(
+                queue!(stdout(), style::SetAttribute(*attr)),
+                format!("PrintWithAttributes -> SetAttribute({:?})", attr)
+              );
+              needs_reset = true;
+            }
+          });
+
+          exec!(queue!(stdout(), style::Print(text.clone())), format!("PrintWithAttributes -> Print({:?})", text));
+
+          if needs_reset {
+            exec!(
+              queue!(stdout(), SetAttribute(Attribute::Reset)),
+              format!("PrintWithAttributes -> SetAttribute(Reset))")
+            );
+          }
+        } else {
+          exec!(queue!(stdout(), style::Print(text.clone())), format!("PrintWithAttributes -> Print({:?})", text))
         }
       }
       _ => {
@@ -230,6 +268,20 @@ impl TWCommandQueue {
       }
     });
 
+    // Flush all the commands that were added via calls to `queue!` above.
     TWCommand::flush();
   }
+}
+
+lazy_static! {
+  static ref STYLE_TO_ATTRIBUTE_MAP: HashMap<StyleFlag, Attribute> = {
+    let mut map = HashMap::new();
+    map.insert(StyleFlag::BOLD_SET, Attribute::Bold);
+    map.insert(StyleFlag::DIM_SET, Attribute::Dim);
+    map.insert(StyleFlag::UNDERLINE_SET, Attribute::Underlined);
+    map.insert(StyleFlag::REVERSE_SET, Attribute::Reverse);
+    map.insert(StyleFlag::HIDDEN_SET, Attribute::Hidden);
+    map.insert(StyleFlag::STRIKETHROUGH_SET, Attribute::Fraktur);
+    map
+  };
 }

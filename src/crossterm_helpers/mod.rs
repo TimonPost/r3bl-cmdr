@@ -36,12 +36,12 @@
 
 // Attach source files.
 pub mod raw_mode;
-pub mod cmd_wrapper;
+pub mod tw_command;
 pub mod input_event;
 pub mod event_stream_ext;
 
 // Re-export everything from attached source files.
-pub use cmd_wrapper::*;
+pub use tw_command::*;
 pub use event_stream_ext::*;
 pub use input_event::*;
 pub use raw_mode::*;

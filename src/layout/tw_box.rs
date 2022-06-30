@@ -15,6 +15,8 @@
  *   limitations under the License.
 */
 
+use std::fmt::Debug;
+
 use crate::*;
 use r3bl_rs_utils::Builder;
 
@@ -52,15 +54,7 @@ impl TWBox {
   }
 
   /// Explicitly set the position & size of our box.
-  pub fn make_root_box(
-    id: String,
-    size: Size,
-    origin_pos: Position,
-    width_pc: Percent,
-    height_pc: Percent,
-    dir: Direction,
-    computed_style: Option<Style>,
-  ) -> TWBox {
+  pub fn make_root_box(id: String, size: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent, dir: Direction, computed_style: Option<Style>) -> TWBox {
     let bounds_size = Size::from((calc_percentage(width_pc, size.width), calc_percentage(height_pc, size.height)));
     TWBoxBuilder::new()
       .set_id(id)
@@ -85,10 +79,7 @@ impl TWBox {
   ) -> Self {
     // Adjust `bounds_size` & `origin` based on the style's margin.
     let mut style_adjusted_origin = origin_pos;
-    let mut style_adjusted_bounds_size = Size::from((
-      calc_percentage(width_pc, container_bounds.width),
-      calc_percentage(height_pc, container_bounds.height),
-    ));
+    let mut style_adjusted_bounds_size = Size::from((calc_percentage(width_pc, container_bounds.width), calc_percentage(height_pc, container_bounds.height)));
     if let Some(ref style) = computed_style {
       if let Some(margin) = style.margin {
         style_adjusted_origin += margin;
@@ -115,7 +106,12 @@ macro_rules! format_option {
   };
 }
 
-impl std::fmt::Debug for TWBox {
+#[derive(Clone, Copy, Debug)]
+enum FormatMsg {
+  None,
+}
+
+impl Debug for TWBox {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.debug_struct("TWBox")
       .field("id", &self.id)
@@ -128,10 +124,4 @@ impl std::fmt::Debug for TWBox {
       .field("styles", format_option!(&self.computed_style))
       .finish()
   }
-}
-
-#[non_exhaustive]
-#[derive(Clone, Copy, Debug)]
-enum FormatMsg {
-  None,
 }

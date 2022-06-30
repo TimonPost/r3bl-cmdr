@@ -15,22 +15,26 @@
  *   limitations under the License.
 */
 
-use std::ops::{Add, AddAssign};
-
-use crate::UnitType;
+use crate::*;
 use bitflags::bitflags;
+use core::fmt::Debug;
 use crossterm::style::Color;
 use r3bl_rs_utils::{unwrap_option_or_compute_if_none, Builder};
+use std::fmt::Formatter;
+use std::ops::{Add, AddAssign};
 
 /// Use the `StyleBuilder` to create a `Style`. `Style` objects are meant to be immutable.
 /// If you need to modify a `Style`, you should use the `StyleBuilder` to create a new
 /// one.
-#[derive(Default, Builder, Debug, Clone, PartialEq, Eq)]
+#[derive(Default, Builder, Clone, PartialEq, Eq)]
 pub struct Style {
   pub id: String,
   pub bold: bool,
-  pub italic: bool,
+  pub dim: bool,
   pub underline: bool,
+  pub reverse: bool,
+  pub hidden: bool,
+  pub fraktur: bool,
   pub computed: bool,
   pub color_fg: Option<Color>,
   pub color_bg: Option<Color>,
@@ -38,16 +42,84 @@ pub struct Style {
   pub cached_bitflags: Option<StyleFlag>,
 }
 
+enum DebugColor {
+  None,
+  DebugRgb(Color),
+}
+
+impl DebugColor {
+  fn from(color: Option<Color>) -> DebugColor {
+    match color {
+      Some(color) => DebugColor::DebugRgb(color),
+      None => DebugColor::None,
+    }
+  }
+}
+
+impl Debug for DebugColor {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    if let DebugColor::None = self {
+      return Ok(());
+    }
+    if let DebugColor::DebugRgb(Color::Rgb { r, g, b }) = self {
+      f.write_fmt(format_args!("{},{},{}", r, g, b))
+    } else {
+      f.write_fmt(format_args!("{:?}", self))
+    }
+  }
+}
+
+impl Debug for Style {
+  fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+    let mut msg_vec: Vec<String> = vec![];
+    if self.computed {
+      msg_vec.push("computed".to_string())
+    } else {
+      msg_vec.push(self.id.to_string());
+    }
+    if self.bold {
+      msg_vec.push("bold".to_string())
+    }
+    if self.dim {
+      msg_vec.push("dim".to_string())
+    }
+    if self.underline {
+      msg_vec.push("underline".to_string())
+    }
+    if self.reverse {
+      msg_vec.push("reverse".to_string())
+    }
+    if self.hidden {
+      msg_vec.push("hidden".to_string())
+    }
+    if self.fraktur {
+      msg_vec.push("fraktur".to_string())
+    }
+
+    write!(
+      f,
+      "Style {{ {} | fg: {:?} | bg: {:?} | margin: {:?} }}",
+      msg_vec.join("+"),
+      DebugColor::from(self.color_fg),
+      DebugColor::from(self.color_bg),
+      if self.margin.is_some() { self.margin.unwrap() } else { 0 }
+    )
+  }
+}
+
 bitflags! {
   /// https://docs.rs/bitflags/0.8.2/bitflags/macro.bitflags.html
   pub struct StyleFlag: u8 {
-    const COLOR_FG_SET  = 0b0000_0001;
-    const COLOR_BG_SET  = 0b0000_0010;
-    const BOLD_SET      = 0b0000_0100;
-    const ITALIC_SET    = 0b0000_1000;
-    const UNDERLINE_SET = 0b0001_0000;
-    const MARGIN_SET    = 0b0010_0000;
-    const COMPUTED_SET  = 0b0100_0000;
+    const COLOR_FG_SET        = 0b0000_0001;
+    const COLOR_BG_SET        = 0b0000_0010;
+    const BOLD_SET            = 0b0000_0100;
+    const DIM_SET             = 0b0000_1000;
+    const UNDERLINE_SET       = 0b0001_0000;
+    const MARGIN_SET          = 0b0010_0000;
+    const COMPUTED_SET        = 0b0100_0000;
+    const REVERSE_SET         = 0b1000_0000;
+    const HIDDEN_SET          = 0b1000_0001;
+    const STRIKETHROUGH_SET   = 0b1000_0010;
   }
 }
 
@@ -81,8 +153,8 @@ impl Style {
     if self.bold {
       it.insert(StyleFlag::BOLD_SET);
     }
-    if self.italic {
-      it.insert(StyleFlag::ITALIC_SET);
+    if self.dim {
+      it.insert(StyleFlag::DIM_SET);
     }
     if self.underline {
       it.insert(StyleFlag::UNDERLINE_SET);
@@ -119,8 +191,8 @@ impl Add<Self> for Style {
     if other.bold {
       self.bold = true;
     }
-    if other.italic {
-      self.italic = true;
+    if other.dim {
+      self.dim = true;
     }
     if other.underline {
       self.underline = true;

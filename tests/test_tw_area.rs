@@ -29,6 +29,7 @@ fn test_simple_2_col_layout() -> CommonResult<()> {
     tw_area.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size((500, 500).into()).build())?;
     create_main_container(&mut tw_area)?;
     tw_area.area_end()?;
+    println!("{}", tw_area.render_buffer);
   });
 }
 
@@ -147,7 +148,7 @@ fn create_style(id: &str) -> Style {
     .set_id(id.to_string())
     .set_color_bg(Some(black))
     .set_color_fg(Some(black))
-    .set_italic(true)
+    .set_dim(true)
     .set_bold(true)
     .set_margin(Some(2))
     .build()
