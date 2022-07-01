@@ -1,19 +1,19 @@
 /*
  *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
-
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
-
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 use crate::*;
 use rand::thread_rng;
@@ -120,9 +120,7 @@ pub struct Lolcat {
 impl Lolcat {
   pub fn new() -> Self {
     let control = ColorWheelControl::default();
-    Self {
-      color_wheel_control: control,
-    }
+    Self { color_wheel_control: control }
   }
 
   pub fn format_str(&mut self, input_str: &str) -> OutputCollector {
@@ -270,17 +268,7 @@ impl Lolcat {
     if self.color_wheel_control.background_mode {
       let bg = ColorUtils::get_color_tuple(&self.color_wheel_control);
       let fg = ColorUtils::calc_fg_color(bg);
-      my_print!(
-        output_vec,
-        "\x1b[38;2;{};{};{};48;2;{};{};{}m{}",
-        fg.0,
-        fg.1,
-        fg.2,
-        bg.0,
-        bg.1,
-        bg.2,
-        character
-      );
+      my_print!(output_vec, "\x1b[38;2;{};{};{};48;2;{};{};{}m{}", fg.0, fg.1, fg.2, bg.0, bg.1, bg.2, character);
     } else {
       let fg = ColorUtils::get_color_tuple(&self.color_wheel_control);
       my_print!(output_vec, "\x1b[38;2;{};{};{}m{}", fg.0, fg.1, fg.2, character);

@@ -1,19 +1,19 @@
 /*
  *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
-
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
-
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 //! Background information on terminals, VT100, ANSI, ASCII, etc.
 //!
@@ -35,16 +35,18 @@
 //! - Windows Terminal (bash): https://www.makeuseof.com/windows-terminal-vs-powershell/
 
 // Attach source files.
+pub mod tw_color;
 pub mod raw_mode;
 pub mod tw_command;
 pub mod input_event;
 pub mod event_stream_ext;
 
 // Re-export everything from attached source files.
-pub use tw_command::*;
 pub use event_stream_ext::*;
 pub use input_event::*;
 pub use raw_mode::*;
+pub use tw_color::*;
+pub use tw_command::*;
 
 /// If set to true, and the [log!] fails, then it will print the error to stderr.
 pub const DEBUG: bool = true;

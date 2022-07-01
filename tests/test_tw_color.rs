@@ -15,14 +15,21 @@
  *   limitations under the License.
  */
 
-// Attach files.
-mod type_alias;
-mod main_event_loop;
-mod default_input_event_handler;
-mod render;
+use crossterm::style::Color;
+use r3bl_cmdr::TWColor;
 
-// Re-export.
-pub use default_input_event_handler::*;
-pub use main_event_loop::*;
-pub use render::*;
-pub use type_alias::*;
+#[test]
+fn test_serde_tw_color_simple() {
+  let color: TWColor = Color::Red.into();
+  let ser_str = serde_json::to_string(&color).unwrap();
+  let og_color: TWColor = serde_json::from_str(&ser_str).unwrap();
+  assert_eq!(color, og_color);
+}
+
+#[test]
+fn test_serde_tw_color_rgb() {
+  let color: TWColor = Color::Rgb { r: 0, g: 0, b: 0 }.into();
+  let ser_str = serde_json::to_string(&color).unwrap();
+  let og_color: TWColor = serde_json::from_str(&ser_str).unwrap();
+  assert_eq!(color, og_color);
+}

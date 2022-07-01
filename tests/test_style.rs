@@ -1,25 +1,25 @@
 /*
  *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
-
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
-
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 //! https://docs.rs/bitmask/latest/bitmask/macro.bitmask.html
 
-use crossterm::style::Color;
-use r3bl_cmdr::{Style, StyleBuilder, StyleFlag, Stylesheet};
-use r3bl_rs_utils::{debug, with_mut};
+use crossterm::style::*;
+use r3bl_cmdr::*;
+use r3bl_rs_utils::*;
 
 #[test]
 fn test_bitflags() {
@@ -67,11 +67,11 @@ fn test_style() {
 
 #[test]
 fn test_cascade_style() {
-  let style_bold_green_fg = StyleBuilder::new().set_bold(true).set_color_fg(Some(Color::Green)).build();
+  let style_bold_green_fg = StyleBuilder::new().set_bold(true).set_color_fg(Some(Color::Green.into())).build();
   let style_italic = StyleBuilder::new().set_dim(true).build();
-  let style_yellow_bg = StyleBuilder::new().set_color_bg(Some(Color::Yellow)).build();
+  let style_yellow_bg = StyleBuilder::new().set_color_bg(Some(Color::Yellow.into())).build();
   let style_margin = StyleBuilder::new().set_margin(Some(2)).build();
-  let style_red_fg = StyleBuilder::new().set_color_fg(Some(Color::Red)).build();
+  let style_red_fg = StyleBuilder::new().set_color_fg(Some(Color::Red.into())).build();
 
   let mut computed_style = style_bold_green_fg + style_italic + style_yellow_bg + style_margin + style_red_fg;
 
@@ -79,8 +79,8 @@ fn test_cascade_style() {
     .get_bitflags()
     .contains(StyleFlag::COLOR_FG_SET | StyleFlag::COLOR_BG_SET | StyleFlag::BOLD_SET | StyleFlag::DIM_SET | StyleFlag::MARGIN_SET | StyleFlag::COMPUTED_SET));
 
-  assert_eq!(computed_style.color_bg.unwrap(), Color::Yellow);
-  assert_eq!(computed_style.color_fg.unwrap(), Color::Red);
+  assert_eq!(computed_style.color_bg.unwrap(), Color::Yellow.into());
+  assert_eq!(computed_style.color_fg.unwrap(), Color::Red.into());
   assert!(computed_style.bold);
   assert!(computed_style.dim);
   assert!(computed_style.computed);
@@ -118,8 +118,8 @@ fn make_a_style(id: &str) -> Style {
   let black = Color::Rgb { r: 0, g: 0, b: 0 };
   StyleBuilder::new()
     .set_id(id.to_string())
-    .set_color_bg(Some(black))
-    .set_color_fg(Some(black))
+    .set_color_bg(Some(black.into()))
+    .set_color_fg(Some(black.into()))
     .set_dim(true)
     .set_bold(true)
     .build()

@@ -1,19 +1,19 @@
 /*
  *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
-
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
-
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 use crate::*;
 use async_trait::async_trait;
@@ -157,20 +157,11 @@ where
     throws!({
       let latest_state = shared_store.read().await.get_state();
       let window_size = shared_window.read().await.size;
-      shared_render
-        .read()
-        .await
-        .handle_event(input_event, &latest_state, shared_store, window_size)
-        .await?
+      shared_render.read().await.handle_event(input_event, &latest_state, shared_store, window_size).await?
     });
   }
 
-  pub async fn render(
-    shared_store: &SharedStore<S, A>,
-    shared_render: &SharedRender<S, A>,
-    window_size: Size,
-    my_state: Option<S>,
-  ) -> CommonResult<()> {
+  pub async fn render(shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>, window_size: Size, my_state: Option<S>) -> CommonResult<()> {
     throws!({
       let state: S = if my_state.is_none() {
         shared_store.read().await.get_state()

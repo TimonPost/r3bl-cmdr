@@ -1,19 +1,19 @@
 /*
  *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
-
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
-
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 use crate::*;
 use crossterm::{
@@ -25,6 +25,8 @@ use crossterm::{
 };
 use lazy_static::lazy_static;
 use r3bl_rs_utils::*;
+use serde::{Deserialize, Serialize};
+
 use std::{
   collections::HashMap,
   fmt::Display,
@@ -37,6 +39,7 @@ use std::{
 ///
 /// Paste docs: https://github.com/dtolnay/paste
 #[macro_export]
+
 macro_rules! exec {
   ($cmd: expr, $msg: expr) => {{
     // Generate a new function that returns [CommonResult].
@@ -102,7 +105,7 @@ macro_rules! tw_queue {
   };
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum TWCommand {
   EnableRawMode,
@@ -114,8 +117,8 @@ pub enum TWCommand {
   /// (column / x , row / y).
   MoveCursorPosition((UnitType, UnitType)),
   ClearScreen,
-  SetFgColor(Color),
-  SetBgColor(Color),
+  SetFgColor(TWColor),
+  SetBgColor(TWColor),
   ResetColor,
   ApplyColors(Option<Style>),
   PrintWithAttributes(String, Option<Style>),
@@ -197,10 +200,10 @@ impl TWCommandQueue {
         exec!(queue!(stdout(), terminal::Clear(ClearType::All)), "ClearScreen")
       }
       TWCommand::SetFgColor(color) => {
-        exec!(queue!(stdout(), style::SetForegroundColor(*color)), format!("SetFgColor({:?})", color))
+        exec!(queue!(stdout(), style::SetForegroundColor(**color)), format!("SetFgColor({:?})", color))
       }
       TWCommand::SetBgColor(color) => {
-        exec!(queue!(stdout(), style::SetBackgroundColor(*color)), format!("SetBgColor({:?})", color))
+        exec!(queue!(stdout(), style::SetBackgroundColor(**color)), format!("SetBgColor({:?})", color))
       }
       TWCommand::ResetColor => {
         exec!(queue!(stdout(), style::ResetColor), "ResetColor")
@@ -220,15 +223,15 @@ impl TWCommandQueue {
           if mask.contains(StyleFlag::COLOR_BG_SET) {
             let color_bg = style.color_bg.unwrap();
             exec!(
-              queue!(stdout(), style::SetBackgroundColor(color_bg)),
-              format!("ApplyColors -> SetBackgroundColor({:?})", color_bg)
+              queue!(stdout(), style::SetBackgroundColor(*color_bg)),
+              format!("ApplyColors -> SetBackgroundColor({:?})", *color_bg)
             )
           }
           if mask.contains(StyleFlag::COLOR_FG_SET) {
             let color_fg = style.color_fg.unwrap();
             exec!(
-              queue!(stdout(), style::SetForegroundColor(color_fg)),
-              format!("ApplyColors -> SetForegroundColor({:?})", color_fg)
+              queue!(stdout(), style::SetForegroundColor(*color_fg)),
+              format!("ApplyColors -> SetForegroundColor({:?})", *color_fg)
             )
           }
         }

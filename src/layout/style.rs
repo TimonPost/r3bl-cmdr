@@ -1,32 +1,34 @@
 /*
  *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
-
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
-
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 use crate::*;
 use bitflags::bitflags;
 use core::fmt::Debug;
 use crossterm::style::Color;
 use r3bl_rs_utils::{unwrap_option_or_compute_if_none, Builder};
+use serde::{Deserialize, Serialize};
+
 use std::fmt::Formatter;
 use std::ops::{Add, AddAssign};
 
 /// Use the `StyleBuilder` to create a `Style`. `Style` objects are meant to be immutable.
 /// If you need to modify a `Style`, you should use the `StyleBuilder` to create a new
 /// one.
-#[derive(Default, Builder, Clone, PartialEq, Eq)]
+#[derive(Default, Builder, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Style {
   pub id: String,
   pub bold: bool,
@@ -36,8 +38,8 @@ pub struct Style {
   pub hidden: bool,
   pub fraktur: bool,
   pub computed: bool,
-  pub color_fg: Option<Color>,
-  pub color_bg: Option<Color>,
+  pub color_fg: Option<TWColor>,
+  pub color_bg: Option<TWColor>,
   pub margin: Option<UnitType>,
   pub cached_bitflags: Option<StyleFlag>,
 }
@@ -48,9 +50,9 @@ enum DebugColor {
 }
 
 impl DebugColor {
-  fn from(color: Option<Color>) -> DebugColor {
+  fn from(color: Option<TWColor>) -> DebugColor {
     match color {
-      Some(color) => DebugColor::DebugRgb(color),
+      Some(color) => DebugColor::DebugRgb(*color),
       None => DebugColor::None,
     }
   }
@@ -100,8 +102,8 @@ impl Debug for Style {
       f,
       "Style {{ {} | fg: {:?} | bg: {:?} | margin: {:?} }}",
       msg_vec.join("+"),
-      DebugColor::from(self.color_fg),
-      DebugColor::from(self.color_bg),
+      DebugColor::from(self.color_fg.clone()),
+      DebugColor::from(self.color_bg.clone()),
       if self.margin.is_some() { self.margin.unwrap() } else { 0 }
     )
   }
@@ -109,6 +111,7 @@ impl Debug for Style {
 
 bitflags! {
   /// https://docs.rs/bitflags/0.8.2/bitflags/macro.bitflags.html
+  #[derive(Serialize, Deserialize)]
   pub struct StyleFlag: u8 {
     const COLOR_FG_SET        = 0b0000_0001;
     const COLOR_BG_SET        = 0b0000_0010;

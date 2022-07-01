@@ -1,19 +1,19 @@
 /*
  *   Copyright (c) 2022 Nazmul Idris
  *   All rights reserved.
-
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
-
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 use crossterm::style::Color;
 use r3bl_cmdr::layout::*;
@@ -146,8 +146,8 @@ fn create_style(id: &str) -> Style {
   let black = Color::Rgb { r: 0, g: 0, b: 0 };
   StyleBuilder::new()
     .set_id(id.to_string())
-    .set_color_bg(Some(black))
-    .set_color_fg(Some(black))
+    .set_color_bg(Some(black.into()))
+    .set_color_fg(Some(black.into()))
     .set_dim(true)
     .set_bold(true)
     .set_margin(Some(2))

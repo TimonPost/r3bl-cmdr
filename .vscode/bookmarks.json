@@ -24,12 +24,17 @@
 			"path": "src/crossterm_helpers/tw_command.rs",
 			"bookmarks": [
 				{
-					"line": 215,
+					"line": 128,
+					"column": 2,
+					"label": ""
+				},
+				{
+					"line": 217,
 					"column": 10,
 					"label": ""
 				},
 				{
-					"line": 237,
+					"line": 239,
 					"column": 0,
 					"label": ""
 				}
