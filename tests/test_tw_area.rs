@@ -29,7 +29,8 @@ fn test_simple_2_col_layout() -> CommonResult<()> {
     tw_area.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size((500, 500).into()).build())?;
     create_main_container(&mut tw_area)?;
     tw_area.area_end()?;
-    println!("{}", tw_area.render_buffer);
+    println!("{}", &tw_area.render_buffer);
+    println!("{}", serde_json::to_string_pretty(&tw_area.render_buffer).unwrap());
   });
 }
 

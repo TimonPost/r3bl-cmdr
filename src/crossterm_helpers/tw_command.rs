@@ -144,7 +144,7 @@ impl TWCommand {
 /// queue.add(Command::ClearScreen);
 /// queue.flush();
 /// ```
-#[derive(Default, Clone, Debug)]
+#[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct TWCommandQueue {
   pub queue: Vec<TWCommand>,
 }

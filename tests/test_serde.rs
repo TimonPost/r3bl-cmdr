@@ -16,7 +16,8 @@
  */
 
 use crossterm::style::Color;
-use r3bl_cmdr::TWColor;
+use r3bl_cmdr::{TWColor, TWCommandQueue};
+use r3bl_rs_utils::debug;
 
 #[test]
 fn test_serde_tw_color_simple() {
@@ -32,4 +33,15 @@ fn test_serde_tw_color_rgb() {
   let ser_str = serde_json::to_string(&color).unwrap();
   let og_color: TWColor = serde_json::from_str(&ser_str).unwrap();
   assert_eq!(color, og_color);
+}
+
+#[test]
+fn test_serde_tw_command_queue() {
+  let mut q = TWCommandQueue::default();
+  q.push(r3bl_cmdr::TWCommand::ClearScreen);
+  q.push(r3bl_cmdr::TWCommand::SetBgColor(Color::Red.into()));
+  let ser_str = serde_json::to_string_pretty(&q).unwrap();
+  println!("{}", ser_str);
+  let og_q: TWCommandQueue = serde_json::from_str(&ser_str).unwrap();
+  assert_eq!(q, og_q);
 }

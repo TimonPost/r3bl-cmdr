@@ -7,8 +7,8 @@ impl styling support:
   ✔ impl `cmd_wrapper.rs::TWCommand::ApplyStyle(style)` -> Color @done(22-06-30 19:21)
   ✔ impl `tw_area.rs::paint_inside_box()` to emit styling commands @done(22-06-30 19:21)
   ✔ update test_tw_area.rs to pretty print `TWCommandQueue` @done(22-06-30 19:22)
-  ✔ add serde support to `TWCommandQueue` & add test for this @done(22-07-01 21:20)
   ✔ use clippy to refactor all of `r3bl_rs_utils` @done(22-07-01 21:20)
+  ✔ add serde support to `TWCommandQueue` & add `test_serder.s` @done(22-07-01 21:20)
   ☐ update `test_tw_area.rs` w/ real styles (different margins, colors, attributes)
 
 add layout engine:
