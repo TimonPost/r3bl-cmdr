@@ -110,33 +110,3 @@ impl From<Color> for TWColor {
     TWColor { color }
   }
 }
-
-// impl Serialize for TWColor {
-//   fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//   where
-//     S: Serializer,
-//   {
-//     // TODO: copy from Color
-//     // serializer.serialize_str(&self.0.to_string())
-//     serializer.serialize_str("todo")
-//   }
-// }
-
-// impl<'de> Deserialize<'de> for TWColor {
-//   fn deserialize<D>(_deserializer: D) -> Result<Self, D::Error>
-//   where
-//     D: Deserializer<'de>,
-//   {
-//     // TODO: copy from Color
-//     // let s = String::deserialize(deserializer)?;
-//     // Ok(MyColor(Color::from_str(&s).unwrap()))
-//     Ok(TWColor(Color::from_str("todo").unwrap()))
-//   }
-// }
-
-// impl Deref for TWColor {
-//   type Target = Color;
-//   fn deref(&self) -> &Self::Target {
-//     &self.0
-//   }
-// }

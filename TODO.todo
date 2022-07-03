@@ -1,0 +1,40 @@
+add layout engine:
+  ☐ copy 2 col layout from `tw_area_test.rs` into `app_with_layout.rs`
+  ☐ save `app_without_layout.rs` for future use w/ routing below
+  ☐ test 2 col layout!
+  ☐ stress test app w/ full screen repaint on mouse move
+  ☐ add all the crossterm commands to `TWCommand`
+
+routing:
+  ☐ introduce routing concept to switch between apps
+
+focus mgmt:
+  ☐ figure out keyboard focus management
+  ☐ what does input event routing look like?
+  ☐ extend state to have a focus field (current id w/ focus)
+  ☐ how does this affect rendering of a layout (paint focus highlight?)
+  ☐ key input processing & state mgmt (redux?)
+  ☐ implement simplest editor component (single line text field)
+
+support for graphemes & text wrapping:
+  ☐ `unicode-width` crate
+  ☐ `textwrap` crate
+  ☐ Update `tw_area.rs::print_inside_box()` to support graphemes & text wrapping
+
+pre built components - multi select chooser:
+  ☐ TODO
+
+pre built components - editor:
+  ☐ TODO
+
+pre built components - autocompletion provider:
+  ☐ TODO
+
+mdns & p2p:
+  ☐ Ideate on what this might look like
+    - local service discovery
+    - easy authentication (cloud auth provider login?)
+
+flow editor:
+  ☐ Ideate on how to impl this
+    - 2+ col layout that allows text to be edited flowing LTR
