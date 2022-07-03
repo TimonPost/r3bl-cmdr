@@ -55,6 +55,47 @@ fn test_bitflags() {
 }
 
 #[test]
+fn test_all_fields_in_style() {
+  let mut style = Style {
+    id: "foo".to_string(),
+    bold: true,
+    dim: true,
+    underline: true,
+    reverse: true,
+    hidden: true,
+    strikethrough: true,
+    color_fg: Some(Color::Red.into()),
+    color_bg: Some(Color::Rgb { r: 0, g: 0, b: 0 }.into()),
+    margin: Some(10),
+    ..Style::default()
+  };
+
+  assert!(!style.computed);
+  assert_eq!(style.id, "foo");
+  assert!(style.bold);
+  assert!(style.dim);
+  assert!(style.underline);
+  assert!(style.reverse);
+  assert!(style.hidden);
+  assert!(style.strikethrough);
+  assert_eq!(style.color_fg, Some(Color::Red.into()));
+  assert_eq!(style.color_bg, Some(Color::Rgb { r: 0, g: 0, b: 0 }.into()));
+  assert_eq!(style.margin, Some(10));
+
+  let mask = style.get_bitflags();
+  assert!(!mask.contains(StyleFlag::COMPUTED_SET));
+  assert!(mask.contains(StyleFlag::BOLD_SET));
+  assert!(mask.contains(StyleFlag::DIM_SET));
+  assert!(mask.contains(StyleFlag::UNDERLINE_SET));
+  assert!(mask.contains(StyleFlag::REVERSE_SET));
+  assert!(mask.contains(StyleFlag::HIDDEN_SET));
+  assert!(mask.contains(StyleFlag::STRIKETHROUGH_SET));
+  assert!(mask.contains(StyleFlag::COLOR_FG_SET));
+  assert!(mask.contains(StyleFlag::COLOR_BG_SET));
+  assert!(mask.contains(StyleFlag::MARGIN_SET));
+}
+
+#[test]
 fn test_style() {
   let mut style = make_a_style("test_style");
   let bitflags = style.get_bitflags();

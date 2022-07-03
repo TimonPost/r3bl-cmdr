@@ -122,8 +122,8 @@ fn create_right_col(tw_area: &mut TWArea) -> CommonResult<()> {
       let current_box = tw_area.stack_of_boxes.last().unwrap();
       assert_eq!(current_box.id, "col_2");
       assert_eq!(current_box.dir, Direction::Vertical);
-      assert_eq!(current_box.origin_pos, (252, 2).into()); // Take margin into account.
-      assert_eq!(current_box.bounds_size, (246, 496).into()); // Take margin into account.
+      assert_eq!(current_box.origin_pos, (253, 3).into()); // Take margin into account.
+      assert_eq!(current_box.bounds_size, (244, 494).into()); // Take margin into account.
       assert_eq!(current_box.req_size_percent, (50, 100).try_into()?);
       assert_eq!(current_box.box_cursor_pos, None);
       assert_eq!(current_box.content_cursor_pos, Some((0, 2).into()));
@@ -138,19 +138,32 @@ fn create_right_col(tw_area: &mut TWArea) -> CommonResult<()> {
 /// Create a stylesheet containing styles.
 fn create_stylesheet() -> CommonResult<Stylesheet> {
   let mut stylesheet = Stylesheet::new();
-  stylesheet.add_styles(vec![create_style("style1"), create_style("style2")])?;
+  stylesheet.add_styles(vec![create_style1(), create_style2()])?;
   Ok(stylesheet)
 }
 
-/// Create a style.
-fn create_style(id: &str) -> Style {
-  let black = Color::Rgb { r: 0, g: 0, b: 0 };
+fn create_style1() -> Style {
+  let yellow = Color::Rgb { r: 255, g: 255, b: 0 };
+  let grey = Color::Rgb { r: 128, g: 128, b: 128 };
   StyleBuilder::new()
-    .set_id(id.to_string())
-    .set_color_bg(Some(black.into()))
-    .set_color_fg(Some(black.into()))
+    .set_id("style1".to_string())
+    .set_color_fg(Some(yellow.into()))
+    .set_color_bg(Some(grey.into()))
     .set_dim(true)
     .set_bold(true)
     .set_margin(Some(2))
+    .build()
+}
+
+fn create_style2() -> Style {
+  let black = Color::Rgb { r: 0, g: 0, b: 0 };
+  let white = Color::Rgb { r: 255, g: 255, b: 255 };
+  StyleBuilder::new()
+    .set_id("style2".to_string())
+    .set_color_fg(Some(black.into()))
+    .set_color_bg(Some(white.into()))
+    .set_underline(true)
+    .set_strikethrough(true)
+    .set_margin(Some(3))
     .build()
 }

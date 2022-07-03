@@ -9,7 +9,7 @@ impl styling support:
   ✔ update test_tw_area.rs to pretty print `TWCommandQueue` @done(22-06-30 19:22)
   ✔ use clippy to refactor all of `r3bl_rs_utils` @done(22-07-01 21:20)
   ✔ add serde support to `TWCommandQueue` & add `test_serder.s` @done(22-07-01 21:20)
-  ☐ update `test_tw_area.rs` w/ real styles (different margins, colors, attributes)
+  ✔ update `test_tw_area.rs` w/ real styles (different margins, colors, attributes) @done(22-07-02 18:56)
 
 add layout engine:
   ☐ copy 2 col layout from `tw_area_test.rs` into `app_with_layout.rs`

@@ -36,7 +36,7 @@ pub struct Style {
   pub underline: bool,
   pub reverse: bool,
   pub hidden: bool,
-  pub fraktur: bool,
+  pub strikethrough: bool,
   pub computed: bool,
   pub color_fg: Option<TWColor>,
   pub color_bg: Option<TWColor>,
@@ -94,8 +94,8 @@ impl Debug for Style {
     if self.hidden {
       msg_vec.push("hidden".to_string())
     }
-    if self.fraktur {
-      msg_vec.push("fraktur".to_string())
+    if self.strikethrough {
+      msg_vec.push("strikethrough".to_string())
     }
 
     write!(
@@ -150,9 +150,6 @@ impl Style {
     if self.color_bg.is_some() {
       it.insert(StyleFlag::COLOR_BG_SET);
     }
-    if self.margin.is_some() {
-      it.insert(StyleFlag::MARGIN_SET);
-    }
     if self.bold {
       it.insert(StyleFlag::BOLD_SET);
     }
@@ -162,8 +159,20 @@ impl Style {
     if self.underline {
       it.insert(StyleFlag::UNDERLINE_SET);
     }
+    if self.margin.is_some() {
+      it.insert(StyleFlag::MARGIN_SET);
+    }
     if self.computed {
       it.insert(StyleFlag::COMPUTED_SET);
+    }
+    if self.reverse {
+      it.insert(StyleFlag::REVERSE_SET);
+    }
+    if self.hidden {
+      it.insert(StyleFlag::HIDDEN_SET);
+    }
+    if self.strikethrough {
+      it.insert(StyleFlag::STRIKETHROUGH_SET);
     }
 
     it
@@ -182,23 +191,33 @@ impl Add<Self> for Style {
     self.id = "".to_string();
 
     // other (if set) overrides self.
-    if let Some(color_fg) = other.color_fg {
-      self.color_fg = Some(color_fg);
+    let other_mask = other.clone().get_bitflags();
+    if other_mask.contains(StyleFlag::COLOR_FG_SET) {
+      self.color_fg = other.color_fg;
     }
-    if let Some(color_bg) = other.color_bg {
-      self.color_bg = Some(color_bg);
+    if other_mask.contains(StyleFlag::COLOR_BG_SET) {
+      self.color_bg = other.color_bg;
     }
-    if let Some(margin) = other.margin {
-      self.margin = Some(margin);
+    if other_mask.contains(StyleFlag::BOLD_SET) {
+      self.bold = other.bold;
     }
-    if other.bold {
-      self.bold = true;
+    if other_mask.contains(StyleFlag::DIM_SET) {
+      self.dim = other.dim;
     }
-    if other.dim {
-      self.dim = true;
+    if other_mask.contains(StyleFlag::UNDERLINE_SET) {
+      self.underline = other.underline;
     }
-    if other.underline {
-      self.underline = true;
+    if other_mask.contains(StyleFlag::MARGIN_SET) {
+      self.margin = other.margin;
+    }
+    if other_mask.contains(StyleFlag::REVERSE_SET) {
+      self.reverse = other.reverse;
+    }
+    if other_mask.contains(StyleFlag::HIDDEN_SET) {
+      self.hidden = other.hidden;
+    }
+    if other_mask.contains(StyleFlag::STRIKETHROUGH_SET) {
+      self.strikethrough = other.strikethrough;
     }
 
     // Recalculate the bitflags.
