@@ -58,7 +58,11 @@ impl TerminalWindow {
   /// S: Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   /// A: Default + Clone + Sync + Send,
   /// ```
-  pub async fn main_event_loop<S, A>(store: Store<S, A>, shared_render: SharedRender<S, A>, exit_keys: Vec<KeyEvent>) -> CommonResult<()>
+  pub async fn main_event_loop<S, A>(
+    store: Store<S, A>,
+    shared_render: SharedRender<S, A>,
+    exit_keys: Vec<KeyEvent>,
+  ) -> CommonResult<()>
   where
     S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static,
     A: Display + Default + Clone + Sync + Send + 'static,
@@ -100,7 +104,9 @@ impl TerminalWindow {
               shared_window.write().await.set_size(new_size);
               TWSubscriber::render(&shared_store, &shared_render, new_size, None).await?;
             }
-            Continuation::Continue => TWSubscriber::handle_input(&shared_window, &shared_store, &shared_render, &input_event).await?,
+            Continuation::Continue => {
+              TWSubscriber::handle_input(&shared_window, &shared_store, &shared_render, &input_event).await?
+            }
           };
         }
         TWCommand::flush();
@@ -157,11 +163,20 @@ where
     throws!({
       let latest_state = shared_store.read().await.get_state();
       let window_size = shared_window.read().await.size;
-      shared_render.read().await.handle_event(input_event, &latest_state, shared_store, window_size).await?
+      shared_render
+        .read()
+        .await
+        .handle_event(input_event, &latest_state, shared_store, window_size)
+        .await?
     });
   }
 
-  pub async fn render(shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>, window_size: Size, my_state: Option<S>) -> CommonResult<()> {
+  pub async fn render(
+    shared_store: &SharedStore<S, A>,
+    shared_render: &SharedRender<S, A>,
+    window_size: Size,
+    my_state: Option<S>,
+  ) -> CommonResult<()> {
     throws!({
       let state: S = if my_state.is_none() {
         shared_store.read().await.get_state()
@@ -173,11 +188,14 @@ where
       match render_result {
         Err(error) => {
           TWCommand::flush();
-          call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::run draw error: {}", error));
+          call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::render() error ❌: {}", error));
         }
         Ok(command_queue) => {
           command_queue.flush();
-          call_if_true!(DEBUG, log_no_err!(INFO, "MySubscriber::run draw: {}, {}", window_size, state));
+          call_if_true!(
+            DEBUG,
+            log_no_err!(INFO, "MySubscriber::render() ok ✅: {}, {}", window_size, state)
+          );
         }
       }
     });

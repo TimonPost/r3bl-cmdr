@@ -17,7 +17,7 @@
 
 use crate::*;
 use async_trait::async_trait;
-use crossterm::event::*;
+use crossterm::{event::*, style::Color};
 
 const DEBUG: bool = true;
 
@@ -25,6 +25,11 @@ const DEBUG: bool = true;
 #[derive(Default, Debug, Clone, Copy)]
 pub struct AppWithLayout {
   pub lolcat: Lolcat,
+}
+
+struct RenderProps<'a> {
+  pub lolcat: &'a Lolcat,
+  pub state: &'a AppState,
 }
 
 #[async_trait]
@@ -36,27 +41,20 @@ impl Render<AppState, AppAction> for AppWithLayout {
     window_size: Size,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
-      let content = format!("{}", state);
-
-      let content_size = content.len() as UnitType;
-      let x: UnitType = window_size.width / 2 - content_size / 2;
-      let y: UnitType = window_size.height / 2;
-
-      let colored_content = colorize!(self, "{}", state);
-
-      let queue = tw_queue!(
-        TWCommand::ClearScreen,
-        TWCommand::ResetColor,
-        TWCommand::MoveCursorPosition((x, y)),
-        TWCommand::PrintWithAttributes(colored_content, None),
-        TWCommand::ResetColor
-      );
-
-      call_if_true!(DEBUG, {
-        log_no_err!(INFO, "⛵ AppWithLayout::render -> size, state: {} {}", window_size, state);
-        log_no_err!(INFO, "⛵ AppWithLayout::render -> queue: {}", queue);
-      });
-      queue
+      let mut tw_area = TWArea {
+        stylesheet: create_stylesheet()?,
+        ..TWArea::default()
+      };
+      tw_area.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size(window_size).build())?;
+      create_main_container(
+        &mut tw_area,
+        &RenderProps {
+          lolcat: &self.lolcat,
+          state,
+        },
+      )?;
+      tw_area.area_end()?;
+      tw_area.render_buffer
     });
   }
 
@@ -136,4 +134,85 @@ impl Render<AppState, AppAction> for AppWithLayout {
       }
     });
   }
+}
+
+/// Main container "container".
+fn create_main_container(tw_area: &mut TWArea, render_props: &RenderProps) -> CommonResult<()> {
+  throws!({
+    tw_area.box_start(
+      TWBoxPropsBuilder::new()
+        .set_id("container".to_string())
+        .set_dir(Direction::Horizontal)
+        .set_req_size((100, 100).try_into()?)
+        .build(),
+    )?;
+    create_left_col(tw_area, render_props)?;
+    create_right_col(tw_area, render_props)?;
+    tw_area.box_end()?;
+  });
+}
+
+/// Left column "col_1".
+fn create_left_col(tw_area: &mut TWArea, render_props: &RenderProps) -> CommonResult<()> {
+  // TODO: use render_props.lolcat to colorize render_props.state
+  throws!({
+    tw_area.box_start(
+      TWBoxPropsBuilder::new()
+        .set_styles(tw_area.stylesheet.find_styles_by_ids(vec!["style1"]))
+        .set_id("col_1".to_string())
+        .set_dir(Direction::Vertical)
+        .set_req_size((50, 100).try_into()?)
+        .build(),
+    )?;
+    tw_area.print_inside_box(vec!["col 1 - Hello"])?;
+    tw_area.print_inside_box(vec!["col 1 - World"])?;
+    tw_area.box_end()?;
+  });
+}
+
+/// Right column "col_2".
+fn create_right_col(tw_area: &mut TWArea, render_props: &RenderProps) -> CommonResult<()> {
+  // TODO: use render_props.lolcat to colorize render_props.state
+  throws!({
+    tw_area.box_start(
+      TWBoxPropsBuilder::new()
+        .set_styles(tw_area.stylesheet.find_styles_by_ids(vec!["style2"]))
+        .set_id("col_2".to_string())
+        .set_dir(Direction::Vertical)
+        .set_req_size((50, 100).try_into()?)
+        .build(),
+    )?;
+    tw_area.print_inside_box(vec!["col 2 - Hello"])?;
+    tw_area.print_inside_box(vec!["col 2 - World"])?;
+    tw_area.box_end()?;
+  });
+}
+
+/// Create a stylesheet containing styles.
+fn create_stylesheet() -> CommonResult<Stylesheet> {
+  let mut stylesheet = Stylesheet::new();
+  stylesheet.add_styles(vec![create_style1(), create_style2()])?;
+  Ok(stylesheet)
+}
+
+fn create_style1() -> Style {
+  let fg = Color::Black;
+  let bg = Color::Yellow;
+  StyleBuilder::new()
+    .set_id("style1".to_string())
+    .set_color_fg(Some(fg.into()))
+    .set_color_bg(Some(bg.into()))
+    .set_margin(Some(2))
+    .build()
+}
+
+fn create_style2() -> Style {
+  let fg = Color::Black;
+  let bg = Color::Magenta;
+  StyleBuilder::new()
+    .set_id("style2".to_string())
+    .set_color_fg(Some(fg.into()))
+    .set_color_bg(Some(bg.into()))
+    .set_margin(Some(2))
+    .build()
 }

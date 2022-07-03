@@ -1,7 +1,15 @@
 add layout engine:
-  ☐ merge `tw_area_test.rs` + `app_withuout_layout.rs` -> `app_with_layout.rs`
-  ☐ make sure to save `app_without_layout.rs` for future use w/ routing below
-  ☐ test 2 col layout!
+  ✔ merge `tw_area_test.rs` + `app_withuout_layout.rs` -> `app_with_layout.rs` @done(22-07-03 16:47)
+  ✔ make sure to save `app_without_layout.rs` for future use w/ routing below @done(22-07-03 16:26)
+  ☐ paint state & use lolcat
+
+test 2 col layout!:
+  ☐ emit clear screen command before rendering each frame (artifacts appear on resize)
+  ☐ make sure that the colors work as expected (Color::Red, Color::Rgb, etc)
+  ☐ make sure that the attributes work as expected (dim, strikethru, etc)
+  ☐ row calculation seems wrong (too much space on top of the rendered output)
+
+performance & completness:
   ☐ stress test app w/ full screen repaint on mouse move
   ☐ add all the remaining crossterm commands to `TWCommand`
 
