@@ -1,7 +1,7 @@
 {
 	"files": [
 		{
-			"path": "src/layout/tw_area.rs",
+			"path": "src/tui/layout/tw_area.rs",
 			"bookmarks": [
 				{
 					"line": 81,
@@ -21,7 +21,7 @@
 			]
 		},
 		{
-			"path": "src/crossterm_helpers/tw_command.rs",
+			"path": "src/tui/crossterm_helpers/tw_command.rs",
 			"bookmarks": [
 				{
 					"line": 128,
@@ -41,7 +41,7 @@
 			]
 		},
 		{
-			"path": "src/layout/tw_box.rs",
+			"path": "src/tui/layout/tw_box.rs",
 			"bookmarks": [
 				{
 					"line": 79,

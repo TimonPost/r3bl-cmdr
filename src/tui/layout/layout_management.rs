@@ -35,7 +35,7 @@ pub trait LayoutManagement {
 }
 
 /// Internal (semi-private) methods that actually perform the layout and positioning.
-pub(in crate::layout) trait PerformPositioningAndSizing {
+pub(in crate::tui) trait PerformPositioningAndSizing {
   /// Update `content_cursor_pos`. If it hasn't been set yet, it will be initialized to
   /// `(0, 0)`.
   fn calc_where_to_insert_new_content_in_box(&mut self, pos: Size) -> CommonResult<Position>;

@@ -15,8 +15,17 @@
  *   limitations under the License.
  */
 
+/// Use bitflags! macro.
+extern crate bitflags;
+
 // Attach sources.
-pub mod tui;
+pub mod layout;
+pub mod crossterm_helpers;
+pub mod terminal_window;
+pub mod lolcat;
 
 // Re-export.
-pub use tui::*;
+pub use crossterm_helpers::*;
+pub use layout::*;
+pub use lolcat::*;
+pub use terminal_window::*;
