@@ -23,12 +23,12 @@ const DEBUG: bool = true;
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default, Debug, Clone, Copy)]
-pub struct AppWithoutLayout {
+pub struct AppWithLayout {
   pub lolcat: Lolcat,
 }
 
 #[async_trait]
-impl Render<AppState, AppAction> for AppWithoutLayout {
+impl Render<AppState, AppAction> for AppWithLayout {
   async fn render(
     &mut self,
     state: &AppState,
@@ -53,8 +53,8 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
       );
 
       call_if_true!(DEBUG, {
-        log_no_err!(INFO, "⛵ App::render -> size, state: {} {}", window_size, state);
-        log_no_err!(INFO, "⛵ App::render -> queue: {}", queue);
+        log_no_err!(INFO, "⛵ AppWithLayout::render -> size, state: {} {}", window_size, state);
+        log_no_err!(INFO, "⛵ AppWithLayout::render -> queue: {}", queue);
       });
       queue
     });
@@ -70,7 +70,7 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
     throws!({
       call_if_true!(
         DEBUG,
-        log_no_err!(INFO, "⛵ App::handle_event -> input_event: {}", input_event)
+        log_no_err!(INFO, "⛵ AppWithLayout::handle_event -> input_event: {}", input_event)
       );
 
       if let InputEvent::DisplayableKeypress(typed_char) = input_event {
@@ -79,14 +79,22 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
             spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
             call_if_true!(
               DEBUG,
-              log_no_err!(INFO, "⛵ App::handle_event -> + -> dispatch_spawn: {}", AppAction::AddPop(1))
+              log_no_err!(
+                INFO,
+                "⛵ AppWithLayout::handle_event -> + -> dispatch_spawn: {}",
+                AppAction::AddPop(1)
+              )
             );
           }
           '-' => {
             spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
             call_if_true!(
               DEBUG,
-              log_no_err!(INFO, "⛵ App::handle_event -> - -> dispatch_spawn: {}", AppAction::SubPop(1))
+              log_no_err!(
+                INFO,
+                "⛵ AppWithLayout::handle_event -> - -> dispatch_spawn: {}",
+                AppAction::SubPop(1)
+              )
             );
           }
           _ => {}
@@ -102,7 +110,11 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
             spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
             call_if_true!(
               DEBUG,
-              log_no_err!(INFO, "⛵ App::handle_event -> Up -> dispatch_spawn: {}", AppAction::AddPop(1))
+              log_no_err!(
+                INFO,
+                "⛵ AppWithLayout::handle_event -> Up -> dispatch_spawn: {}",
+                AppAction::AddPop(1)
+              )
             );
           }
           KeyEvent {
@@ -114,7 +126,7 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
               DEBUG,
               log_no_err!(
                 INFO,
-                "⛵ App::handle_event -> Down -> dispatch_spawn: {}",
+                "⛵ AppWithLayout::handle_event -> Down -> dispatch_spawn: {}",
                 AppAction::SubPop(1)
               )
             );
