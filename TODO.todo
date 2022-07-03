@@ -1,12 +1,12 @@
 add layout engine:
-  ☐ copy 2 col layout from `tw_area_test.rs` into `app_with_layout.rs`
-  ☐ save `app_without_layout.rs` for future use w/ routing below
+  ☐ merge `tw_area_test.rs` + `app_withuout_layout.rs` -> `app_with_layout.rs`
+  ☐ make sure to save `app_without_layout.rs` for future use w/ routing below
   ☐ test 2 col layout!
   ☐ stress test app w/ full screen repaint on mouse move
-  ☐ add all the crossterm commands to `TWCommand`
+  ☐ add all the remaining crossterm commands to `TWCommand`
 
 routing:
-  ☐ introduce routing concept to switch between apps
+  ☐ introduce routing concept to switch between apps (with + without layout)
 
 focus mgmt:
   ☐ figure out keyboard focus management
@@ -15,6 +15,7 @@ focus mgmt:
   ☐ how does this affect rendering of a layout (paint focus highlight?)
   ☐ key input processing & state mgmt (redux?)
   ☐ implement simplest editor component (single line text field)
+  ☐ implement simplest checkbox selection component (modal?)
 
 support for graphemes & text wrapping:
   ☐ `unicode-width` crate

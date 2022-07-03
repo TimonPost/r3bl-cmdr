@@ -29,7 +29,12 @@ pub struct AppWithoutLayout {
 
 #[async_trait]
 impl Render<AppState, AppAction> for AppWithoutLayout {
-  async fn render(&mut self, state: &AppState, _shared_store: &SharedStore<AppState, AppAction>, window_size: Size) -> CommonResult<TWCommandQueue> {
+  async fn render(
+    &mut self,
+    state: &AppState,
+    _shared_store: &SharedStore<AppState, AppAction>,
+    window_size: Size,
+  ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
       let content = format!("{}", state);
 
@@ -63,17 +68,26 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
     _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
-      call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::handle_event -> input_event: {}", input_event));
+      call_if_true!(
+        DEBUG,
+        log_no_err!(INFO, "⛵ App::handle_event -> input_event: {}", input_event)
+      );
 
       if let InputEvent::DisplayableKeypress(typed_char) = input_event {
         match typed_char {
           '+' => {
             spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
-            call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::handle_event -> + -> dispatch_spawn: {}", AppAction::AddPop(1)));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(INFO, "⛵ App::handle_event -> + -> dispatch_spawn: {}", AppAction::AddPop(1))
+            );
           }
           '-' => {
             spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
-            call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::handle_event -> - -> dispatch_spawn: {}", AppAction::SubPop(1)));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(INFO, "⛵ App::handle_event -> - -> dispatch_spawn: {}", AppAction::SubPop(1))
+            );
           }
           _ => {}
         }
@@ -86,14 +100,24 @@ impl Render<AppState, AppAction> for AppWithoutLayout {
             modifiers: KeyModifiers::NONE,
           } => {
             spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
-            call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::handle_event -> Up -> dispatch_spawn: {}", AppAction::AddPop(1)));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(INFO, "⛵ App::handle_event -> Up -> dispatch_spawn: {}", AppAction::AddPop(1))
+            );
           }
           KeyEvent {
             code: KeyCode::Down,
             modifiers: KeyModifiers::NONE,
           } => {
             spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
-            call_if_true!(DEBUG, log_no_err!(INFO, "⛵ App::handle_event -> Down -> dispatch_spawn: {}", AppAction::SubPop(1)));
+            call_if_true!(
+              DEBUG,
+              log_no_err!(
+                INFO,
+                "⛵ App::handle_event -> Down -> dispatch_spawn: {}",
+                AppAction::SubPop(1)
+              )
+            );
           }
           _ => {}
         }
