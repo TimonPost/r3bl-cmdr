@@ -1,6 +1,6 @@
 This project is WIP & experimental.
 
-The plan is to eventually move:
+The plan is to eventually:
 
-- The lib portion to r3bl_rs_utils
-- The bin portion stays in this repo, and becomes its own TUI app
+1. Move the `lib` portion to `r3bl_rs_utils` crate (the `tui` part).
+2. The `bin` portion stays in this repo, and becomes the actual TUI app.i
