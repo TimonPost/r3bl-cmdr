@@ -108,7 +108,10 @@ fn test_style() {
 
 #[test]
 fn test_cascade_style() {
-  let style_bold_green_fg = StyleBuilder::new().set_bold(true).set_color_fg(Some(Color::Green.into())).build();
+  let style_bold_green_fg = StyleBuilder::new()
+    .set_bold(true)
+    .set_color_fg(Some(Color::Green.into()))
+    .build();
   let style_italic = StyleBuilder::new().set_dim(true).build();
   let style_yellow_bg = StyleBuilder::new().set_color_bg(Some(Color::Yellow.into())).build();
   let style_margin = StyleBuilder::new().set_margin(Some(2)).build();
@@ -116,9 +119,14 @@ fn test_cascade_style() {
 
   let mut computed_style = style_bold_green_fg + style_italic + style_yellow_bg + style_margin + style_red_fg;
 
-  assert!(computed_style
-    .get_bitflags()
-    .contains(StyleFlag::COLOR_FG_SET | StyleFlag::COLOR_BG_SET | StyleFlag::BOLD_SET | StyleFlag::DIM_SET | StyleFlag::MARGIN_SET | StyleFlag::COMPUTED_SET));
+  assert!(computed_style.get_bitflags().contains(
+    StyleFlag::COLOR_FG_SET
+      | StyleFlag::COLOR_BG_SET
+      | StyleFlag::BOLD_SET
+      | StyleFlag::DIM_SET
+      | StyleFlag::MARGIN_SET
+      | StyleFlag::COMPUTED_SET
+  ));
 
   assert_eq!(computed_style.color_bg.unwrap(), Color::Yellow.into());
   assert_eq!(computed_style.color_fg.unwrap(), Color::Red.into());

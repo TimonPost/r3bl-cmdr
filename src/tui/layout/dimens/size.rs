@@ -29,7 +29,7 @@ use std::{
 /// ```text
 ///     0   4    9    1    2    2
 ///                   4    0    5
-///    ┌────┴────┴────┴────┴────┴──→ x
+///    ┌────┴────┴────┴────┴────┴──→ col
 ///  0 ┤     ╭─────────────╮
 ///  1 ┤     │ origin pos: │
 ///  2 ┤     │ [5, 0]      │
@@ -37,7 +37,7 @@ use std::{
 ///  4 ┤     │ [16, 5]     │
 ///  5 ┤     ╰─────────────╯
 ///    ↓
-///    y
+///    row
 /// ```
 ///
 /// Size, defined as [height, width].
@@ -73,7 +73,10 @@ impl From<(UnitType, UnitType)> for Size {
   /// 1. First (pair.0) is width or cols.
   /// 2. Second (pair.1) is height or rows.
   fn from(pair: (UnitType, UnitType)) -> Self {
-    Self { width: pair.0, height: pair.1 }
+    Self {
+      width: pair.0,
+      height: pair.1,
+    }
   }
 }
 

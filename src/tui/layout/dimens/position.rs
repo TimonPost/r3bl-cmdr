@@ -27,7 +27,7 @@ use std::{
 /// ```text
 ///     0   4    9    1    2    2
 ///                   4    0    5
-///    ┌────┴────┴────┴────┴────┴──→ x
+///    ┌────┴────┴────┴────┴────┴──→ col
 ///  0 ┤     ╭─────────────╮
 ///  1 ┤     │ origin pos: │
 ///  2 ┤     │ [5, 0]      │
@@ -35,38 +35,44 @@ use std::{
 ///  4 ┤     │ [16, 5]     │
 ///  5 ┤     ╰─────────────╯
 ///    ↓
-///    y
+///    row
 /// ```
 ///
-/// Position, defined as [x, y].
+/// Position, defined as [col, row].
 #[derive(Copy, Clone, Default, PartialEq, Eq)]
 pub struct Position {
-  pub x: UnitType,
-  pub y: UnitType,
+  pub col: UnitType,
+  pub row: UnitType,
 }
 
 impl AddAssign<UnitType> for Position {
   fn add_assign(&mut self, other: UnitType) {
-    self.x += other;
-    self.y += other;
+    self.col += other;
+    self.row += other;
   }
 }
 
 impl From<Pair> for Position {
   fn from(pair: Pair) -> Self {
-    Self { x: pair.first, y: pair.second }
+    Self {
+      col: pair.first,
+      row: pair.second,
+    }
   }
 }
 
 impl From<(UnitType, UnitType)> for Position {
   fn from(pair: (UnitType, UnitType)) -> Self {
-    Self { x: pair.0, y: pair.1 }
+    Self {
+      col: pair.0,
+      row: pair.1,
+    }
   }
 }
 
 impl From<Position> for (UnitType, UnitType) {
   fn from(position: Position) -> Self {
-    (position.x, position.y)
+    (position.col, position.row)
   }
 }
 
@@ -76,24 +82,24 @@ impl Position {
     Some(*self)
   }
 
-  /// Add given `x` value to `self`.
-  pub fn add_x(&mut self, value: usize) -> Self {
+  /// Add given `col` value to `self`.
+  pub fn add_col(&mut self, value: usize) -> Self {
     let value: UnitType = value as UnitType;
-    self.x += value;
+    self.col += value;
     *self
   }
 
-  /// Add given `y` value to `self`.
-  pub fn add_y(&mut self, value: usize) -> Self {
+  /// Add given `row` value to `self`.
+  pub fn add_row(&mut self, value: usize) -> Self {
     let value = value as UnitType;
-    self.y += value;
+    self.row += value;
     *self
   }
 }
 
 impl Debug for Position {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "[x:{}, y:{}]", self.x, self.y)
+    write!(f, "[col:{}, row:{}]", self.col, self.row)
   }
 }
 
@@ -101,8 +107,8 @@ impl Add<Position> for Position {
   type Output = Position;
   fn add(self, other: Position) -> Self::Output {
     Position {
-      x: self.x + other.x,
-      y: self.y + other.y,
+      col: self.col + other.col,
+      row: self.row + other.row,
     }
   }
 }
@@ -113,8 +119,8 @@ impl Add<Size> for Position {
   type Output = Position;
   fn add(self, other: Size) -> Self {
     Self {
-      x: self.x + other.width,
-      y: self.y + other.height,
+      col: self.col + other.width,
+      row: self.row + other.height,
     }
   }
 }
@@ -125,8 +131,8 @@ impl Mul<Pair> for Position {
   type Output = Position;
   fn mul(self, other: Pair) -> Self {
     Self {
-      x: self.x * other.first,
-      y: self.y * other.second,
+      col: self.col * other.first,
+      row: self.row * other.second,
     }
   }
 }

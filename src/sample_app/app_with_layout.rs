@@ -202,7 +202,7 @@ fn create_style1() -> Style {
     .set_id("style1".to_string())
     .set_color_fg(Some(turquoise.into()))
     .set_color_bg(Some(pink.into()))
-    .set_margin(Some(0)) // TODO: replace this w/ 1
+    .set_margin(Some(1)) 
     .build()
 }
 
@@ -213,6 +213,6 @@ fn create_style2() -> Style {
     .set_id("style2".to_string())
     .set_color_fg(Some(white.into()))
     .set_color_bg(Some(magenta.into()))
-    .set_margin(Some(0)) // TODO: replace this w/ 1
+    .set_margin(Some(1)) 
     .build()
 }

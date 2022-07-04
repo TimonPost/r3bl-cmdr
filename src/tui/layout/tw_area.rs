@@ -99,7 +99,7 @@ impl LayoutManagement for TWArea {
         let box_origin_pos = current_box.origin_pos; // Adjusted for style margin.
         let _box_bound_size = current_box.bounds_size; // Adjusted for style margin.
 
-        // TODO: Use `_box_bound_size` and `_content_x` to wrap or clip text.
+        // TODO: Use `_box_bound_size` and `_content_col` to wrap or clip text.
 
         // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
         let new_absolute_pos = box_origin_pos + content_relative_pos;

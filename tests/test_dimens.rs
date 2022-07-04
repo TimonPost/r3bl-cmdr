@@ -23,8 +23,8 @@ async fn test_add_box_size_to_pos() {
   let pos = Position::from((10, 10));
   let size = Size::from((30, 10));
   let new_pos = pos + size; // `size + pos` is not defined.
-  assert_eq!(new_pos.x, 40);
-  assert_eq!(new_pos.y, 20);
+  assert_eq!(new_pos.col, 40);
+  assert_eq!(new_pos.row, 20);
 }
 
 #[tokio::test]
@@ -32,19 +32,19 @@ async fn test_mul_box_pos_to_pair() {
   // [30, 10] * [1, 0] = [30, 0]
   {
     let pos: Position = (30, 10).into();
-    let pair_cancel_y = (1, 0).into();
-    let new_pair = pos * pair_cancel_y;
-    assert_eq!(new_pair.x, 30);
-    assert_eq!(new_pair.y, 0);
+    let pair_cancel_row = (1, 0).into();
+    let new_pair = pos * pair_cancel_row;
+    assert_eq!(new_pair.col, 30);
+    assert_eq!(new_pair.row, 0);
   }
 
   // [30, 10] * [0, 1] = [0, 10]
   {
     let pos: Position = (30, 10).into();
-    let pair_cancel_x = (0, 1).into();
-    let new_pair = pos * pair_cancel_x;
-    assert_eq!(new_pair.x, 0);
-    assert_eq!(new_pair.y, 10);
+    let pair_cancel_col = (0, 1).into();
+    let new_pair = pos * pair_cancel_col;
+    assert_eq!(new_pair.col, 0);
+    assert_eq!(new_pair.row, 10);
   }
 }
 
