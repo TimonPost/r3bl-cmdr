@@ -83,15 +83,15 @@ impl LayoutManagement for TWArea {
     throws!({
       for text in text_vec {
         // Get the line of text.
-        let content_y: UnitType = 1;
+        let content_rows: UnitType = 1;
 
         // TODO: Use `convert_to_base_unit!(text.len());` w/ graphemes & text wrapping.
-        let _content_x = convert_to_base_unit!(text.len());
-        let content_x: UnitType = 0;
+        let _content_cols = convert_to_base_unit!(text.len());
+        let content_cols: UnitType = 0;
 
         // Update the `content_cursor_pos` (will be initialized for `self.current_box()` if it
         // doesn't exist yet).
-        let content_size = (content_x, content_y).into();
+        let content_size = (content_cols, content_rows).into();
         let content_relative_pos = self.calc_where_to_insert_new_content_in_box(content_size)?;
 
         // Get the current box & its style.
@@ -103,6 +103,11 @@ impl LayoutManagement for TWArea {
 
         // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
         let new_absolute_pos = box_origin_pos + content_relative_pos;
+
+        trace_log_no_err!(content_size);
+        trace_log_no_err!(content_relative_pos);
+        trace_log_no_err!(box_origin_pos);
+        trace_log_no_err!(new_absolute_pos);
 
         // Queue a bunch of `TWCommand`s to paint the text.
         let move_to_cmd = TWCommand::MoveCursorPosition(new_absolute_pos.into());
@@ -213,7 +218,8 @@ impl PerformPositioningAndSizing for TWArea {
     Ok(new_pos)
   }
 
-  /// This updates the `content_cursor_pos` of the current [TWBox].
+  /// Update the `content_cursor_pos` of the current [TWBox] and return the original [Position] that
+  /// was there prior to this update.h
   fn calc_where_to_insert_new_content_in_box(&mut self, content_size: Size) -> CommonResult<Position> {
     throws_with_return!({
       // Get current content_cursor_pos or initialize it to (0, 0).
@@ -229,8 +235,8 @@ impl PerformPositioningAndSizing for TWArea {
       // Update the content_cursor_pos.
       current_box.content_cursor_pos = Some(new_pos);
 
-      // Return new_pos
-      new_pos
+      // Return current_pos.
+      current_pos
     });
   }
 

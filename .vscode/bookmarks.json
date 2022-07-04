@@ -5,47 +5,12 @@
 			"bookmarks": [
 				{
 					"line": 81,
-					"column": 2,
+					"column": 5,
 					"label": ""
 				},
 				{
-					"line": 87,
-					"column": 8,
-					"label": ""
-				},
-				{
-					"line": 101,
-					"column": 8,
-					"label": ""
-				}
-			]
-		},
-		{
-			"path": "src/tui/crossterm_helpers/tw_command.rs",
-			"bookmarks": [
-				{
-					"line": 128,
-					"column": 2,
-					"label": ""
-				},
-				{
-					"line": 223,
-					"column": 10,
-					"label": ""
-				},
-				{
-					"line": 245,
-					"column": 0,
-					"label": ""
-				}
-			]
-		},
-		{
-			"path": "src/tui/layout/tw_box.rs",
-			"bookmarks": [
-				{
-					"line": 86,
-					"column": 8,
+					"line": 222,
+					"column": 16,
 					"label": ""
 				}
 			]

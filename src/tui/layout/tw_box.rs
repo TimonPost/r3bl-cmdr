@@ -101,14 +101,6 @@ impl TWBox {
 
     let req_size_pc: RequestedSizePercent = (width_pc, height_pc).into();
 
-    // FIXME: left debugging at this pt...
-    log_no_err!(INFO, "🚀 id: {}", id);
-    log_no_err!(INFO, "🚀 dir: {:?}", dir);
-    log_no_err!(INFO, "🚀 style_adjusted_origin: {:?}", style_adjusted_origin);
-    log_no_err!(INFO, "🚀 style_adjusted_bounds_size: {:?}", style_adjusted_bounds_size);
-    log_no_err!(INFO, target: "foo", "🚀🚀 req_size_pc: {:?}", req_size_pc);
-    trace_log_no_err!(computed_style.clone().unwrap());
-
     TWBoxBuilder::new()
       .set_id(id)
       .set_dir(dir)
