@@ -20,6 +20,8 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 pub async fn run_app() -> CommonResult<()> {
   throws!({
+    try_to_set_log_level(log::LevelFilter::Trace)?;
+
     // Create store.
     let mut store: Store<AppState, AppAction> = Store::default();
 

@@ -196,23 +196,23 @@ fn create_stylesheet() -> CommonResult<Stylesheet> {
 }
 
 fn create_style1() -> Style {
-  let fg = Color::Black;
-  let bg = Color::Yellow;
+  let turquoise = Color::Rgb { r: 51, g: 255, b: 255 };
+  let pink = Color::Rgb { r: 252, g: 157, b: 248 };
   StyleBuilder::new()
     .set_id("style1".to_string())
-    .set_color_fg(Some(fg.into()))
-    .set_color_bg(Some(bg.into()))
-    .set_margin(Some(2))
+    .set_color_fg(Some(turquoise.into()))
+    .set_color_bg(Some(pink.into()))
+    .set_margin(Some(0))
     .build()
 }
 
 fn create_style2() -> Style {
-  let fg = Color::Black;
-  let bg = Color::Magenta;
+  let white = Color::White;
+  let magenta = Color::Magenta;
   StyleBuilder::new()
     .set_id("style2".to_string())
-    .set_color_fg(Some(fg.into()))
-    .set_color_bg(Some(bg.into()))
-    .set_margin(Some(2))
+    .set_color_fg(Some(white.into()))
+    .set_color_bg(Some(magenta.into()))
+    .set_margin(Some(0))
     .build()
 }

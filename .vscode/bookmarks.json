@@ -29,12 +29,12 @@
 					"label": ""
 				},
 				{
-					"line": 217,
+					"line": 223,
 					"column": 10,
 					"label": ""
 				},
 				{
-					"line": 239,
+					"line": 245,
 					"column": 0,
 					"label": ""
 				}
@@ -44,7 +44,7 @@
 			"path": "src/tui/layout/tw_box.rs",
 			"bookmarks": [
 				{
-					"line": 79,
+					"line": 86,
 					"column": 8,
 					"label": ""
 				}

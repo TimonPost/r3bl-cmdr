@@ -5,7 +5,7 @@ add layout engine:
 
 test 2 col layout!:
   ☐ emit clear screen command before rendering each frame (artifacts appear on resize)
-  ☐ make sure that the colors work as expected (Color::Red, Color::Rgb, etc)
+  ✔ make sure that the colors work as expected (Color::Red, Color::Rgb, etc) @done(22-07-03 19:43)
   ☐ make sure that the attributes work as expected (dim, strikethru, etc)
   ☐ row calculation seems wrong (too much space on top of the rendered output)
 

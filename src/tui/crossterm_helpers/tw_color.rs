@@ -15,6 +15,7 @@
  *   limitations under the License.
  */
 
+use core::fmt::Debug;
 use crossterm::style::*;
 use serde::{Deserialize, Serialize};
 use std::ops::Deref;
@@ -92,7 +93,7 @@ enum ColorDef {
   AnsiValue(u8),
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct TWColor {
   #[serde(with = "ColorDef")]
   color: Color,
@@ -108,5 +109,14 @@ impl Deref for TWColor {
 impl From<Color> for TWColor {
   fn from(color: Color) -> Self {
     TWColor { color }
+  }
+}
+
+impl Debug for TWColor {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self.color {
+      Color::Rgb { r, g, b } => f.write_fmt(format_args!("{},{},{}", r, g, b)),
+      color => write!(f, "{:?}", color),
+    }
   }
 }

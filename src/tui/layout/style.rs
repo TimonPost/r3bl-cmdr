@@ -18,11 +18,10 @@
 use crate::*;
 use bitflags::bitflags;
 use core::fmt::Debug;
-use crossterm::style::Color;
 use r3bl_rs_utils::{unwrap_option_or_compute_if_none, Builder};
 use serde::{Deserialize, Serialize};
 
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign};
 
 /// Use the `StyleBuilder` to create a `Style`. `Style` objects are meant to be immutable.
@@ -44,36 +43,17 @@ pub struct Style {
   pub cached_bitflags: Option<StyleFlag>,
 }
 
-enum DebugColor {
-  None,
-  DebugRgb(Color),
-}
-
-impl DebugColor {
-  fn from(color: Option<TWColor>) -> DebugColor {
-    match color {
-      Some(color) => DebugColor::DebugRgb(*color),
-      None => DebugColor::None,
-    }
-  }
-}
-
-impl Debug for DebugColor {
+impl Display for Style {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    if let DebugColor::None = self {
-      return Ok(());
-    }
-    if let DebugColor::DebugRgb(Color::Rgb { r, g, b }) = self {
-      f.write_fmt(format_args!("{},{},{}", r, g, b))
-    } else {
-      f.write_fmt(format_args!("{:?}", self))
-    }
+    let msg = format!("{:?}", self);
+    f.write_str(&msg)
   }
 }
 
 impl Debug for Style {
   fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
     let mut msg_vec: Vec<String> = vec![];
+
     if self.computed {
       msg_vec.push("computed".to_string())
     } else {
@@ -102,8 +82,8 @@ impl Debug for Style {
       f,
       "Style {{ {} | fg: {:?} | bg: {:?} | margin: {:?} }}",
       msg_vec.join("+"),
-      DebugColor::from(self.color_fg.clone()),
-      DebugColor::from(self.color_bg.clone()),
+      self.color_fg,
+      self.color_bg,
       if self.margin.is_some() { self.margin.unwrap() } else { 0 }
     )
   }

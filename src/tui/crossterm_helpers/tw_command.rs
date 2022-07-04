@@ -190,20 +190,26 @@ impl TWCommandQueue {
       TWCommand::DisableMouseCapture => {
         exec!(queue!(stdout(), DisableMouseCapture), "DisableMouseCapture")
       }
-      TWCommand::MoveCursorPosition((column, row)) => {
+      TWCommand::MoveCursorPosition((col, row)) => {
         exec!(
-          queue!(stdout(), cursor::MoveTo(*column, *row)),
-          format!("MoveCursorPosition(col: {}, row: {})", column, row)
+          queue!(stdout(), cursor::MoveTo(*col, *row)),
+          format!("MoveCursorPosition(col: {}, row: {})", *col, *row)
         )
       }
       TWCommand::ClearScreen => {
         exec!(queue!(stdout(), terminal::Clear(ClearType::All)), "ClearScreen")
       }
       TWCommand::SetFgColor(color) => {
-        exec!(queue!(stdout(), style::SetForegroundColor(**color)), format!("SetFgColor({:?})", color))
+        exec!(
+          queue!(stdout(), style::SetForegroundColor(**color)),
+          format!("SetFgColor({:?})", color)
+        )
       }
       TWCommand::SetBgColor(color) => {
-        exec!(queue!(stdout(), style::SetBackgroundColor(**color)), format!("SetBgColor({:?})", color))
+        exec!(
+          queue!(stdout(), style::SetBackgroundColor(**color)),
+          format!("SetBgColor({:?})", color)
+        )
       }
       TWCommand::ResetColor => {
         exec!(queue!(stdout(), style::ResetColor), "ResetColor")
@@ -254,7 +260,10 @@ impl TWCommandQueue {
             }
           });
 
-          exec!(queue!(stdout(), style::Print(text.clone())), format!("PrintWithAttributes -> Print({:?})", text));
+          exec!(
+            queue!(stdout(), style::Print(text.clone())),
+            format!("PrintWithAttributes -> Print({:?})", text)
+          );
 
           if needs_reset {
             exec!(
@@ -263,7 +272,10 @@ impl TWCommandQueue {
             );
           }
         } else {
-          exec!(queue!(stdout(), style::Print(text.clone())), format!("PrintWithAttributes -> Print({:?})", text))
+          exec!(
+            queue!(stdout(), style::Print(text.clone())),
+            format!("PrintWithAttributes -> Print({:?})", text)
+          )
         }
       }
       _ => {

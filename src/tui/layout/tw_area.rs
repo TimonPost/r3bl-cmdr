@@ -160,7 +160,10 @@ impl PerformPositioningAndSizing for TWArea {
 
       let container_bounds = current_box.bounds_size;
 
-      let requested_size_allocation = Size::from((calc_percentage(width_pc, container_bounds.width), calc_percentage(height_pc, container_bounds.height)));
+      let requested_size_allocation = Size::from((
+        calc_percentage(width_pc, container_bounds.width),
+        calc_percentage(height_pc, container_bounds.height),
+      ));
 
       let old_position = unwrap_or_err! {
         current_box.box_cursor_pos,
