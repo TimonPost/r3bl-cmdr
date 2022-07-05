@@ -108,8 +108,9 @@ impl LayoutManagement for TWSurface {
         let move_to_cmd = TWCommand::MoveCursorPosition(new_absolute_pos.into());
         let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
         let print_cmd = TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
+        let reset_cmd = TWCommand::ResetColor;
 
-        self.render_buffer += tw_queue!(move_to_cmd, style_cmd, print_cmd);
+        self.render_buffer += tw_queue!(move_to_cmd, style_cmd, print_cmd, reset_cmd);
       }
     });
   }

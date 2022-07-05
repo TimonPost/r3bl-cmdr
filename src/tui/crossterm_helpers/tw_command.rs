@@ -114,8 +114,8 @@ pub enum TWCommand {
 
 impl TWCommand {
   pub fn flush() {
-    exec!(stdout().flush(), "flush stdout");
-    exec!(stderr().flush(), "flush stderr");
+    exec!(stdout().flush(), "flush -> stdout");
+    exec!(stderr().flush(), "flush -> stderr");
   }
 }
 
@@ -153,8 +153,18 @@ impl TWCommandQueue {
   }
 
   #[allow(unreachable_patterns)]
-  pub fn flush(&self) {
+  pub fn flush(&self, clear_before_flush: bool) {
     let mut skip_flush = false;
+
+    if clear_before_flush {
+      exec! {
+        queue!(stdout(),
+          ResetColor,
+          Clear(ClearType::All),
+        ),
+      "flush() -> Clear"
+      }
+    }
 
     self.queue.iter().for_each(|cmd_wrapper| match cmd_wrapper {
       TWCommand::EnterRawMode => {

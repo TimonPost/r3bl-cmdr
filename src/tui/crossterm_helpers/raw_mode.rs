@@ -73,13 +73,13 @@ pub struct RawMode;
 
 impl RawMode {
   pub fn start() -> Self {
-    tw_queue!(TWCommand::EnterRawMode).flush();
+    tw_queue!(TWCommand::EnterRawMode).flush(false);
     RawMode
   }
 }
 
 impl Drop for RawMode {
   fn drop(&mut self) {
-    tw_queue!(TWCommand::ExitRawMode).flush();
+    tw_queue!(TWCommand::ExitRawMode).flush(false);
   }
 }

@@ -190,8 +190,8 @@ where
           TWCommand::flush();
           call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::render() error ❌: {}", error));
         }
-        Ok(command_queue) => {
-          command_queue.flush();
+        Ok(tw_command_queue) => {
+          tw_command_queue.flush(true);
           call_if_true!(
             DEBUG,
             log_no_err!(INFO, "MySubscriber::render() ok ✅: {}, {}", window_size, state)

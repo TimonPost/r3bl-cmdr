@@ -9,8 +9,18 @@
 					"label": ""
 				},
 				{
-					"line": 217,
+					"line": 218,
 					"column": 16,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/tui/crossterm_helpers/tw_command.rs",
+			"bookmarks": [
+				{
+					"line": 155,
+					"column": 9,
 					"label": ""
 				}
 			]

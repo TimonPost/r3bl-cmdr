@@ -9,7 +9,7 @@ test 2 col layout!:
   ✔ make sure that the colors work as expected (Color::Red, Color::Rgb, etc) @done(22-07-03 19:43)
   ✔ row calculation seems wrong (too much space on top of the rendered output) @done(22-07-04 15:10)
   ✔ clean up decl macros w/ repetitions `tw_command.rs`, `file_logging.rs`, `decl_macros.rs` @done(22-07-04 20:23)
-  ☐ emit clear screen command before rendering each frame (artifacts appear on resize)
+  ✔ emit clear screen & reset color commands before rendering each frame (artifacts appear on resize) @done(22-07-04 21:00)
   ☐ make sure that the attributes work as expected (dim, strikethru, etc)
 
 performance & completness:
