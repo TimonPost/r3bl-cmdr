@@ -39,20 +39,20 @@ impl Render<AppState, AppAction> for AppWithLayout {
     window_size: Size,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
-      let mut tw_area = TWArea {
+      let mut tw_surface = TWSurface {
         stylesheet: create_stylesheet()?,
-        ..TWArea::default()
+        ..TWSurface::default()
       };
-      tw_area.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size(window_size).build())?;
+      tw_surface.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size(window_size).build())?;
       create_main_container(
-        &mut tw_area,
+        &mut tw_surface,
         &RenderProps {
           lolcat: &self.lolcat,
           state,
         },
       )?;
-      tw_area.area_end()?;
-      tw_area.render_buffer
+      tw_surface.area_end()?;
+      tw_surface.render_buffer
     });
   }
 
@@ -135,54 +135,54 @@ impl Render<AppState, AppAction> for AppWithLayout {
 }
 
 /// Main container "container".
-fn create_main_container(tw_area: &mut TWArea, render_props: &RenderProps) -> CommonResult<()> {
+fn create_main_container(tw_surface: &mut TWSurface, render_props: &RenderProps) -> CommonResult<()> {
   throws!({
-    tw_area.box_start(
+    tw_surface.box_start(
       TWBoxPropsBuilder::new()
         .set_id("container".to_string())
         .set_dir(Direction::Horizontal)
         .set_req_size((100, 100).try_into()?)
         .build(),
     )?;
-    create_left_col(tw_area, render_props)?;
-    create_right_col(tw_area, render_props)?;
-    tw_area.box_end()?;
+    create_left_col(tw_surface, render_props)?;
+    create_right_col(tw_surface, render_props)?;
+    tw_surface.box_end()?;
   });
 }
 
 /// Left column "col_1".
-fn create_left_col(tw_area: &mut TWArea, render_props: &RenderProps) -> CommonResult<()> {
+fn create_left_col(tw_surface: &mut TWSurface, render_props: &RenderProps) -> CommonResult<()> {
   // TODO: use render_props.lolcat to colorize render_props.state
   throws!({
-    tw_area.box_start(
+    tw_surface.box_start(
       TWBoxPropsBuilder::new()
-        .set_styles(tw_area.stylesheet.find_styles_by_ids(vec!["style1"]))
+        .set_styles(tw_surface.stylesheet.find_styles_by_ids(vec!["style1"]))
         .set_id("col_1".to_string())
         .set_dir(Direction::Vertical)
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    tw_area.print_inside_box(vec!["col 1 - Hello"])?;
-    tw_area.print_inside_box(vec!["col 1 - World"])?;
-    tw_area.box_end()?;
+    tw_surface.print_inside_box(vec!["col 1 - Hello"])?;
+    tw_surface.print_inside_box(vec!["col 1 - World"])?;
+    tw_surface.box_end()?;
   });
 }
 
 /// Right column "col_2".
-fn create_right_col(tw_area: &mut TWArea, render_props: &RenderProps) -> CommonResult<()> {
+fn create_right_col(tw_surface: &mut TWSurface, render_props: &RenderProps) -> CommonResult<()> {
   // TODO: use render_props.lolcat to colorize render_props.state
   throws!({
-    tw_area.box_start(
+    tw_surface.box_start(
       TWBoxPropsBuilder::new()
-        .set_styles(tw_area.stylesheet.find_styles_by_ids(vec!["style2"]))
+        .set_styles(tw_surface.stylesheet.find_styles_by_ids(vec!["style2"]))
         .set_id("col_2".to_string())
         .set_dir(Direction::Vertical)
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    tw_area.print_inside_box(vec!["col 2 - Hello"])?;
-    tw_area.print_inside_box(vec!["col 2 - World"])?;
-    tw_area.box_end()?;
+    tw_surface.print_inside_box(vec!["col 2 - Hello"])?;
+    tw_surface.print_inside_box(vec!["col 2 - World"])?;
+    tw_surface.box_end()?;
   });
 }
 

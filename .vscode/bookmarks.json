@@ -1,7 +1,7 @@
 {
 	"files": [
 		{
-			"path": "src/tui/layout/tw_area.rs",
+			"path": "src/tui/layout/tw_surface.rs",
 			"bookmarks": [
 				{
 					"line": 81,

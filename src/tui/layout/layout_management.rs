@@ -20,7 +20,7 @@ use r3bl_rs_utils::{Builder, CommonResult};
 
 /// Public API interface to create nested & responsive layout based UIs.
 pub trait LayoutManagement {
-  /// Set the origin pos (x, y) & tw_area size (width, height) of our box (container).
+  /// Set the origin pos (x, y) & tw_surface size (width, height) of our box (container).
   fn area_start(&mut self, bounds_props: TWAreaProps) -> CommonResult<()>;
 
   fn area_end(&mut self) -> CommonResult<()>;
@@ -41,12 +41,12 @@ pub(in crate::tui) trait PerformPositioningAndSizing {
   fn calc_where_to_insert_new_content_in_box(&mut self, pos: Size) -> CommonResult<Position>;
 
   /// Update `box_cursor_pos`. This needs to be called before adding a new [TWBox].
-  fn calc_where_to_insert_new_box_in_tw_area(&mut self, allocated_size: Size) -> CommonResult<Position>;
+  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position>;
 
   /// Get the [TWBox] at the "top" of the `stack`.
   fn current_box(&mut self) -> CommonResult<&mut TWBox>;
 
-  /// Add the first [TWBox] to the [TWArea].
+  /// Add the first [TWBox] to the [TWSurface].
   /// 1. This one is explicitly sized.
   /// 2. there can be only one.
   fn add_root_box(&mut self, props: TWBoxProps) -> CommonResult<()>;
@@ -64,7 +64,7 @@ pub struct TWBoxProps {
   pub styles: Option<Vec<Style>>,
 }
 
-/// Properties that are needed to create a [TWArea].
+/// Properties that are needed to create a [TWSurface].
 #[derive(Clone, Debug, Default, Builder)]
 pub struct TWAreaProps {
   pub pos: Position,

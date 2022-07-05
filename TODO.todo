@@ -1,15 +1,16 @@
 add layout engine:
   ✔ merge `tw_area_test.rs` + `app_withuout_layout.rs` -> `app_with_layout.rs` @done(22-07-03 16:47)
   ✔ make sure to save `app_without_layout.rs` for future use w/ routing below @done(22-07-03 16:26)
+  ✔ rename `tw_area.rs` to `tw_surface` and `TWArea` to `TWSurface` @done(22-07-04 20:27)
   ☐ paint state & use lolcat
 
 test 2 col layout!:
-  ☐ emit clear screen command before rendering each frame (artifacts appear on resize)
-  ☐ make sure that the attributes work as expected (dim, strikethru, etc)
   ✔ refactor DEBUG & raw mode & TWCommand @done(22-07-04 20:06)
   ✔ make sure that the colors work as expected (Color::Red, Color::Rgb, etc) @done(22-07-03 19:43)
   ✔ row calculation seems wrong (too much space on top of the rendered output) @done(22-07-04 15:10)
   ✔ clean up decl macros w/ repetitions `tw_command.rs`, `file_logging.rs`, `decl_macros.rs` @done(22-07-04 20:23)
+  ☐ emit clear screen command before rendering each frame (artifacts appear on resize)
+  ☐ make sure that the attributes work as expected (dim, strikethru, etc)
 
 performance & completness:
   ☐ stress test app w/ full screen repaint on mouse move
@@ -30,7 +31,7 @@ focus mgmt:
 support for graphemes & text wrapping:
   ☐ `unicode-width` crate
   ☐ `textwrap` crate
-  ☐ Update `tw_area.rs::print_inside_box()` to support graphemes & text wrapping
+  ☐ Update `tw_surface.rs::print_inside_box()` to support graphemes & text wrapping
 
 pre built components - multi select chooser:
   ☐ TODO

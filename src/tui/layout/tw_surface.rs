@@ -19,10 +19,10 @@ use crate::layout::*;
 use crate::*;
 use r3bl_rs_utils::*;
 
-/// Represents a rectangular area of the terminal screen, and not necessarily the full
-/// terminal screen.
+/// Represents a rectangular area of the terminal screen, and not necessarily the full terminal
+/// screen.
 #[derive(Clone, Debug, Default)]
-pub struct TWArea {
+pub struct TWSurface {
   pub origin_pos: Position,
   pub box_size: Size,
   pub stack_of_boxes: Vec<TWBox>,
@@ -30,7 +30,7 @@ pub struct TWArea {
   pub render_buffer: TWCommandQueue,
 }
 
-impl LayoutManagement for TWArea {
+impl LayoutManagement for TWSurface {
   fn area_start(&mut self, TWAreaProps { pos, size }: TWAreaProps) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
@@ -115,7 +115,7 @@ impl LayoutManagement for TWArea {
   }
 }
 
-impl PerformPositioningAndSizing for TWArea {
+impl PerformPositioningAndSizing for TWSurface {
   /// 🌳 Root: Handle first box to add to stack of boxes, explicitly sized & positioned.
   fn add_root_box(
     &mut self,
@@ -170,7 +170,7 @@ impl PerformPositioningAndSizing for TWArea {
         LayoutErrorType::BoxCursorPositionUndefined
       };
 
-      self.calc_where_to_insert_new_box_in_tw_area(requested_size_allocation)?;
+      self.calc_where_to_insert_new_box_in_tw_surface(requested_size_allocation)?;
 
       self.stack_of_boxes.push(TWBox::make_box(
         id,
@@ -190,7 +190,7 @@ impl PerformPositioningAndSizing for TWArea {
   /// This updates the `box_cursor_pos` of the current [TWBox].
   ///
   /// Returns the [Position] where the next [TWBox] can be added to the stack of boxes.
-  fn calc_where_to_insert_new_box_in_tw_area(&mut self, allocated_size: Size) -> CommonResult<Position> {
+  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position> {
     let current_box = self.current_box()?;
     let box_cursor_pos = current_box.box_cursor_pos;
 

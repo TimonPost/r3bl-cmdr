@@ -22,37 +22,42 @@ use r3bl_rs_utils::*;
 #[test]
 fn test_simple_2_col_layout() -> CommonResult<()> {
   throws!({
-    let mut tw_area = TWArea {
+    let mut tw_surface = TWSurface {
       stylesheet: create_stylesheet()?,
-      ..TWArea::default()
+      ..TWSurface::default()
     };
-    tw_area.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size((500, 500).into()).build())?;
-    create_main_container(&mut tw_area)?;
-    tw_area.area_end()?;
-    println!("{}", &tw_area.render_buffer);
-    println!("{}", serde_json::to_string_pretty(&tw_area.render_buffer).unwrap());
+    tw_surface.area_start(
+      TWAreaPropsBuilder::new()
+        .set_pos((0, 0).into())
+        .set_size((500, 500).into())
+        .build(),
+    )?;
+    create_main_container(&mut tw_surface)?;
+    tw_surface.area_end()?;
+    println!("{}", &tw_surface.render_buffer);
+    println!("{}", serde_json::to_string_pretty(&tw_surface.render_buffer).unwrap());
   });
 }
 
 /// Main container "container".
-fn create_main_container(tw_area: &mut TWArea) -> CommonResult<()> {
+fn create_main_container(tw_surface: &mut TWSurface) -> CommonResult<()> {
   throws!({
-    tw_area.box_start(
+    tw_surface.box_start(
       TWBoxPropsBuilder::new()
         .set_id("container".to_string())
         .set_dir(Direction::Horizontal)
         .set_req_size((100, 100).try_into()?)
         .build(),
     )?;
-    make_container_assertions(tw_area)?;
-    create_left_col(tw_area)?;
-    create_right_col(tw_area)?;
-    tw_area.box_end()?;
+    make_container_assertions(tw_surface)?;
+    create_left_col(tw_surface)?;
+    create_right_col(tw_surface)?;
+    tw_surface.box_end()?;
   });
 
-  fn make_container_assertions(tw_area: &TWArea) -> CommonResult<()> {
+  fn make_container_assertions(tw_surface: &TWSurface) -> CommonResult<()> {
     throws!({
-      let layout_item = tw_area.stack_of_boxes.first().unwrap();
+      let layout_item = tw_surface.stack_of_boxes.first().unwrap();
       assert_eq!(layout_item.id, "container");
       assert_eq!(layout_item.dir, Direction::Horizontal);
       assert_eq!(layout_item.origin_pos, (0, 0).into());
@@ -66,25 +71,25 @@ fn create_main_container(tw_area: &mut TWArea) -> CommonResult<()> {
 }
 
 /// Left column "col_1".
-fn create_left_col(tw_area: &mut TWArea) -> CommonResult<()> {
+fn create_left_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
   throws!({
-    tw_area.box_start(
+    tw_surface.box_start(
       TWBoxPropsBuilder::new()
-        .set_styles(tw_area.stylesheet.find_styles_by_ids(vec!["style1"]))
+        .set_styles(tw_surface.stylesheet.find_styles_by_ids(vec!["style1"]))
         .set_id("col_1".to_string())
         .set_dir(Direction::Vertical)
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    tw_area.print_inside_box(vec!["col 1 - Hello"])?;
-    tw_area.print_inside_box(vec!["col 1 - World"])?;
-    make_left_col_assertions(tw_area)?;
-    tw_area.box_end()?;
+    tw_surface.print_inside_box(vec!["col 1 - Hello"])?;
+    tw_surface.print_inside_box(vec!["col 1 - World"])?;
+    make_left_col_assertions(tw_surface)?;
+    tw_surface.box_end()?;
   });
 
-  fn make_left_col_assertions(tw_area: &TWArea) -> CommonResult<()> {
+  fn make_left_col_assertions(tw_surface: &TWSurface) -> CommonResult<()> {
     throws!({
-      let layout_item = tw_area.stack_of_boxes.last().unwrap();
+      let layout_item = tw_surface.stack_of_boxes.last().unwrap();
       assert_eq!(layout_item.id, "col_1");
       assert_eq!(layout_item.dir, Direction::Vertical);
       assert_eq!(layout_item.origin_pos, (2, 2).into()); // Take margin into account.
@@ -94,32 +99,32 @@ fn create_left_col(tw_area: &mut TWArea) -> CommonResult<()> {
       assert_eq!(layout_item.content_cursor_pos, Some((0, 2).into()));
       assert_eq!(
         layout_item.get_computed_style(),
-        Stylesheet::compute(tw_area.stylesheet.find_styles_by_ids(vec!["style1"]))
+        Stylesheet::compute(tw_surface.stylesheet.find_styles_by_ids(vec!["style1"]))
       );
     });
   }
 }
 
 /// Right column "col_2".
-fn create_right_col(tw_area: &mut TWArea) -> CommonResult<()> {
+fn create_right_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
   throws!({
-    tw_area.box_start(
+    tw_surface.box_start(
       TWBoxPropsBuilder::new()
-        .set_styles(tw_area.stylesheet.find_styles_by_ids(vec!["style2"]))
+        .set_styles(tw_surface.stylesheet.find_styles_by_ids(vec!["style2"]))
         .set_id("col_2".to_string())
         .set_dir(Direction::Vertical)
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    tw_area.print_inside_box(vec!["col 2 - Hello"])?;
-    tw_area.print_inside_box(vec!["col 2 - World"])?;
-    make_right_col_assertions(tw_area)?;
-    tw_area.box_end()?;
+    tw_surface.print_inside_box(vec!["col 2 - Hello"])?;
+    tw_surface.print_inside_box(vec!["col 2 - World"])?;
+    make_right_col_assertions(tw_surface)?;
+    tw_surface.box_end()?;
   });
 
-  fn make_right_col_assertions(tw_area: &TWArea) -> CommonResult<()> {
+  fn make_right_col_assertions(tw_surface: &TWSurface) -> CommonResult<()> {
     throws!({
-      let current_box = tw_area.stack_of_boxes.last().unwrap();
+      let current_box = tw_surface.stack_of_boxes.last().unwrap();
       assert_eq!(current_box.id, "col_2");
       assert_eq!(current_box.dir, Direction::Vertical);
       assert_eq!(current_box.origin_pos, (253, 3).into()); // Take margin into account.
@@ -129,7 +134,7 @@ fn create_right_col(tw_area: &mut TWArea) -> CommonResult<()> {
       assert_eq!(current_box.content_cursor_pos, Some((0, 2).into()));
       assert_eq!(
         current_box.get_computed_style(),
-        Stylesheet::compute(tw_area.stylesheet.find_styles_by_ids(vec!["style2"]))
+        Stylesheet::compute(tw_surface.stylesheet.find_styles_by_ids(vec!["style2"]))
       );
     });
   }
