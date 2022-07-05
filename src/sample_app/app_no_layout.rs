@@ -19,8 +19,6 @@ use crate::*;
 use async_trait::async_trait;
 use crossterm::event::*;
 
-const DEBUG: bool = true;
-
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default, Debug, Clone, Copy)]
 pub struct AppNoLayout {

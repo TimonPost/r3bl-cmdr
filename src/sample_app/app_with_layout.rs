@@ -19,8 +19,6 @@ use crate::*;
 use async_trait::async_trait;
 use crossterm::{event::*, style::Color};
 
-const DEBUG: bool = true;
-
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default, Debug, Clone, Copy)]
 pub struct AppWithLayout {
@@ -202,7 +200,7 @@ fn create_style1() -> Style {
     .set_id("style1".to_string())
     .set_color_fg(Some(turquoise.into()))
     .set_color_bg(Some(pink.into()))
-    .set_margin(Some(1)) 
+    .set_margin(Some(1))
     .build()
 }
 
@@ -213,6 +211,6 @@ fn create_style2() -> Style {
     .set_id("style2".to_string())
     .set_color_fg(Some(white.into()))
     .set_color_bg(Some(magenta.into()))
-    .set_margin(Some(1)) 
+    .set_margin(Some(1))
     .build()
 }

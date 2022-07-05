@@ -47,6 +47,3 @@ pub use input_event::*;
 pub use raw_mode::*;
 pub use tw_color::*;
 pub use tw_command::*;
-
-/// If set to true, and the [log!] fails, then it will print the error to stderr.
-pub const DEBUG: bool = true;

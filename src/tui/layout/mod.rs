@@ -15,6 +15,10 @@
  *   limitations under the License.
  */
 
+/// If set to true, and the [log!] fails, then it will print the error to stderr. Also enables or
+/// disables file logging for entire module.
+pub const DEBUG: bool = true;
+
 // Attach source files.
 pub mod layout_error;
 pub mod dimens;

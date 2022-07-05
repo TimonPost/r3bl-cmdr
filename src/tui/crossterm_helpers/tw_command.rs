@@ -17,9 +17,9 @@
 
 use crate::*;
 use crossterm::{
-  cursor::{self, *},
+  cursor::*,
   event::*,
-  style::{self, *},
+  style::*,
   terminal::{self, *},
   *,
 };
@@ -29,7 +29,7 @@ use serde::{Deserialize, Serialize};
 
 use std::{
   collections::HashMap,
-  fmt::Display,
+  fmt::{Display, Formatter, Result},
   io::{stderr, stdout, Write},
   ops::AddAssign,
 };
@@ -62,16 +62,13 @@ macro_rules! exec {
   }};
 }
 
-/// This works together w/ [Command] to enqueue commands, but not flush them. It will
-/// return a [CommandQueue]. Here's an example.
+/// This works together w/ [TWCommand] to enqueue commands, but not flush them. It will
+/// return a [TWCommandQueue]. Here's an example.
 ///
 /// ```ignore
 /// let mut queue = queue!(
-///   Command::EnableRawMode,
-///   Command::EnableMouseCapture,
-///   Command::EnterAlternateScreen,
-///   Command::ResetCursorPosition,
-///   Command::ClearScreen
+///   TWCommand::ClearScreen,
+///   TWCommand::ResetColor
 /// );
 /// ```
 ///
@@ -108,13 +105,9 @@ macro_rules! tw_queue {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum TWCommand {
-  EnableRawMode,
-  EnableMouseCapture,
-  EnterAlternateScreen,
-  LeaveAlternateScreen,
-  DisableRawMode,
-  DisableMouseCapture,
-  /// (column / x , row / y).
+  EnterRawMode,
+  ExitRawMode,
+  /// (column, row).
   MoveCursorPosition((UnitType, UnitType)),
   ClearScreen,
   SetFgColor(TWColor),
@@ -133,15 +126,12 @@ impl TWCommand {
   }
 }
 
-/// This works w/ [Command] items. It allows them to be added in sequence, and then
+/// This works w/ [TWCommand] items. It allows them to be added in sequence, and then
 /// flushed at the end. Here's an example.
 /// ```ignore
 /// let mut queue = CommandQueue::default();
-/// queue.add(Command::EnableRawMode);
-/// queue.add(Command::EnableMouseCapture);
-/// queue.add(Command::EnterAlternateScreen);
-/// queue.add(Command::ResetCursorPosition);
-/// queue.add(Command::ClearScreen);
+/// queue.add(TWCommand::ClearScreen);
+/// queue.add(TWCommand::CursorShow);
 /// queue.flush();
 /// ```
 #[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -150,7 +140,7 @@ pub struct TWCommandQueue {
 }
 
 impl Display for TWCommandQueue {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+  fn fmt(&self, f: &mut Formatter<'_>) -> Result {
     for cmd in &self.queue {
       writeln!(f, "{:?}", cmd)?;
     }
@@ -171,48 +161,63 @@ impl TWCommandQueue {
 
   #[allow(unreachable_patterns)]
   pub fn flush(&self) {
+    let mut skip_flush = false;
+
     self.queue.iter().for_each(|cmd_wrapper| match cmd_wrapper {
-      TWCommand::EnableRawMode => {
-        exec!(terminal::enable_raw_mode(), "EnableRawMode")
+      TWCommand::EnterRawMode => {
+        exec! {
+          terminal::enable_raw_mode(),
+          "EnterRawMode -> enable_raw_mode()"
+        };
+        exec! {
+          queue!(stdout(),
+            EnableMouseCapture,
+            EnterAlternateScreen,
+            MoveTo(0,0),
+            Clear(ClearType::All),
+            Hide,
+          ),
+        "EnterRawMode -> EnableMouseCapture, EnterAlternateScreen, MoveTo(0,0), Clear(ClearType::All), Hide"
+        }
+        TWCommand::flush();
+        skip_flush = true;
       }
-      TWCommand::EnableMouseCapture => {
-        exec!(queue!(stdout(), EnableMouseCapture), "EnableMouseCapture")
-      }
-      TWCommand::EnterAlternateScreen => {
-        exec!(queue!(stdout(), EnterAlternateScreen), "EnterAlternateScreen")
-      }
-      TWCommand::LeaveAlternateScreen => {
-        exec!(queue!(stdout(), LeaveAlternateScreen), "LeaveAlternateScreen")
-      }
-      TWCommand::DisableRawMode => {
-        exec!(terminal::disable_raw_mode(), "DisableRawMode")
-      }
-      TWCommand::DisableMouseCapture => {
-        exec!(queue!(stdout(), DisableMouseCapture), "DisableMouseCapture")
+      TWCommand::ExitRawMode => {
+        exec! {
+          queue!(stdout(),
+            Show,
+            LeaveAlternateScreen,
+            DisableMouseCapture
+          ),
+          "ExitRawMode -> Show, LeaveAlternateScreen, DisableMouseCapture"
+        };
+        TWCommand::flush();
+        exec! {terminal::disable_raw_mode(), "ExitRawMode -> disable_raw_mode()"}
+        skip_flush = true;
       }
       TWCommand::MoveCursorPosition((col, row)) => {
         exec!(
-          queue!(stdout(), cursor::MoveTo(*col, *row)),
+          queue!(stdout(), MoveTo(*col, *row)),
           format!("MoveCursorPosition(col: {}, row: {})", *col, *row)
         )
       }
       TWCommand::ClearScreen => {
-        exec!(queue!(stdout(), terminal::Clear(ClearType::All)), "ClearScreen")
+        exec!(queue!(stdout(), Clear(ClearType::All)), "ClearScreen")
       }
       TWCommand::SetFgColor(color) => {
         exec!(
-          queue!(stdout(), style::SetForegroundColor(**color)),
+          queue!(stdout(), SetForegroundColor(**color)),
           format!("SetFgColor({:?})", color)
         )
       }
       TWCommand::SetBgColor(color) => {
         exec!(
-          queue!(stdout(), style::SetBackgroundColor(**color)),
+          queue!(stdout(), SetBackgroundColor(**color)),
           format!("SetBgColor({:?})", color)
         )
       }
       TWCommand::ResetColor => {
-        exec!(queue!(stdout(), style::ResetColor), "ResetColor")
+        exec!(queue!(stdout(), ResetColor), "ResetColor")
       }
       TWCommand::CursorShow => {
         exec!(queue!(stdout(), Show), "CursorShow")
@@ -229,14 +234,14 @@ impl TWCommandQueue {
           if mask.contains(StyleFlag::COLOR_BG_SET) {
             let color_bg = style.color_bg.unwrap();
             exec!(
-              queue!(stdout(), style::SetBackgroundColor(*color_bg)),
+              queue!(stdout(), SetBackgroundColor(*color_bg)),
               format!("ApplyColors -> SetBackgroundColor({:?})", *color_bg)
             )
           }
           if mask.contains(StyleFlag::COLOR_FG_SET) {
             let color_fg = style.color_fg.unwrap();
             exec!(
-              queue!(stdout(), style::SetForegroundColor(*color_fg)),
+              queue!(stdout(), SetForegroundColor(*color_fg)),
               format!("ApplyColors -> SetForegroundColor({:?})", *color_fg)
             )
           }
@@ -253,7 +258,7 @@ impl TWCommandQueue {
           STYLE_TO_ATTRIBUTE_MAP.iter().for_each(|(flag, attr)| {
             if mask.contains(*flag) {
               exec!(
-                queue!(stdout(), style::SetAttribute(*attr)),
+                queue!(stdout(), SetAttribute(*attr)),
                 format!("PrintWithAttributes -> SetAttribute({:?})", attr)
               );
               needs_reset = true;
@@ -261,7 +266,7 @@ impl TWCommandQueue {
           });
 
           exec!(
-            queue!(stdout(), style::Print(text.clone())),
+            queue!(stdout(), Print(text.clone())),
             format!("PrintWithAttributes -> Print({:?})", text)
           );
 
@@ -273,7 +278,7 @@ impl TWCommandQueue {
           }
         } else {
           exec!(
-            queue!(stdout(), style::Print(text.clone())),
+            queue!(stdout(), Print(text.clone())),
             format!("PrintWithAttributes -> Print({:?})", text)
           )
         }
@@ -284,7 +289,9 @@ impl TWCommandQueue {
     });
 
     // Flush all the commands that were added via calls to `queue!` above.
-    TWCommand::flush();
+    if !skip_flush {
+      TWCommand::flush()
+    };
   }
 }
 

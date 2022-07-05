@@ -38,13 +38,13 @@ impl TWData {
     })
   }
 
-  pub fn log_state(&self, msg: &str) {
-    log_no_err!(INFO, "{} -> {:?}", msg, self);
+  pub fn dump_state_to_log(&self, msg: &str) {
+    call_if_true!(DEBUG, log_no_err!(INFO, "{} -> {:?}", msg, self));
   }
 
   pub fn set_size(&mut self, new_size: Size) {
     self.size = new_size;
-    call_if_true!(DEBUG, self.log_state("main_event_loop -> Resize"));
+    self.dump_state_to_log("main_event_loop -> Resize");
   }
 }
 
@@ -85,7 +85,7 @@ impl TerminalWindow {
       // Perform first render.
       TWSubscriber::render(&shared_store, &shared_render, shared_window.read().await.size, None).await?;
 
-      call_if_true!(DEBUG, shared_window.read().await.log_state("main_event_loop -> Startup 🚀"));
+      shared_window.read().await.dump_state_to_log("main_event_loop -> Startup 🚀");
 
       // Main event loop.
       loop {
@@ -135,7 +135,7 @@ where
     let window_size = self.shared_window.read().await.size;
     let result = TWSubscriber::render(&self.shared_store, &self.shared_render, window_size, Some(my_state)).await;
     if let Err(e) = result {
-      log_no_err!(ERROR, "MySubscriber::run -> Error: {}", e);
+      call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::run -> Error: {}", e))
     }
   }
 }

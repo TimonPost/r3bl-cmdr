@@ -73,27 +73,13 @@ pub struct RawMode;
 
 impl RawMode {
   pub fn start() -> Self {
-    tw_queue!(
-      TWCommand::EnableRawMode,
-      TWCommand::EnableMouseCapture,
-      TWCommand::EnterAlternateScreen,
-      TWCommand::MoveCursorPosition((0, 0)),
-      TWCommand::ClearScreen,
-      TWCommand::CursorHide
-    )
-    .flush();
+    tw_queue!(TWCommand::EnterRawMode).flush();
     RawMode
   }
 }
 
 impl Drop for RawMode {
   fn drop(&mut self) {
-    tw_queue!(
-      TWCommand::CursorShow,
-      TWCommand::LeaveAlternateScreen,
-      TWCommand::DisableMouseCapture,
-      TWCommand::DisableRawMode
-    )
-    .flush();
+    tw_queue!(TWCommand::ExitRawMode).flush();
   }
 }

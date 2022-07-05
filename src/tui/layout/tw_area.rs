@@ -104,11 +104,6 @@ impl LayoutManagement for TWArea {
         // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
         let new_absolute_pos = box_origin_pos + content_relative_pos;
 
-        trace_log_no_err!(content_size);
-        trace_log_no_err!(content_relative_pos);
-        trace_log_no_err!(box_origin_pos);
-        trace_log_no_err!(new_absolute_pos);
-
         // Queue a bunch of `TWCommand`s to paint the text.
         let move_to_cmd = TWCommand::MoveCursorPosition(new_absolute_pos.into());
         let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
