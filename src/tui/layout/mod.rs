@@ -21,18 +21,12 @@ pub const DEBUG: bool = true;
 
 // Attach source files.
 pub mod layout_error;
-pub mod dimens;
 pub mod tw_box;
 pub mod tw_surface;
-pub mod style;
-pub mod stylesheet;
 pub mod layout_management;
 
 // Re-export the public items.
-pub use dimens::*;
 pub use layout_error::*;
 pub use layout_management::*;
-pub use style::*;
-pub use stylesheet::*;
-pub use tw_surface::*;
 pub use tw_box::*;
+pub use tw_surface::*;

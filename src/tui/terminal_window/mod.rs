@@ -16,10 +16,10 @@
  */
 
 // Attach files.
-mod type_alias;
-mod main_event_loop;
-mod default_input_event_handler;
-mod render;
+pub mod type_alias;
+pub mod main_event_loop;
+pub mod default_input_event_handler;
+pub mod render;
 
 // Re-export.
 pub use default_input_event_handler::*;

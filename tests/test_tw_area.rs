@@ -15,8 +15,8 @@
  *   limitations under the License.
  */
 
-use crossterm::style::Color;
-use r3bl_cmdr::layout::*;
+use crossterm::style::*;
+use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
 #[test]
