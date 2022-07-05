@@ -34,7 +34,7 @@ impl LayoutManagement for TWSurface {
   fn surface_start(&mut self, TWAreaProps { pos, size }: TWAreaProps) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
-      if !self.stack_of_boxes.is_empty() {
+      if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceStart,
           LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
@@ -48,7 +48,7 @@ impl LayoutManagement for TWSurface {
   fn surface_end(&mut self) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
-      if !self.stack_of_boxes.is_empty() {
+      if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceEnd,
           LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
@@ -59,7 +59,7 @@ impl LayoutManagement for TWSurface {
 
   fn box_start(&mut self, tw_box_props: TWBoxProps) -> CommonResult<()> {
     throws!({
-      match self.stack_of_boxes.is_empty() {
+      match self.no_boxes_added() {
         true => self.add_root_box(tw_box_props),
         false => self.add_box(tw_box_props),
       }?
@@ -69,7 +69,7 @@ impl LayoutManagement for TWSurface {
   fn box_end(&mut self) -> CommonResult<()> {
     throws!({
       // Expect stack not to be empty!
-      if self.stack_of_boxes.is_empty() {
+      if self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedBoxEnd,
           LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should not be empty"),
@@ -239,9 +239,13 @@ impl PerformPositioningAndSizing for TWSurface {
   /// Get the last box on the stack (if none found then return Err).
   fn current_box(&mut self) -> CommonResult<&mut TWBox> {
     // Expect stack of boxes not to be empty!
-    if self.stack_of_boxes.is_empty() {
+    if self.no_boxes_added() {
       LayoutError::new_err(LayoutErrorType::StackOfBoxesShouldNotBeEmpty)?
     }
     Ok(self.stack_of_boxes.last_mut().unwrap())
+  }
+
+  fn no_boxes_added(&self) -> bool {
+    self.stack_of_boxes.is_empty()
   }
 }

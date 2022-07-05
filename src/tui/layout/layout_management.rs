@@ -46,6 +46,8 @@ pub(in crate::tui) trait PerformPositioningAndSizing {
   /// Get the [TWBox] at the "top" of the `stack`.
   fn current_box(&mut self) -> CommonResult<&mut TWBox>;
 
+  fn no_boxes_added(&self) -> bool;
+  
   /// Add the first [TWBox] to the [TWSurface].
   /// 1. This one is explicitly sized.
   /// 2. there can be only one.
