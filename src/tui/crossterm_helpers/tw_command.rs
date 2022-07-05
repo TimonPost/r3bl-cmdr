@@ -39,7 +39,6 @@ use std::{
 ///
 /// Paste docs: https://github.com/dtolnay/paste
 #[macro_export]
-
 macro_rules! exec {
   ($cmd: expr, $msg: expr) => {{
     // Generate a new function that returns [CommonResult].
@@ -76,29 +75,23 @@ macro_rules! exec {
 /// - https://veykril.github.io/tlborm/decl-macros/macros-methodical.html#repetitions
 #[macro_export]
 macro_rules! tw_queue {
-    (
-      // Start a repetition:
-      $(
-          // Each repeat must contain an expression...
-          $element:expr
-      )
-      // ...separated by commas...
-      ,
-      // ...zero or more times.
-      *
+  (
+    $(                      /* Start a repetition. */
+      $element:expr         /* Expression. */
+    )                       /* End repetition. */
+    ,                       /* Comma separated. */
+    *                       /* Zero or more times. */
   ) => {
-      // Enclose the expansion in a block so that we can use
-      // multiple statements.
-      {
-          let mut queue = TWCommandQueue::default();
-          // Start a repetition:
-          $(
-              // Each repeat will contain the following statement, with
-              // $element replaced with the corresponding expression.
-              queue.push($element);
-          )*
-          queue
-      }
+    /* Enclose the expansion in a block so that we can use multiple statements. */
+    {
+      let mut queue = TWCommandQueue::default();
+      /* Start a repetition. */
+      $(
+        /* Each repeat will contain the following statement, with $element replaced. */
+        queue.push($element);
+      )*
+      queue
+    }
   };
 }
 
