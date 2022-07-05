@@ -16,7 +16,7 @@
  */
 
 use crate::*;
-use r3bl_rs_utils::{Builder, CommonResult};
+use r3bl_rs_utils::*;
 
 /// Public API interface to create nested & responsive layout based UIs.
 pub trait LayoutManagement {
@@ -47,7 +47,7 @@ pub(in crate::tui) trait PerformPositioningAndSizing {
   fn current_box(&mut self) -> CommonResult<&mut TWBox>;
 
   fn no_boxes_added(&self) -> bool;
-  
+
   /// Add the first [TWBox] to the [TWSurface].
   /// 1. This one is explicitly sized.
   /// 2. there can be only one.

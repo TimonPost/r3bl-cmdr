@@ -150,25 +150,27 @@ fn create_stylesheet() -> CommonResult<Stylesheet> {
 fn create_style1() -> Style {
   let yellow = Color::Rgb { r: 255, g: 255, b: 0 };
   let grey = Color::Rgb { r: 128, g: 128, b: 128 };
-  StyleBuilder::new()
-    .set_id("style1".to_string())
-    .set_color_fg(Some(yellow.into()))
-    .set_color_bg(Some(grey.into()))
-    .set_dim(true)
-    .set_bold(true)
-    .set_margin(Some(2))
-    .build()
+  Style {
+    id: "style1".to_string(),
+    color_fg: Some(yellow.into()),
+    color_bg: Some(grey.into()),
+    dim: true,
+    bold: true,
+    margin: Some(2),
+    ..Default::default()
+  }
 }
 
 fn create_style2() -> Style {
   let black = Color::Rgb { r: 0, g: 0, b: 0 };
   let white = Color::Rgb { r: 255, g: 255, b: 255 };
-  StyleBuilder::new()
-    .set_id("style2".to_string())
-    .set_color_fg(Some(black.into()))
-    .set_color_bg(Some(white.into()))
-    .set_underline(true)
-    .set_strikethrough(true)
-    .set_margin(Some(3))
-    .build()
+  Style {
+    id: "style2".to_string(),
+    color_fg: Some(black.into()),
+    color_bg: Some(white.into()),
+    underline: true,
+    strikethrough: true,
+    margin: Some(3),
+    ..Default::default()
+  }
 }

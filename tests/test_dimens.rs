@@ -15,7 +15,7 @@
  *   limitations under the License.
  */
 
-use r3bl_cmdr::*;
+use r3bl_rs_utils::*;
 
 #[tokio::test]
 async fn test_add_box_size_to_pos() {

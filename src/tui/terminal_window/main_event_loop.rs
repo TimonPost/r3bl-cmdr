@@ -17,7 +17,7 @@
 
 use crate::*;
 use async_trait::async_trait;
-use crossterm::event::*;
+use crossterm::{event::*, terminal::*};
 use r3bl_rs_utils::*;
 use std::{
   fmt::{Debug, Display},
@@ -31,10 +31,16 @@ pub struct TWData {
   pub size: Size,
 }
 
+/// Create a new [Size] from [crossterm::terminal::size()].
+pub fn try_to_get_from_crossterm_terminal() -> CommonResult<Size> {
+  let size: Size = size()?.into();
+  Ok(size)
+}
+
 impl TWData {
   fn try_to_create_instance() -> CommonResult<TWData> {
     Ok(TWData {
-      size: Size::try_to_get_from_crossterm_terminal()?,
+      size: try_to_get_from_crossterm_terminal()?,
     })
   }
 

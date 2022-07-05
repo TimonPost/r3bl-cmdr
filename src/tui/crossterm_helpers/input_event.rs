@@ -15,13 +15,12 @@
  *   limitations under the License.
  */
 
-use std::fmt::{Display, Formatter};
-
-use crate::*;
 use crossterm::event::{
   Event::{self, Key, Mouse, Resize},
   KeyCode, KeyEvent, KeyModifiers, MouseEvent,
 };
+use r3bl_rs_utils::*;
+use std::fmt::{Display, Formatter};
 
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -61,7 +60,10 @@ impl From<Event> for InputEvent {
 impl From<(/* rows: */ u16, /* cols: */ u16)> for InputEvent {
   fn from(size: (u16, u16)) -> Self {
     let (rows, cols) = size;
-    InputEvent::Resize(Size { width: cols, height: rows })
+    InputEvent::Resize(Size {
+      width: cols,
+      height: rows,
+    })
   }
 }
 

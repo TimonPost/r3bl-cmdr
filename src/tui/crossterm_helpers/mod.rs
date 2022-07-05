@@ -35,7 +35,6 @@
 //! - Windows Terminal (bash): https://www.makeuseof.com/windows-terminal-vs-powershell/
 
 // Attach source files.
-pub mod tw_color;
 pub mod raw_mode;
 pub mod tw_command;
 pub mod input_event;
@@ -45,5 +44,4 @@ pub mod event_stream_ext;
 pub use event_stream_ext::*;
 pub use input_event::*;
 pub use raw_mode::*;
-pub use tw_color::*;
 pub use tw_command::*;

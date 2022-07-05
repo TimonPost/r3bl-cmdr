@@ -16,7 +16,8 @@
  */
 
 use crossterm::style::Color;
-use r3bl_cmdr::{TWColor, TWCommandQueue};
+use r3bl_cmdr::TWCommandQueue;
+use r3bl_rs_utils::*;
 
 #[test]
 fn test_serde_tw_color_simple() {

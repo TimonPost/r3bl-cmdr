@@ -17,8 +17,6 @@
 
 // Attach sources.
 pub mod tui;
-pub mod tui_core;
 
 // Re-export.
 pub use tui::*;
-pub use tui_core::*;

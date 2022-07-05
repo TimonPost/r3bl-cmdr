@@ -18,7 +18,6 @@
 //! https://docs.rs/bitmask/latest/bitmask/macro.bitmask.html
 
 use crossterm::style::*;
-use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
 #[test]
@@ -108,16 +107,38 @@ fn test_style() {
 
 #[test]
 fn test_cascade_style() {
-  let style_bold_green_fg = StyleBuilder::new()
-    .set_bold(true)
-    .set_color_fg(Some(Color::Green.into()))
-    .build();
-  let style_italic = StyleBuilder::new().set_dim(true).build();
-  let style_yellow_bg = StyleBuilder::new().set_color_bg(Some(Color::Yellow.into())).build();
-  let style_margin = StyleBuilder::new().set_margin(Some(2)).build();
-  let style_red_fg = StyleBuilder::new().set_color_fg(Some(Color::Red.into())).build();
+  let style_bold_green_fg = Style {
+    id: "bold_green_fg".to_string(),
+    bold: true,
+    color_fg: Some(Color::Green.into()),
+    ..Style::default()
+  };
 
-  let mut computed_style = style_bold_green_fg + style_italic + style_yellow_bg + style_margin + style_red_fg;
+  let style_dim = Style {
+    id: "dim".to_string(),
+    dim: true,
+    ..Style::default()
+  };
+
+  let style_yellow_bg = Style {
+    id: "yellow_bg".to_string(),
+    color_bg: Some(Color::Yellow.into()),
+    ..Style::default()
+  };
+
+  let style_margin = Style {
+    id: "margin".to_string(),
+    margin: Some(2),
+    ..Style::default()
+  };
+
+  let style_red_fg = Style {
+    id: "red_fg".to_string(),
+    color_fg: Some(Color::Red.into()),
+    ..Style::default()
+  };
+
+  let mut computed_style = style_bold_green_fg + style_dim + style_yellow_bg + style_margin + style_red_fg;
 
   assert!(computed_style.get_bitflags().contains(
     StyleFlag::COLOR_FG_SET
@@ -165,11 +186,13 @@ fn test_stylesheet() {
 /// Helper function.
 fn make_a_style(id: &str) -> Style {
   let black = Color::Rgb { r: 0, g: 0, b: 0 };
-  StyleBuilder::new()
-    .set_id(id.to_string())
-    .set_color_bg(Some(black.into()))
-    .set_color_fg(Some(black.into()))
-    .set_dim(true)
-    .set_bold(true)
-    .build()
+
+  Style {
+    id: id.to_string(),
+    dim: true,
+    bold: true,
+    color_fg: Some(black.into()),
+    color_bg: Some(black.into()),
+    ..Style::default()
+  }
 }
