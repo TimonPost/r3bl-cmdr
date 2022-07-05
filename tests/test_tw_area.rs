@@ -26,14 +26,14 @@ fn test_simple_2_col_layout() -> CommonResult<()> {
       stylesheet: create_stylesheet()?,
       ..TWSurface::default()
     };
-    tw_surface.area_start(
+    tw_surface.surface_start(
       TWAreaPropsBuilder::new()
         .set_pos((0, 0).into())
         .set_size((500, 500).into())
         .build(),
     )?;
     create_main_container(&mut tw_surface)?;
-    tw_surface.area_end()?;
+    tw_surface.surface_end()?;
     println!("{}", &tw_surface.render_buffer);
     println!("{}", serde_json::to_string_pretty(&tw_surface.render_buffer).unwrap());
   });

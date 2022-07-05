@@ -21,9 +21,9 @@ use r3bl_rs_utils::{Builder, CommonResult};
 /// Public API interface to create nested & responsive layout based UIs.
 pub trait LayoutManagement {
   /// Set the origin pos (x, y) & tw_surface size (width, height) of our box (container).
-  fn area_start(&mut self, bounds_props: TWAreaProps) -> CommonResult<()>;
+  fn surface_start(&mut self, bounds_props: TWAreaProps) -> CommonResult<()>;
 
-  fn area_end(&mut self) -> CommonResult<()>;
+  fn surface_end(&mut self) -> CommonResult<()>;
 
   /// Add a new layout on the stack w/ the direction & (width, height) percentages.
   fn box_start(&mut self, tw_box_props: TWBoxProps) -> CommonResult<()>;

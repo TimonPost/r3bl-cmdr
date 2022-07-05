@@ -31,12 +31,12 @@ pub struct TWSurface {
 }
 
 impl LayoutManagement for TWSurface {
-  fn area_start(&mut self, TWAreaProps { pos, size }: TWAreaProps) -> CommonResult<()> {
+  fn surface_start(&mut self, TWAreaProps { pos, size }: TWAreaProps) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
       if !self.stack_of_boxes.is_empty() {
         LayoutError::new_err_with_msg(
-          LayoutErrorType::MismatchedAreaStart,
+          LayoutErrorType::MismatchedSurfaceStart,
           LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
         )?
       }
@@ -45,12 +45,12 @@ impl LayoutManagement for TWSurface {
     });
   }
 
-  fn area_end(&mut self) -> CommonResult<()> {
+  fn surface_end(&mut self) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
       if !self.stack_of_boxes.is_empty() {
         LayoutError::new_err_with_msg(
-          LayoutErrorType::MismatchedAreaEnd,
+          LayoutErrorType::MismatchedSurfaceEnd,
           LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
         )?
       }

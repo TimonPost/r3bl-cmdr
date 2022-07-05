@@ -43,7 +43,7 @@ impl Render<AppState, AppAction> for AppWithLayout {
         stylesheet: create_stylesheet()?,
         ..TWSurface::default()
       };
-      tw_surface.area_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size(window_size).build())?;
+      tw_surface.surface_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size(window_size).build())?;
       create_main_container(
         &mut tw_surface,
         &RenderProps {
@@ -51,7 +51,7 @@ impl Render<AppState, AppAction> for AppWithLayout {
           state,
         },
       )?;
-      tw_surface.area_end()?;
+      tw_surface.surface_end()?;
       tw_surface.render_buffer
     });
   }

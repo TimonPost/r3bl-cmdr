@@ -35,8 +35,8 @@ pub struct LayoutError {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy)]
 pub enum LayoutErrorType {
-  MismatchedAreaEnd,
-  MismatchedAreaStart,
+  MismatchedSurfaceEnd,
+  MismatchedSurfaceStart,
   MismatchedBoxEnd,
   StackOfBoxesShouldNotBeEmpty,
   InvalidSizePercentage,
