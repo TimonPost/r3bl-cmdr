@@ -107,35 +107,30 @@ fn test_style() {
 
 #[test]
 fn test_cascade_style() {
-  let style_bold_green_fg = Style {
-    id: "bold_green_fg".to_string(),
-    bold: true,
-    color_fg: Some(Color::Green.into()),
-    ..Style::default()
+  let style_bold_green_fg = style! {
+    id: bold_green_fg
+    attrib: [bold]
+    color_fg: Color::Green
   };
 
-  let style_dim = Style {
-    id: "dim".to_string(),
-    dim: true,
-    ..Style::default()
+  let style_dim = style! {
+    id: dim
+    attrib: [dim]
   };
 
-  let style_yellow_bg = Style {
-    id: "yellow_bg".to_string(),
-    color_bg: Some(Color::Yellow.into()),
-    ..Style::default()
+  let style_yellow_bg = style! {
+    id: yellow_bg
+    color_bg: Color::Yellow
   };
 
-  let style_margin = Style {
-    id: "margin".to_string(),
-    margin: Some(2),
-    ..Style::default()
+  let style_margin = style! {
+    id: margin
+    margin: 2
   };
 
-  let style_red_fg = Style {
-    id: "red_fg".to_string(),
-    color_fg: Some(Color::Red.into()),
-    ..Style::default()
+  let style_red_fg = style! {
+    id: red_fg
+    color_fg: Color::Red
   };
 
   let mut computed_style = style_bold_green_fg + style_dim + style_yellow_bg + style_margin + style_red_fg;
@@ -186,7 +181,6 @@ fn test_stylesheet() {
 /// Helper function.
 fn make_a_style(id: &str) -> Style {
   let black = Color::Rgb { r: 0, g: 0, b: 0 };
-
   Style {
     id: id.to_string(),
     dim: true,

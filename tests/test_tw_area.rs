@@ -15,7 +15,6 @@
  *   limitations under the License.
  */
 
-use crossterm::style::*;
 use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
@@ -142,35 +141,26 @@ fn create_right_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
 
 /// Create a stylesheet containing styles.
 fn create_stylesheet() -> CommonResult<Stylesheet> {
-  let mut stylesheet = Stylesheet::new();
-  stylesheet.add_styles(vec![create_style1(), create_style2()])?;
-  Ok(stylesheet)
-}
+  throws_with_return!({
+    let mut stylesheet = Stylesheet::new();
 
-fn create_style1() -> Style {
-  let yellow = Color::Rgb { r: 255, g: 255, b: 0 };
-  let grey = Color::Rgb { r: 128, g: 128, b: 128 };
-  Style {
-    id: "style1".to_string(),
-    color_fg: Some(yellow.into()),
-    color_bg: Some(grey.into()),
-    dim: true,
-    bold: true,
-    margin: Some(2),
-    ..Default::default()
-  }
-}
+    stylesheet.add_styles(vec![
+      style! {
+          id: style1
+          attrib: [dim, bold]
+          margin: 2
+          color_fg: Color::Rgb { r: 255, g: 255, b: 0 } /* Yellow. */
+          color_bg:  Color::Rgb { r: 128, g: 128, b: 128 } /* Grey. */
+      },
+      style! {
+        id: style2
+        attrib: [underline, strikethrough]
+        margin: 3
+        color_fg: Color::Rgb { r: 0, g: 0, b: 0 } /* Black. */
+        color_bg: Color::Rgb { r: 255, g: 255, b: 255 } /* White. */
+      },
+    ])?;
 
-fn create_style2() -> Style {
-  let black = Color::Rgb { r: 0, g: 0, b: 0 };
-  let white = Color::Rgb { r: 255, g: 255, b: 255 };
-  Style {
-    id: "style2".to_string(),
-    color_fg: Some(black.into()),
-    color_bg: Some(white.into()),
-    underline: true,
-    strikethrough: true,
-    margin: Some(3),
-    ..Default::default()
-  }
+    stylesheet
+  })
 }
