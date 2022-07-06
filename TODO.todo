@@ -12,6 +12,11 @@ test 2 col layout!:
   ✔ emit clear screen & reset color commands before rendering each frame (artifacts appear on resize) @done(22-07-04 21:00)
   ☐ make sure that the attributes work as expected (dim, strikethru, etc)
 
+introduce first DSL (JSX-like syntax):
+  ✔ implement `style!` proc macro as first DSL JSX like syntax for TUI @done(22-07-06 15:29)
+  ✔ split `tui_core` from `tui` and move it into `r3bl_rs_utils` @done(22-07-06 15:29)
+  ☐ replace all use of `Style` with this macro
+
 performance & completness:
   ☐ stress test app w/ full screen repaint on mouse move
   ☐ add all the remaining crossterm commands to `TWCommand`

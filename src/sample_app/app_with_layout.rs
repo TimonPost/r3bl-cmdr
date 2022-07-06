@@ -186,33 +186,25 @@ fn create_right_col(tw_surface: &mut TWSurface, render_props: &RenderProps) -> C
   });
 }
 
-/// Create a stylesheet containing styles.
 fn create_stylesheet() -> CommonResult<Stylesheet> {
-  let mut stylesheet = Stylesheet::new();
-  stylesheet.add_styles(vec![create_style1(), create_style2()])?;
-  Ok(stylesheet)
-}
+  throws_with_return!({
+    let mut stylesheet = Stylesheet::new();
 
-fn create_style1() -> Style {
-  let turquoise = Color::Rgb { r: 51, g: 255, b: 255 };
-  let pink = Color::Rgb { r: 252, g: 157, b: 248 };
-  Style {
-    id: "style1".to_string(),
-    color_fg: Some(turquoise.into()),
-    color_bg: Some(pink.into()),
-    margin: Some(1),
-    ..Default::default()
-  }
-}
+    stylesheet.add_styles(vec![
+      style! {
+        id: style1
+        margin: 1
+        color_fg: Color::Rgb { r: 51, g: 255, b: 255 } /* Turquoise. */
+        color_bg: Color::Rgb { r: 252, g: 157, b: 248 } /* Pink. */
+      },
+      style! {
+        id: style2
+        margin: 1
+        color_fg: Color::White
+        color_bg: Color::Magenta
+      },
+    ])?;
 
-fn create_style2() -> Style {
-  let white = Color::White;
-  let magenta = Color::Magenta;
-  Style {
-    id: "style2".to_string(),
-    color_fg: Some(white.into()),
-    color_bg: Some(magenta.into()),
-    margin: Some(1),
-    ..Default::default()
-  }
+    stylesheet
+  })
 }
