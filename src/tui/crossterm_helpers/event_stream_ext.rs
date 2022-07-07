@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,8 @@
  *   limitations under the License.
  */
 
-//! Using `poll()` is inefficient. The following code will generate some CPU utilization
-//! while idling.
+//! Using `poll()` is inefficient. The following code will generate some CPU
+//! utilization while idling.
 //!
 //! ```ignore
 //! loop {
@@ -28,7 +28,6 @@
 //!   }
 //! }
 //! ```
-//!
 //[! The following code blocks the thread that its running on.
 //!
 //! ```ignore
@@ -51,17 +50,18 @@
 //! - https://github.com/crossterm-rs/crossterm/wiki/Upgrade-from-0.13-to-0.14#111-new-event-api
 //! - https://github.com/crossterm-rs/crossterm/blob/master/examples/event-stream-tokio.rs
 
-use crate::*;
 use async_trait::async_trait;
 use crossterm::event::*;
 use futures_util::{FutureExt, StreamExt};
 use r3bl_rs_utils::*;
 
+use crate::*;
+
 #[async_trait]
 pub trait EventStreamExt {
-  /// Try and read an [Event] from the [EventStream], and convert it into an [InputEvent].
-  /// This is a non-blocking call. It returns an [InputEvent] wrapped in a [Option].
-  /// [None] is returned if there was an error.
+  /// Try and read an [Event] from the [EventStream], and convert it into an
+  /// [InputEvent]. This is a non-blocking call. It returns an [InputEvent]
+  /// wrapped in a [Option]. [None] is returned if there was an error.
   async fn try_to_get_input_event(&mut self) -> Option<InputEvent>;
 }
 

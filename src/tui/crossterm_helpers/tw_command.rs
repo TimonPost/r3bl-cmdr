@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,27 +15,24 @@
  *   limitations under the License.
  */
 
-use crate::*;
-use crossterm::{
-  cursor::*,
-  event::*,
-  style::*,
-  terminal::{self, *},
-  *,
-};
+use std::{collections::HashMap,
+          fmt::{Display, Formatter, Result},
+          io::{stderr, stdout, Write},
+          ops::AddAssign};
+
+use crossterm::{cursor::*,
+                event::*,
+                style::*,
+                terminal::{self, *},
+                *};
 use lazy_static::lazy_static;
 use r3bl_rs_utils::*;
 use serde::{Deserialize, Serialize};
 
-use std::{
-  collections::HashMap,
-  fmt::{Display, Formatter, Result},
-  io::{stderr, stdout, Write},
-  ops::AddAssign,
-};
+use crate::*;
 
-/// Given a crossterm command, this will run it and [log!] the [Result] that is returned.
-/// If [log!] fails, then it will print a message to stderr.
+/// Given a crossterm command, this will run it and [log!] the [Result] that is
+/// returned. If [log!] fails, then it will print a message to stderr.
 ///
 /// Paste docs: https://github.com/dtolnay/paste
 #[macro_export]
@@ -61,8 +58,8 @@ macro_rules! exec {
   }};
 }
 
-/// This works together w/ [TWCommand] to enqueue commands, but not flush them. It will
-/// return a [TWCommandQueue]. Here's an example.
+/// This works together w/ [TWCommand] to enqueue commands, but not flush them.
+/// It will return a [TWCommandQueue]. Here's an example.
 ///
 /// ```ignore
 /// let mut queue = queue!(
@@ -119,8 +116,8 @@ impl TWCommand {
   }
 }
 
-/// This works w/ [TWCommand] items. It allows them to be added in sequence, and then
-/// flushed at the end. Here's an example.
+/// This works w/ [TWCommand] items. It allows them to be added in sequence, and
+/// then flushed at the end. Here's an example.
 /// ```ignore
 /// let mut queue = CommandQueue::default();
 /// queue.add(TWCommand::ClearScreen);
@@ -142,15 +139,11 @@ impl Display for TWCommandQueue {
 }
 
 impl AddAssign for TWCommandQueue {
-  fn add_assign(&mut self, other: TWCommandQueue) {
-    self.queue.extend(other.queue);
-  }
+  fn add_assign(&mut self, other: TWCommandQueue) { self.queue.extend(other.queue); }
 }
 
 impl TWCommandQueue {
-  pub fn push(&mut self, cmd_wrapper: TWCommand) {
-    self.queue.push(cmd_wrapper);
-  }
+  pub fn push(&mut self, cmd_wrapper: TWCommand) { self.queue.push(cmd_wrapper); }
 
   #[allow(unreachable_patterns)]
   pub fn flush(&self, clear_before_flush: bool) {

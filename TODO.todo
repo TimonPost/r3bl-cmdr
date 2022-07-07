@@ -4,14 +4,19 @@ add layout engine:
   ✔ rename `tw_area.rs` to `tw_surface` and `TWArea` to `TWSurface` @done(22-07-04 20:27)
   ☐ paint state & use lolcat
 
-test 2 col layout!:
+test 2 col layout:
   ✔ refactor DEBUG & raw mode & TWCommand @done(22-07-04 20:06)
   ✔ make sure that the colors work as expected (Color::Red, Color::Rgb, etc) @done(22-07-03 19:43)
   ✔ row calculation seems wrong (too much space on top of the rendered output) @done(22-07-04 15:10)
   ✔ clean up decl macros w/ repetitions `tw_command.rs`, `file_logging.rs`, `decl_macros.rs` @done(22-07-04 20:23)
   ✔ emit clear screen & reset color commands before rendering each frame (artifacts appear on resize) @done(22-07-04 21:00)
   ☐ make sure that the attributes work as expected (dim, strikethru, etc)
+  ☐ does margin (cols) work as expected? (different in vscode terminal vs real terminal)
 
+performance & completness:
+  ☐ stress test app w/ full screen repaint on mouse move
+  ☐ add all the remaining crossterm commands to `TWCommand`
+  
 introduce first DSL (JSX-like syntax):
   ✔ implement `style!` proc macro as first DSL JSX like syntax for TUI @done(22-07-06 15:29)
   ✔ split `tui_core` from `tui` and move it into `r3bl_rs_utils` @done(22-07-06 15:29)
@@ -19,10 +24,8 @@ introduce first DSL (JSX-like syntax):
   ☐ write DL tutorial on create DSL in Rust
     - based on: https://github.com/r3bl-org/r3bl-rs-utils/blob/main/macro/src/make_style/mod.rs
     - create tui category in DL
+    - make sure to publicise this article on mailchimp, reddit, users.rust-lang.org
 
-performance & completness:
-  ☐ stress test app w/ full screen repaint on mouse move
-  ☐ add all the remaining crossterm commands to `TWCommand`
 
 routing:
   ☐ introduce routing concept to switch between apps (with + without layout)

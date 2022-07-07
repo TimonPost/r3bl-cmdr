@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,10 @@
  *   limitations under the License.
  */
 
-use crate::*;
 use crossterm::event::*;
 use r3bl_rs_utils::*;
+
+use crate::*;
 
 #[non_exhaustive]
 pub enum Continuation {
@@ -29,8 +30,9 @@ pub enum Continuation {
 pub struct DefaultInputEventHandler;
 
 impl DefaultInputEventHandler {
-  /// This function does **not** consume the `input_event` argument. [InputEvent] implements
-  /// [Copy] (no need to pass references into this function).
+  /// This function does **not** consume the `input_event` argument.
+  /// [InputEvent] implements [Copy] (no need to pass references into this
+  /// function).
   pub async fn no_consume(input_event: InputEvent, exit_keys: &[KeyEvent]) -> Continuation {
     // Early return if any exit key sequence is pressed.
     if let Continuation::Exit = DefaultInputEventHandler::from(input_event, exit_keys) {
@@ -40,10 +42,16 @@ impl DefaultInputEventHandler {
     // Default input event handling.
     match input_event {
       InputEvent::NonDisplayableKeypress(key_event) => {
-        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> NonDisplayableKeypress: {:?}", key_event));
+        call_if_true!(
+          DEBUG,
+          log_no_err!(INFO, "default_event_handler -> NonDisplayableKeypress: {:?}", key_event)
+        );
       }
       InputEvent::DisplayableKeypress(character) => {
-        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> DisplayableKeypress: {:?}", character));
+        call_if_true!(
+          DEBUG,
+          log_no_err!(INFO, "default_event_handler -> DisplayableKeypress: {:?}", character)
+        );
       }
       InputEvent::Resize(size) => {
         call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Resize: {:?}", size));

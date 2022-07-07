@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,8 @@
  *   limitations under the License.
  */
 
-/// If set to true, and the [log!] fails, then it will print the error to stderr. Also enables or
-/// disables file logging for entire module.
+/// If set to true, and the [log!] fails, then it will print the error to
+/// stderr. Also enables or disables file logging for entire module.
 pub const DEBUG: bool = true;
 
 // Attach source files.

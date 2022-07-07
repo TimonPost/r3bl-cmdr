@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,12 @@
  *   limitations under the License.
  */
 
-use crate::layout::*;
-use crate::*;
 use r3bl_rs_utils::*;
 
-/// Represents a rectangular area of the terminal screen, and not necessarily the full terminal
-/// screen.
+use crate::{layout::*, *};
+
+/// Represents a rectangular area of the terminal screen, and not necessarily
+/// the full terminal screen.
 #[derive(Clone, Debug, Default)]
 pub struct TWSurface {
   pub origin_pos: Position,
@@ -89,8 +89,8 @@ impl LayoutManagement for TWSurface {
         let _content_cols = convert_to_base_unit!(text.len());
         let content_cols: UnitType = 0;
 
-        // Update the `content_cursor_pos` (will be initialized for `self.current_box()` if it
-        // doesn't exist yet).
+        // Update the `content_cursor_pos` (will be initialized for `self.current_box()`
+        // if it doesn't exist yet).
         let content_size = (content_cols, content_rows).into();
         let content_relative_pos = self.calc_where_to_insert_new_content_in_box(content_size)?;
 
@@ -117,7 +117,8 @@ impl LayoutManagement for TWSurface {
 }
 
 impl PerformPositioningAndSizing for TWSurface {
-  /// 🌳 Root: Handle first box to add to stack of boxes, explicitly sized & positioned.
+  /// 🌳 Root: Handle first box to add to stack of boxes, explicitly sized &
+  /// positioned.
   fn add_root_box(
     &mut self,
     TWBoxProps {
@@ -143,7 +144,8 @@ impl PerformPositioningAndSizing for TWSurface {
     });
   }
 
-  /// 🍀 Non-root: Handle non-root box to add to stack of boxes. [Position] and [Size] will be calculated.
+  /// 🍀 Non-root: Handle non-root box to add to stack of boxes. [Position] and
+  /// [Size] will be calculated.
   fn add_box(
     &mut self,
     TWBoxProps {
@@ -185,12 +187,14 @@ impl PerformPositioningAndSizing for TWSurface {
     });
   }
 
-  /// Must be called *before* the new [TWBox] is added to the stack of boxes otherwise
-  /// [LayoutErrorType::ErrorCalculatingNextLayoutPos] error is returned.
+  /// Must be called *before* the new [TWBox] is added to the stack of boxes
+  /// otherwise [LayoutErrorType::ErrorCalculatingNextLayoutPos] error is
+  /// returned.
   ///
   /// This updates the `box_cursor_pos` of the current [TWBox].
   ///
-  /// Returns the [Position] where the next [TWBox] can be added to the stack of boxes.
+  /// Returns the [Position] where the next [TWBox] can be added to the stack of
+  /// boxes.
   fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position> {
     let current_box = self.current_box()?;
     let box_cursor_pos = current_box.box_cursor_pos;
@@ -214,8 +218,8 @@ impl PerformPositioningAndSizing for TWSurface {
     Ok(new_pos)
   }
 
-  /// Update the `content_cursor_pos` of the current [TWBox] and return the original [Position] that
-  /// was there prior to this update.h
+  /// Update the `content_cursor_pos` of the current [TWBox] and return the
+  /// original [Position] that was there prior to this update.h
   fn calc_where_to_insert_new_content_in_box(&mut self, content_size: Size) -> CommonResult<Position> {
     throws_with_return!({
       // Get current content_cursor_pos or initialize it to (0, 0).
@@ -245,7 +249,5 @@ impl PerformPositioningAndSizing for TWSurface {
     Ok(self.stack_of_boxes.last_mut().unwrap())
   }
 
-  fn no_boxes_added(&self) -> bool {
-    self.stack_of_boxes.is_empty()
-  }
+  fn no_boxes_added(&self) -> bool { self.stack_of_boxes.is_empty() }
 }

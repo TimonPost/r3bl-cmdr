@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,10 @@
  *   limitations under the License.
  */
 
+use std::fmt::{Display, Formatter};
+
 use async_trait::async_trait;
 use r3bl_rs_utils::redux::AsyncReducer;
-use std::fmt::{Display, Formatter};
 
 /// Action.
 #[derive(Clone, Debug)]
@@ -31,33 +32,25 @@ pub enum AppAction {
 }
 
 impl Default for AppAction {
-  fn default() -> Self {
-    AppAction::Noop
-  }
+  fn default() -> Self { AppAction::Noop }
 }
 
 impl Display for AppAction {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "{:?}", self)
-  }
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }
 
 /// State.
-#[derive(Clone, PartialEq, Debug, Hash)]
+#[derive(Clone, PartialEq, Eq, Debug, Hash)]
 pub struct AppState {
   pub stack: Vec<i32>,
 }
 
 impl Default for AppState {
-  fn default() -> Self {
-    Self { stack: vec![0] }
-  }
+  fn default() -> Self { Self { stack: vec![0] } }
 }
 
 impl Display for AppState {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "State {{ stack: {:?} }}", self.stack)
-  }
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "State {{ stack: {:?} }}", self.stack) }
 }
 
 /// Reducer.

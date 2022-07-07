@@ -4,7 +4,7 @@
 max_width = 130
 
 # function
-fn_args_layout = "Tall"
+fn_args_layout = "Compressed"
 fn_single_line = true
 
 # imports

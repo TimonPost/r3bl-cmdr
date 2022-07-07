@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,9 @@
  *   limitations under the License.
  */
 
-use crate::*;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+
+use crate::*;
 
 pub async fn run_app() -> CommonResult<()> {
   throws!({

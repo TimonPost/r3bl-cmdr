@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +15,15 @@
  *   limitations under the License.
  */
 
-use crate::*;
+use std::{fmt::{Debug, Display},
+          hash::Hash,
+          sync::Arc};
+
 use async_trait::async_trait;
 use r3bl_rs_utils::*;
-use std::{
-  fmt::{Debug, Display},
-  hash::Hash,
-  sync::Arc,
-};
 use tokio::sync::RwLock;
+
+use crate::*;
 
 /// Async trait docs: https://doc.rust-lang.org/book/ch10-02-traits.html
 #[async_trait]
@@ -32,11 +32,14 @@ where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   A: Display + Default + Clone + Sync + Send,
 {
-  /// Use the state to render the output (via crossterm). To change the state, dispatch an action.
+  /// Use the state to render the output (via crossterm). To change the state,
+  /// dispatch an action.
   async fn render(&mut self, state: &S, shared_store: &SharedStore<S, A>, window_size: Size) -> CommonResult<TWCommandQueue>;
 
   /// Use the input_event to dispatch an action to the store if needed.
-  async fn handle_event(&self, input_event: &InputEvent, state: &S, shared_store: &SharedStore<S, A>, window_size: Size) -> CommonResult<()>;
+  async fn handle_event(
+    &self, input_event: &InputEvent, state: &S, shared_store: &SharedStore<S, A>, window_size: Size,
+  ) -> CommonResult<()>;
 
   /// Wrap a new instance in [Box].
   fn new_owned() -> Box<dyn Render<S, A>>

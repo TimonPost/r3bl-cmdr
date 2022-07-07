@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,9 @@
  *   limitations under the License.
  */
 
-use r3bl_rs_utils::*;
 use std::fmt::Debug;
+
+use r3bl_rs_utils::*;
 
 /// Direction of the layout of the box.
 #[non_exhaustive]
@@ -27,13 +28,11 @@ pub enum Direction {
 }
 
 impl Default for Direction {
-  fn default() -> Direction {
-    Direction::Horizontal
-  }
+  fn default() -> Direction { Direction::Horizontal }
 }
 
-/// A box is a rectangle with a position and size. The direction of the box determines how
-/// it's contained elements are positioned.
+/// A box is a rectangle with a position and size. The direction of the box
+/// determines how it's contained elements are positioned.
 #[derive(Clone, Default, Builder)]
 pub struct TWBox {
   pub id: String,
@@ -47,18 +46,11 @@ pub struct TWBox {
 }
 
 impl TWBox {
-  pub fn get_computed_style(&self) -> Option<Style> {
-    self.computed_style.clone()
-  }
+  pub fn get_computed_style(&self) -> Option<Style> { self.computed_style.clone() }
 
   /// Explicitly set the position & size of our box.
   pub fn make_root_box(
-    id: String,
-    size: Size,
-    origin_pos: Position,
-    width_pc: Percent,
-    height_pc: Percent,
-    dir: Direction,
+    id: String, size: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent, dir: Direction,
     computed_style: Option<Style>,
   ) -> TWBox {
     let bounds_size = Size::from((calc_percentage(width_pc, size.width), calc_percentage(height_pc, size.height)));
@@ -73,14 +65,10 @@ impl TWBox {
       .build()
   }
 
-  /// Actual position and size for our box will be calculated based on provided hints.
+  /// Actual position and size for our box will be calculated based on provided
+  /// hints.
   pub fn make_box(
-    id: String,
-    dir: Direction,
-    container_bounds: Size,
-    origin_pos: Position,
-    width_pc: Percent,
-    height_pc: Percent,
+    id: String, dir: Direction, container_bounds: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent,
     computed_style: Option<Style>,
   ) -> Self {
     // Adjust `bounds_size` & `origin` based on the style's margin.

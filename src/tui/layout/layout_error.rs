@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,12 @@
  *   limitations under the License.
  */
 
-use crate::*;
+use std::{error::Error,
+          fmt::{Display, Result}};
+
 use r3bl_rs_utils::CommonResult;
-use std::{
-  error::Error,
-  fmt::{Display, Result},
-};
+
+use crate::*;
 
 /// Main error struct.
 /// https://learning-rust.github.io/docs/e7.custom_error_types.html
@@ -51,33 +51,27 @@ impl Error for LayoutError {}
 
 /// Implement [`Display`] trait (needed by [`Error`] trait).
 impl Display for LayoutError {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result {
-    write!(f, "{:?}", self)
-  }
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result { write!(f, "{:?}", self) }
 }
 
 /// Implement constructor that is compatible w/ [`CommonResult<T>`].
 impl LayoutError {
-  pub fn new_err<T>(err_type: LayoutErrorType) -> CommonResult<T> {
-    Err(LayoutError::new(err_type, None))
-  }
+  pub fn new_err<T>(err_type: LayoutErrorType) -> CommonResult<T> { Err(LayoutError::new(err_type, None)) }
 
   pub fn new_err_with_msg<T>(err_type: LayoutErrorType, msg: String) -> CommonResult<T> {
     Err(LayoutError::new(err_type, Some(msg)))
   }
 
-  pub fn new(err_type: LayoutErrorType, msg: Option<String>) -> Box<Self> {
-    Box::new(LayoutError { err_type, msg })
-  }
+  pub fn new(err_type: LayoutErrorType, msg: Option<String>) -> Box<Self> { Box::new(LayoutError { err_type, msg }) }
 
   pub fn format_msg_with_stack_len(stack_of_boxes: &Vec<TWBox>, msg: &str) -> String {
     format!("{}, stack_of_boxes.len(): {}", msg, stack_of_boxes.len())
   }
 }
 
-/// Unwrap the `$option`, and if `None` then return the given `$err_type`. Otherwise
-/// return the unwrapped `$option`. This macro must be called in a block that returns a
-/// `CommonResult<T>`.
+/// Unwrap the `$option`, and if `None` then return the given `$err_type`.
+/// Otherwise return the unwrapped `$option`. This macro must be called in a
+/// block that returns a `CommonResult<T>`.
 #[macro_export]
 macro_rules! unwrap_or_err {
   ($option:expr, $err_type:expr) => {

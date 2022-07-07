@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,9 +37,10 @@ pub enum ColorChangeSpeed {
 }
 
 impl From<ColorChangeSpeed> for f64 {
-  /// The float is added to seed in [crate::Lolcat] after every iteration. If the number
-  /// is `Rapid` then the changes in color between new lines is quite abrupt. If it is
-  /// `Slow` then the changes are much much smoother. And so this is the default.
+  /// The float is added to seed in [crate::Lolcat] after every iteration. If
+  /// the number is `Rapid` then the changes in color between new lines is
+  /// quite abrupt. If it is `Slow` then the changes are much much smoother.
+  /// And so this is the default.
   fn from(value: ColorChangeSpeed) -> Self {
     match value {
       ColorChangeSpeed::Rapid => 1.0,
@@ -71,7 +72,5 @@ impl ColorWheelControl {
 }
 
 impl Default for ColorWheelControl {
-  fn default() -> Self {
-    Self::new("0.0", "3.0", "0.1", ColorChangeSpeed::Slow)
-  }
+  fn default() -> Self { Self::new("0.0", "3.0", "0.1", ColorChangeSpeed::Slow) }
 }

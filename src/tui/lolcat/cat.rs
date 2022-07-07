@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,17 @@
  *   limitations under the License.
  */
 
-use crate::*;
-use rand::thread_rng;
-use rand::Rng;
-use std::fmt::Display;
-use std::io::stdout;
-use std::io::Write;
-use std::thread::sleep;
-use std::time::Duration;
+use std::{fmt::Display,
+          io::{stdout, Write},
+          thread::sleep,
+          time::Duration};
 
-/// Given a struct that contains a [Lolcat] property, colorize the token tree that follows.
+use rand::{thread_rng, Rng};
+
+use crate::*;
+
+/// Given a struct that contains a [Lolcat] property, colorize the token tree
+/// that follows.
 ///
 /// ```ignore
 /// #[derive(Default, Debug, Clone, Copy)]
@@ -74,9 +75,7 @@ pub struct OutputCollector {
 }
 
 impl OutputCollector {
-  pub fn from(output_vec: OutputCollectorType) -> OutputCollector {
-    OutputCollector { output_vec }
-  }
+  pub fn from(output_vec: OutputCollectorType) -> OutputCollector { OutputCollector { output_vec } }
 }
 
 impl Display for OutputCollector {
@@ -90,9 +89,7 @@ pub trait LolcatStringExt {
 }
 
 impl LolcatStringExt for String {
-  fn color_with(&self, lolcat: &mut Lolcat) -> String {
-    lolcat.format_str(self).to_string()
-  }
+  fn color_with(&self, lolcat: &mut Lolcat) -> String { lolcat.format_str(self).to_string() }
 }
 
 pub trait SupportsColor {
@@ -120,7 +117,9 @@ pub struct Lolcat {
 impl Lolcat {
   pub fn new() -> Self {
     let control = ColorWheelControl::default();
-    Self { color_wheel_control: control }
+    Self {
+      color_wheel_control: control,
+    }
   }
 
   pub fn format_str(&mut self, input_str: &str) -> OutputCollector {
@@ -128,12 +127,11 @@ impl Lolcat {
     self.format_iter(chars_iter, true)
   }
 
-  pub fn to_string(output_vec: OutputCollectorType) -> String {
-    String::from_iter(output_vec)
-  }
+  pub fn to_string(output_vec: OutputCollectorType) -> String { String::from_iter(output_vec) }
 
   /// - Takes in an iterator over characters.
-  /// - Duplicates escape sequences, otherwise prints printable characters with colored_print.
+  /// - Duplicates escape sequences, otherwise prints printable characters with
+  ///   colored_print.
   /// - Print newlines correctly, resetting background.
   /// - If constantly_flush is on, it won't wait till a newline to flush stdout.
   fn format_iter<I: Iterator<Item = char>>(&mut self, mut iter: I, constantly_flush: bool) -> OutputCollector {
@@ -153,14 +151,18 @@ impl Lolcat {
         // Consume escape sequences
         '\x1b' => {
           // Escape sequences seem to be one of many different categories: https://en.wikipedia.org/wiki/ANSI_escape_code
-          // CSI sequences are \e \[ [bytes in 0x30-0x3F] [bytes in 0x20-0x2F] [final byte in 0x40-0x7E]
-          // nF Escape seq are \e [bytes in 0x20-0x2F] [byte in 0x30-0x7E]
-          // Fp Escape seq are \e [byte in 0x30-0x3F] [I have no idea, but `sl` creates one where the next byte is the end of the escape sequence, so assume that]
-          // Fe Escape seq are \e [byte in 0x40-0x5F] [I have no idea, '' though sl doesn't make one]
-          // Fs Escape seq are \e [byte in 0x60-0x7E] [I have no idea, '' though sl doesn't make one]
-          // Otherwise the next byte is the whole escape sequence (maybe? I can't exactly tell, but I will go with it)
-          // We will consume up to, but not through, the next printable character
-          // In addition, we my_print everything in the escape sequence, even if it is a color (that will be overridden)
+          // CSI sequences are \e \[ [bytes in 0x30-0x3F] [bytes in 0x20-0x2F] [final byte
+          // in 0x40-0x7E] nF Escape seq are \e [bytes in 0x20-0x2F] [byte in
+          // 0x30-0x7E] Fp Escape seq are \e [byte in 0x30-0x3F] [I have no
+          // idea, but `sl` creates one where the next byte is the end of the escape
+          // sequence, so assume that] Fe Escape seq are \e [byte in 0x40-0x5F]
+          // [I have no idea, '' though sl doesn't make one] Fs Escape seq are
+          // \e [byte in 0x60-0x7E] [I have no idea, '' though sl doesn't make one]
+          // Otherwise the next byte is the whole escape sequence (maybe? I can't exactly
+          // tell, but I will go with it) We will consume up to, but not
+          // through, the next printable character In addition, we my_print
+          // everything in the escape sequence, even if it is a color (that will be
+          // overridden)
           my_print!(&mut output_vec, "\x1b");
           let mut escape_sequence_character = iter.next().expect("Escape character with no escape sequence after it");
           my_print!(&mut output_vec, "{}", escape_sequence_character);
@@ -206,9 +208,10 @@ impl Lolcat {
         // reset the seed of the coloring and the value of ignore_whitespace.
         '\n' => {
           if self.color_wheel_control.print_color {
-            // Reset the background color only, as we don't have to reset the foreground till
-            // the end of the program.
-            // We reset the background here because otherwise it bleeds all the way to the next line.
+            // Reset the background color only, as we don't have to reset the foreground
+            // till the end of the program.
+            // We reset the background here because otherwise it bleeds all the way to the
+            // next line.
             if self.color_wheel_control.background_mode {
               my_print!(&mut output_vec, "\x1b[49m");
             }
@@ -228,7 +231,8 @@ impl Lolcat {
         // If not an escape sequence or a newline, my_print a colorful escape sequence and then the
         // character.
         _ => {
-          // In background mode, don't my_print colorful whitespace until the first printable character.
+          // In background mode, don't my_print colorful whitespace until the first
+          // printable character.
           if ignore_whitespace && character.is_whitespace() {
             my_print!(&mut output_vec, "{}", character);
             continue;
@@ -241,8 +245,8 @@ impl Lolcat {
         }
       }
 
-      // If we should constantly flush, flush after each completed sequence, and also reset
-      // colors because otherwise weird things happen.
+      // If we should constantly flush, flush after each completed sequence, and also
+      // reset colors because otherwise weird things happen.
       if constantly_flush {
         self.reset_colors(&mut output_vec);
         stdout().flush().unwrap();
@@ -268,7 +272,17 @@ impl Lolcat {
     if self.color_wheel_control.background_mode {
       let bg = ColorUtils::get_color_tuple(&self.color_wheel_control);
       let fg = ColorUtils::calc_fg_color(bg);
-      my_print!(output_vec, "\x1b[38;2;{};{};{};48;2;{};{};{}m{}", fg.0, fg.1, fg.2, bg.0, bg.1, bg.2, character);
+      my_print!(
+        output_vec,
+        "\x1b[38;2;{};{};{};48;2;{};{};{}m{}",
+        fg.0,
+        fg.1,
+        fg.2,
+        bg.0,
+        bg.1,
+        bg.2,
+        character
+      );
     } else {
       let fg = ColorUtils::get_color_tuple(&self.color_wheel_control);
       my_print!(output_vec, "\x1b[38;2;{};{};{}m{}", fg.0, fg.1, fg.2, character);

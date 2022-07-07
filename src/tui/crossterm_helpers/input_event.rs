@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,14 @@
  *   limitations under the License.
  */
 
-use crossterm::event::{
-  Event::{self, Key, Mouse, Resize},
-  KeyCode, KeyEvent, KeyModifiers, MouseEvent,
-};
-use r3bl_rs_utils::*;
 use std::fmt::{Display, Formatter};
+
+use crossterm::event::{Event::{self, Key, Mouse, Resize},
+                       KeyCode,
+                       KeyEvent,
+                       KeyModifiers,
+                       MouseEvent};
+use r3bl_rs_utils::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -34,15 +36,11 @@ pub enum InputEvent {
 
 /// For [ToString].
 impl Display for InputEvent {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "{:?}", self)
-  }
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }
 
 impl Default for InputEvent {
-  fn default() -> Self {
-    InputEvent::None
-  }
+  fn default() -> Self { InputEvent::None }
 }
 
 /// Typecast / convert [Event] to [InputEvent].
@@ -69,9 +67,7 @@ impl From<(/* rows: */ u16, /* cols: */ u16)> for InputEvent {
 
 /// Typecast / convert [MouseEvent] to [InputEvent::InputMouseEvent].
 impl From<MouseEvent> for InputEvent {
-  fn from(mouse_event: MouseEvent) -> Self {
-    InputEvent::Mouse(mouse_event)
-  }
+  fn from(mouse_event: MouseEvent) -> Self { InputEvent::Mouse(mouse_event) }
 }
 
 /// Typecast / convert [KeyEvent] to [InputEvent::].

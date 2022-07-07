@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,8 @@ use crate::*;
 
 /// This will automatically disable [raw
 /// mode](https://docs.rs/crossterm/0.23.2/crossterm/terminal/index.html#raw-mode) when
-/// the enclosed block ends. Note that this macro must be called from a function that
-/// returns a `Result`.
+/// the enclosed block ends. Note that this macro must be called from a function
+/// that returns a `Result`.
 ///
 /// Example 1:
 /// ```ignore
@@ -66,9 +66,9 @@ macro_rules! raw_mode {
   }};
 }
 
-/// To use this, you need to make sure to create an instance using `start()` (which
-/// enables raw mode) and then when this instance is dropped (when the enclosing code
-/// block falls out of scope) raw mode will be disabled.
+/// To use this, you need to make sure to create an instance using `start()`
+/// (which enables raw mode) and then when this instance is dropped (when the
+/// enclosing code block falls out of scope) raw mode will be disabled.
 pub struct RawMode;
 
 impl RawMode {
@@ -79,7 +79,5 @@ impl RawMode {
 }
 
 impl Drop for RawMode {
-  fn drop(&mut self) {
-    tw_queue!(TWCommand::ExitRawMode).flush(false);
-  }
+  fn drop(&mut self) { tw_queue!(TWCommand::ExitRawMode).flush(false); }
 }

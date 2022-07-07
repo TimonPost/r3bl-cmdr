@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,10 @@
  *   limitations under the License.
  */
 
-use crate::*;
 use async_trait::async_trait;
 use crossterm::event::*;
+
+use crate::*;
 
 /// Async trait object that implements the [Draw] trait.
 #[derive(Default, Debug, Clone, Copy)]
@@ -28,10 +29,7 @@ pub struct AppNoLayout {
 #[async_trait]
 impl Render<AppState, AppAction> for AppNoLayout {
   async fn render(
-    &mut self,
-    state: &AppState,
-    _shared_store: &SharedStore<AppState, AppAction>,
-    window_size: Size,
+    &mut self, state: &AppState, _shared_store: &SharedStore<AppState, AppAction>, window_size: Size,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
       let content = format!("{}", state);
@@ -59,11 +57,7 @@ impl Render<AppState, AppAction> for AppNoLayout {
   }
 
   async fn handle_event(
-    &self,
-    input_event: &InputEvent,
-    _state: &AppState,
-    shared_store: &SharedStore<AppState, AppAction>,
-    _terminal_size: Size,
+    &self, input_event: &InputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>, _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
       call_if_true!(

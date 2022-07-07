@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 Nazmul Idris
+ *   Copyright (c) 2022 R3BL LLC
  *   All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,16 @@
  *   limitations under the License.
  */
 
-use crate::*;
+use std::{fmt::{Debug, Display},
+          hash::Hash,
+          sync::Arc};
+
 use async_trait::async_trait;
 use crossterm::{event::*, terminal::*};
 use r3bl_rs_utils::*;
-use std::{
-  fmt::{Debug, Display},
-  hash::Hash,
-  sync::Arc,
-};
 use tokio::sync::RwLock;
+
+use crate::*;
 
 #[derive(Clone, Debug)]
 pub struct TWData {
@@ -65,9 +65,7 @@ impl TerminalWindow {
   /// A: Default + Clone + Sync + Send,
   /// ```
   pub async fn main_event_loop<S, A>(
-    store: Store<S, A>,
-    shared_render: SharedRender<S, A>,
-    exit_keys: Vec<KeyEvent>,
+    store: Store<S, A>, shared_render: SharedRender<S, A>, exit_keys: Vec<KeyEvent>,
   ) -> CommonResult<()>
   where
     S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static,
@@ -161,10 +159,7 @@ where
 
   /// Pass the event to the shared_render for further processing.
   pub async fn handle_input(
-    shared_window: &SharedWindow,
-    shared_store: &SharedStore<S, A>,
-    shared_render: &SharedRender<S, A>,
-    input_event: &InputEvent,
+    shared_window: &SharedWindow, shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>, input_event: &InputEvent,
   ) -> CommonResult<()> {
     throws!({
       let latest_state = shared_store.read().await.get_state();
@@ -178,10 +173,7 @@ where
   }
 
   pub async fn render(
-    shared_store: &SharedStore<S, A>,
-    shared_render: &SharedRender<S, A>,
-    window_size: Size,
-    my_state: Option<S>,
+    shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>, window_size: Size, my_state: Option<S>,
   ) -> CommonResult<()> {
     throws!({
       let state: S = if my_state.is_none() {
