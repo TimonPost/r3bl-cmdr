@@ -12,6 +12,10 @@ test 2 col layout:
   ✔ emit clear screen & reset color commands before rendering each frame (artifacts appear on resize) @done(22-07-04 21:00)
   ✔ does margin (cols) work as expected? (different in vscode terminal vs real terminal) @done(22-07-07 13:41)
   ☐ make sure that the attributes work as expected (dim, strikethru, etc)
+  ☐ handle situation when cursor is moved PAST the bounds of the window (< 0 or > max)
+    - add row and col offset?
+    - track cursor position?
+    - Example: https://github.com/nazmulidris/cli-editor/blob/main/src/main.rs
 
 performance & completness:
   ☐ stress test app w/ full screen repaint on mouse move
@@ -25,7 +29,6 @@ introduce first DSL (JSX-like syntax):
     - based on: https://github.com/r3bl-org/r3bl-rs-utils/blob/main/macro/src/make_style/mod.rs
     - create tui category in DL
     - make sure to publicise this article on mailchimp, reddit, users.rust-lang.org
-
 
 routing:
   ☐ introduce routing concept to switch between apps (with + without layout)
@@ -44,10 +47,16 @@ support for graphemes & text wrapping:
   ☐ `textwrap` crate
   ☐ Update `tw_surface.rs::print_inside_box()` to support graphemes & text wrapping
 
-pre built components - multi select chooser:
-  ☐ TODO
-
 pre built components - editor:
+  ☐ scrolling: data buffer, cursor pos (row, col), scrolling (row offset, col offset)
+    - [src](https://github.com/nazmulidris/cli-editor/blob/main/src/main.rs)
+    - [viewer tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-part-4-fd4a8b8641f8)
+    - [editor tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-part-5-e363c16f542b)
+    - [search tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-part-6-3cff61dc2de5)
+    - [syntax highlighting tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-final-part-4c841a649900)
+  ☐ undo & redo
+
+pre built components - multi select chooser:
   ☐ TODO
 
 pre built components - autocompletion provider:

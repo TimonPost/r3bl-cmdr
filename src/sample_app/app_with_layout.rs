@@ -58,39 +58,19 @@ impl Render<AppState, AppAction> for AppWithLayout {
     &self, input_event: &InputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>, _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
-      call_if_true!(
-        DEBUG,
-        log_no_err!(INFO, "⛵ AppWithLayout::handle_event -> input_event: {}", input_event)
-      );
-
       if let InputEvent::DisplayableKeypress(typed_char) = input_event {
         match typed_char {
           '+' => {
             spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
-            call_if_true!(
-              DEBUG,
-              log_no_err!(
-                INFO,
-                "⛵ AppWithLayout::handle_event -> + -> dispatch_spawn: {}",
-                AppAction::AddPop(1)
-              )
-            );
+            debug_log(AppAction::AddPop(1));
           }
           '-' => {
             spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
-            call_if_true!(
-              DEBUG,
-              log_no_err!(
-                INFO,
-                "⛵ AppWithLayout::handle_event -> - -> dispatch_spawn: {}",
-                AppAction::SubPop(1)
-              )
-            );
+            debug_log(AppAction::SubPop(1));
           }
           _ => {}
         }
       }
-
       if let InputEvent::NonDisplayableKeypress(key_event) = input_event {
         match key_event {
           KeyEvent {
@@ -98,34 +78,27 @@ impl Render<AppState, AppAction> for AppWithLayout {
             modifiers: KeyModifiers::NONE,
           } => {
             spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
-            call_if_true!(
-              DEBUG,
-              log_no_err!(
-                INFO,
-                "⛵ AppWithLayout::handle_event -> Up -> dispatch_spawn: {}",
-                AppAction::AddPop(1)
-              )
-            );
+            debug_log(AppAction::AddPop(1));
           }
           KeyEvent {
             code: KeyCode::Down,
             modifiers: KeyModifiers::NONE,
           } => {
             spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
-            call_if_true!(
-              DEBUG,
-              log_no_err!(
-                INFO,
-                "⛵ AppWithLayout::handle_event -> Down -> dispatch_spawn: {}",
-                AppAction::SubPop(1)
-              )
-            );
+            debug_log(AppAction::SubPop(1));
           }
           _ => {}
         }
       }
     });
   }
+}
+
+fn debug_log(action: AppAction) {
+  call_if_true!(
+    DEBUG,
+    log_no_err!(INFO, "⛵ AppWithLayout::handle_event -> dispatch_spawn: {}", action)
+  );
 }
 
 /// Main container "container".
