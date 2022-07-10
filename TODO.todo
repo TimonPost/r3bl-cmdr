@@ -1,9 +1,23 @@
+r3bl-cmdr
+
+example handling:
+  ☐ create a simple way of asking user for which ex to run
+  ☐ use simple readline and then route the request to the correct ex
+  ☐ separate `sample_app` into: `ex_no_layout` & `ex_with_layout`
+  ☐ stub out `ex_with_editor`
+
+separation of concerns:
+  ☐ What should the specificity of input event handling be? 
+    - Currently the `DefaultInputEventHandler` does not consume input events and it peeks at them
+    - There isn't a way for apps to override any container defaults
+    - Should this be inverted? Apps get first dibs input event & consume if they handle it?
+
 add layout engine:
-  ✔ merge `tw_area_test.rs` + `app_withuout_layout.rs` -> `app_with_layout.rs` @done(22-07-03 16:47)
+  ✔ merge `tw_area_test.rs` + `app_without_layout.rs` -> `app_with_layout.rs` @done(22-07-03 16:47)
   ✔ make sure to save `app_without_layout.rs` for future use w/ routing below @done(22-07-03 16:26)
   ✔ rename `tw_area.rs` to `tw_surface` and `TWArea` to `TWSurface` @done(22-07-04 20:27)
   ☐ paint state & use lolcat
-
+  
 test 2 col layout:
   ✔ refactor DEBUG & raw mode & TWCommand @done(22-07-04 20:06)
   ✔ make sure that the colors work as expected (Color::Red, Color::Rgb, etc) @done(22-07-03 19:43)
@@ -11,13 +25,13 @@ test 2 col layout:
   ✔ clean up decl macros w/ repetitions `tw_command.rs`, `file_logging.rs`, `decl_macros.rs` @done(22-07-04 20:23)
   ✔ emit clear screen & reset color commands before rendering each frame (artifacts appear on resize) @done(22-07-04 21:00)
   ✔ does margin (cols) work as expected? (different in vscode terminal vs real terminal) @done(22-07-07 13:41)
-  ☐ make sure that the attributes work as expected (dim, strikethru, etc)
+  ☐ make sure that the attributes work as expected (dim, strike through, etc)
   ☐ handle situation when cursor is moved PAST the bounds of the window (< 0 or > max)
     - add row and col offset?
     - track cursor position?
     - Example: https://github.com/nazmulidris/cli-editor/blob/main/src/main.rs
 
-performance & completness:
+performance & completeness:
   ☐ stress test app w/ full screen repaint on mouse move
   ☐ add all the remaining crossterm commands to `TWCommand`
   
@@ -28,7 +42,7 @@ introduce first DSL (JSX-like syntax):
   ☐ write DL tutorial on create DSL in Rust
     - based on: https://github.com/r3bl-org/r3bl-rs-utils/blob/main/macro/src/make_style/mod.rs
     - create tui category in DL
-    - make sure to publicise this article on mailchimp, reddit, users.rust-lang.org
+    - make sure to publicize this article on mailchimp, reddit, users.rust-lang.org
 
 routing:
   ☐ introduce routing concept to switch between apps (with + without layout)
@@ -67,6 +81,6 @@ mdns & p2p:
     - local service discovery
     - easy authentication (cloud auth provider login?)
 
-flow editor:
-  ☐ Ideate on how to impl this
-    - 2+ col layout that allows text to be edited flowing LTR
+new stuff:
+  ☐ flow editor
+  ☐ diagrams

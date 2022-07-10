@@ -153,10 +153,10 @@ where
   A: Display + Default + Clone + Sync + Send,
 {
   fn new_box(
-    shared_draw: &SharedRender<S, A>, shared_store: &SharedStore<S, A>, shared_window: &SharedWindow,
+    shared_render: &SharedRender<S, A>, shared_store: &SharedStore<S, A>, shared_window: &SharedWindow,
   ) -> Box<Self> {
     Box::new(TWSubscriber {
-      shared_render: shared_draw.clone(),
+      shared_render: shared_render.clone(),
       shared_store: shared_store.clone(),
       shared_window: shared_window.clone(),
     })

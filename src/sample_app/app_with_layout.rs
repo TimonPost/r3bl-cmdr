@@ -20,7 +20,7 @@ use crossterm::event::*;
 
 use crate::*;
 
-/// Async trait object that implements the [Draw] trait.
+/// Async trait object that implements the [Render] trait.
 #[derive(Default, Debug, Clone, Copy)]
 pub struct AppWithLayout {
   pub lolcat: Lolcat,
