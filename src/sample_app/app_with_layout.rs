@@ -41,7 +41,12 @@ impl Render<AppState, AppAction> for AppWithLayout {
         stylesheet: create_stylesheet()?,
         ..TWSurface::default()
       };
-      tw_surface.surface_start(TWAreaPropsBuilder::new().set_pos((0, 0).into()).set_size(window_size).build())?;
+      tw_surface.surface_start(
+        TWAreaPropsBuilder::new()
+          .set_pos((0, 0).into())
+          .set_size(window_size)
+          .build(),
+      )?;
       create_main_container(
         &mut tw_surface,
         &RenderProps {
@@ -55,7 +60,8 @@ impl Render<AppState, AppAction> for AppWithLayout {
   }
 
   async fn handle_event(
-    &self, input_event: &InputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>, _terminal_size: Size,
+    &self, input_event: &InputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>,
+    _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
       if let InputEvent::DisplayableKeypress(typed_char) = input_event {
@@ -118,7 +124,7 @@ fn create_main_container(tw_surface: &mut TWSurface, render_props: &RenderProps)
 }
 
 /// Left column "col_1".
-fn create_left_col(tw_surface: &mut TWSurface, render_props: &RenderProps) -> CommonResult<()> {
+fn create_left_col(tw_surface: &mut TWSurface, _render_props: &RenderProps) -> CommonResult<()> {
   // TODO: use render_props.lolcat to colorize render_props.state
   throws!({
     tw_surface.box_start(
@@ -136,7 +142,7 @@ fn create_left_col(tw_surface: &mut TWSurface, render_props: &RenderProps) -> Co
 }
 
 /// Right column "col_2".
-fn create_right_col(tw_surface: &mut TWSurface, render_props: &RenderProps) -> CommonResult<()> {
+fn create_right_col(tw_surface: &mut TWSurface, _render_props: &RenderProps) -> CommonResult<()> {
   // TODO: use render_props.lolcat to colorize render_props.state
   throws!({
     tw_surface.box_start(

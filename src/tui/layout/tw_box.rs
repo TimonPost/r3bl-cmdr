@@ -53,7 +53,10 @@ impl TWBox {
     id: String, size: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent, dir: Direction,
     computed_style: Option<Style>,
   ) -> TWBox {
-    let bounds_size = Size::from((calc_percentage(width_pc, size.width), calc_percentage(height_pc, size.height)));
+    let bounds_size = Size::from((
+      calc_percentage(width_pc, size.width),
+      calc_percentage(height_pc, size.height),
+    ));
     TWBoxBuilder::new()
       .set_id(id)
       .set_dir(dir)

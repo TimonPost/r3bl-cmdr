@@ -57,7 +57,8 @@ impl Render<AppState, AppAction> for AppNoLayout {
   }
 
   async fn handle_event(
-    &self, input_event: &InputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>, _terminal_size: Size,
+    &self, input_event: &InputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>,
+    _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
       call_if_true!(

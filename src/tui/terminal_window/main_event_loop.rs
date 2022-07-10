@@ -89,7 +89,10 @@ impl TerminalWindow {
       // Perform first render.
       TWSubscriber::render(&shared_store, &shared_render, shared_window.read().await.size, None).await?;
 
-      shared_window.read().await.dump_state_to_log("main_event_loop -> Startup 🚀");
+      shared_window
+        .read()
+        .await
+        .dump_state_to_log("main_event_loop -> Startup 🚀");
 
       // Main event loop.
       loop {
@@ -149,7 +152,9 @@ where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   A: Display + Default + Clone + Sync + Send,
 {
-  fn new_box(shared_draw: &SharedRender<S, A>, shared_store: &SharedStore<S, A>, shared_window: &SharedWindow) -> Box<Self> {
+  fn new_box(
+    shared_draw: &SharedRender<S, A>, shared_store: &SharedStore<S, A>, shared_window: &SharedWindow,
+  ) -> Box<Self> {
     Box::new(TWSubscriber {
       shared_render: shared_draw.clone(),
       shared_store: shared_store.clone(),
@@ -159,7 +164,8 @@ where
 
   /// Pass the event to the shared_render for further processing.
   pub async fn handle_input(
-    shared_window: &SharedWindow, shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>, input_event: &InputEvent,
+    shared_window: &SharedWindow, shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>,
+    input_event: &InputEvent,
   ) -> CommonResult<()> {
     throws!({
       let latest_state = shared_store.read().await.get_state();
@@ -182,7 +188,11 @@ where
         my_state.unwrap()
       };
 
-      let render_result = shared_render.write().await.render(&state, shared_store, window_size).await;
+      let render_result = shared_render
+        .write()
+        .await
+        .render(&state, shared_store, window_size)
+        .await;
       match render_result {
         Err(error) => {
           TWCommand::flush();

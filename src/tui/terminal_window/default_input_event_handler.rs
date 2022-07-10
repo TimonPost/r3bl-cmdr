@@ -58,10 +58,16 @@ impl DefaultInputEventHandler {
         return Continuation::ResizeAndContinue(size);
       }
       InputEvent::Mouse(mouse_event) => {
-        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Mouse: {:?}", mouse_event));
+        call_if_true!(
+          DEBUG,
+          log_no_err!(INFO, "default_event_handler -> Mouse: {:?}", mouse_event)
+        );
       }
       _ => {
-        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Other: {:?}", input_event));
+        call_if_true!(
+          DEBUG,
+          log_no_err!(INFO, "default_event_handler -> Other: {:?}", input_event)
+        );
       }
     }
 
