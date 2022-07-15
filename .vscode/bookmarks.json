@@ -24,6 +24,21 @@
 					"label": ""
 				}
 			]
+		},
+		{
+			"path": "src/tui/terminal_window/main_event_loop.rs",
+			"bookmarks": [
+				{
+					"line": 105,
+					"column": 10,
+					"label": ""
+				},
+				{
+					"line": 165,
+					"column": 2,
+					"label": ""
+				}
+			]
 		}
 	]
 }

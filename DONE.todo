@@ -1,3 +1,9 @@
+example handling:
+  ✔ create a simple way of asking user for which ex to run @done(22-07-15 14:11)
+  ✔ use simple readline and then route the request to the correct ex @done(22-07-15 14:11)
+  ✔ separate `sample_app` into: `ex_no_layout` & `ex_with_layout` @done(22-07-15 14:11)
+  ✔ stub out `ex_with_editor` @done(22-07-15 14:11)
+
 impl styling support:
   ✔ impl `tw_area.rs::paint_inside_box()` to emit `TWCommand::Print` @done(22-06-28 20:40)
   ✔ clean up `base_units.rs` w/ macro @done(22-06-29 11:07)
@@ -8,7 +14,7 @@ impl styling support:
   ✔ impl `tw_area.rs::paint_inside_box()` to emit styling commands @done(22-06-30 19:21)
   ✔ update test_tw_area.rs to pretty print `TWCommandQueue` @done(22-06-30 19:22)
   ✔ use clippy to refactor all of `r3bl_rs_utils` @done(22-07-01 21:20)
-  ✔ add serde support to `TWCommandQueue` & add `test_serder.s` @done(22-07-01 21:20)
+  ✔ add serde support to `TWCommandQueue` & add `test_serde.s` @done(22-07-01 21:20)
   ✔ update `test_tw_area.rs` w/ real styles (different margins, colors, attributes) @done(22-07-02 18:56)
 
 clean up naming:
@@ -25,7 +31,7 @@ add lolcat:
 render:
   ✔ figure out how to create VDOM like result -> CommandQueue @done(22-06-19 18:44)
   ✔ rename Draw -> Render @done(22-06-20 15:35)
-  ✔ accomodate Render returning CommandQueue @done(22-06-20 15:35)
+  ✔ accommodate Render returning CommandQueue @done(22-06-20 15:35)
   ✔ app.rs render the state using CommandQueue (and crossterm commands) @done(22-06-21 17:51)
   ✔ main_container.rs actually flush CommandQueue in MySubscriber @done(22-06-2118:33)
   ✔ do initial render in event loop @done(22-06-21 19:04)
@@ -40,7 +46,7 @@ redux:
   ✔ `app_draw.rs`: dispatch actions on certain keypresses @done(22-06-18 16:35)
   ✔ `main_container.rs` -> subscriber: state change results in draw() call @done(22-06-18 16:35)
 
-lifecyle & organization:
+lifecycle & organization:
   ✔ use electron architecture & terminology as baseline @done(22-06-15 15:40)
   ✔ figure out how to bootstrap the entire tui framework @done(22-06-15 15:40)
   ✔ separate concerns (terminal window, app, state, etc) @done(22-06-15 17:36)

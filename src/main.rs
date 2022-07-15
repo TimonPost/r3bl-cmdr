@@ -15,16 +15,69 @@
  *   limitations under the License.
 */
 
+use std::borrow::Cow;
+
 use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
 // Attach sources.
-pub mod sample_app;
+pub mod ex_app_no_layout;
+pub mod ex_app_with_layout;
+pub mod ex_editor;
 
 // Use things from sources.
-pub use sample_app::*;
+pub use ex_app_no_layout::*;
+pub use ex_app_with_layout::*;
+pub use ex_editor::*;
+use reedline::*;
 
 #[tokio::main]
 async fn main() -> CommonResult<()> {
-  throws!(run_app().await?);
+  throws!({
+    println!(
+      "Type a number to run corresponding example or type CtrlC / CtrlD / 'x' to exit:
+      1. App with no layout ❌
+      2. App with layout ✅
+      3. Text editor 📜"
+    );
+    let selection = get_user_selection();
+    run_ex_for_user_selection(selection).await?;
+  })
+}
+
+async fn run_ex_for_user_selection(selection: Cow<'_, str>) -> CommonResult<()> {
+  throws!({
+    if !selection.is_empty() {
+      match selection.as_ref() {
+        "1" => throws!(ex_app_no_layout::run_app().await?),
+        "2" => throws!(ex_app_with_layout::run_app().await?),
+        "3" => todo!("TODO: implement editor ex!"),
+        _ => unimplemented!(),
+      }
+    }
+  })
+}
+
+fn get_user_selection<'a>() -> Cow<'a, str> {
+  let mut line_editor = Reedline::create();
+  let prompt = DefaultPrompt::default();
+  let mut selection: Cow<str> = Cow::from("");
+
+  loop {
+    let maybe_signal = &line_editor.read_line(&prompt);
+    if let Ok(Signal::Success(user_input_str)) = maybe_signal {
+      match user_input_str.as_str() {
+        code @ ("1" | "2" | "3") => {
+          selection.to_mut().push_str(code);
+          break;
+        }
+        "x" => break,
+        _ => println!("Unknown command: {}", user_input_str),
+      }
+    } else if let Ok(Signal::CtrlC) | Ok(Signal::CtrlD) = maybe_signal {
+      break;
+    }
+  }
+
+  selection
 }

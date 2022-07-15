@@ -1,10 +1,9 @@
-r3bl-cmdr
+■ r3bl-cmdr ■
 
-example handling:
-  ☐ create a simple way of asking user for which ex to run
-  ☐ use simple readline and then route the request to the correct ex
-  ☐ separate `sample_app` into: `ex_no_layout` & `ex_with_layout`
-  ☐ stub out `ex_with_editor`
+thinking about containers and containment:
+  ☐ the pos + size of a box is provided to a *component*
+  ☐ the *component* paints itself thinking it starts at 0, 0
+  ☐ the *component* is actually relative to the box when it is rendered
 
 separation of concerns:
   ☐ What should the specificity of input event handling be? 
