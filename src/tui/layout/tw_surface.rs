@@ -102,15 +102,18 @@ impl LayoutManagement for TWSurface {
         // TODO: Use `_box_bound_size` and `_content_col` to wrap or clip text.
 
         // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
-        let new_absolute_pos = box_origin_pos + content_relative_pos;
-
-        // Queue a bunch of `TWCommand`s to paint the text.
-        let move_to_cmd = TWCommand::MoveCursorPosition(new_absolute_pos.into());
+        let move_cursor_to_abs_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_relative_pos);
         let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
         let print_cmd = TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
         let reset_cmd = TWCommand::ResetColor;
 
-        self.render_buffer += tw_queue!(move_to_cmd, style_cmd, print_cmd, reset_cmd);
+        // Queue a bunch of `TWCommand`s to paint the text.
+        self.render_buffer += tw_queue! {
+          move_cursor_to_abs_cmd,
+          style_cmd,
+          print_cmd,
+          reset_cmd
+        };
       }
     });
   }

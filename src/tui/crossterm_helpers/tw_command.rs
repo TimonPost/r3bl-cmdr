@@ -97,8 +97,8 @@ macro_rules! tw_queue {
 pub enum TWCommand {
   EnterRawMode,
   ExitRawMode,
-  /// (column, row).
-  MoveCursorPosition((UnitType, UnitType)),
+  MoveCursorPositionAbs(Position),
+  MoveCursorPositionRelTo(Position, Position),
   ClearScreen,
   SetFgColor(TWColor),
   SetBgColor(TWColor),
@@ -191,10 +191,17 @@ impl TWCommandQueue {
         exec! {terminal::disable_raw_mode(), "ExitRawMode -> disable_raw_mode()"}
         skip_flush = true;
       }
-      TWCommand::MoveCursorPosition((col, row)) => {
+      TWCommand::MoveCursorPositionAbs(Position { col, row }) => {
         exec!(
           queue!(stdout(), MoveTo(*col, *row)),
           format!("MoveCursorPosition(col: {}, row: {})", *col, *row)
+        )
+      }
+      TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_rel_pos) => {
+        let Position { col, row } = *box_origin_pos + *content_rel_pos;
+        exec!(
+          queue!(stdout(), MoveTo(col, row)),
+          format!("MoveCursorPosition(col: {}, row: {})", col, row)
         )
       }
       TWCommand::ClearScreen => {

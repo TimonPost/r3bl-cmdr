@@ -35,15 +35,15 @@ impl Render<AppState, AppAction> for AppNoLayout {
       let content = format!("{}", state);
 
       let content_size = content.len() as UnitType;
-      let x: UnitType = window_size.width / 2 - content_size / 2;
-      let y: UnitType = window_size.height / 2;
+      let col: UnitType = window_size.width / 2 - content_size / 2;
+      let row: UnitType = window_size.height / 2;
 
       let colored_content = colorize!(self, "{}", state);
 
       let queue = tw_queue!(
         TWCommand::ClearScreen,
         TWCommand::ResetColor,
-        TWCommand::MoveCursorPosition((x, y)),
+        TWCommand::MoveCursorPositionAbs((col, row).into()),
         TWCommand::PrintWithAttributes(colored_content, None),
         TWCommand::ResetColor
       );
