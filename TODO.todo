@@ -1,12 +1,25 @@
 ■ r3bl-cmdr ■
 
-thinking about containers and containment:
-  ☐ the pos + size of a box is provided to a *component*
-  ☐ the *component* paints itself thinking it starts at 0, 0
-  ☐ the *component* is actually relative to the box when it is rendered
-
-separation of concerns:
-  ☐ What should the specificity of input event handling be? 
+think about containers, containment, and keyboard focus management:
+  ✔ move cursor to relative & absolute @done(22-07-17 11:53)
+    - the pos + size of a box is provided to a *component* 
+    - the *component* paints itself thinking it starts at 0, 0 
+    - the *component* is actually relative to the box when it is rendered 
+    - add TWCommands to handle above: 
+      - `MoveCursorPositionAbs(Position)`
+      - `MoveCursorPositionRelTo(Position, Position)`
+    - rename `Render` to `TWApp`
+  ☐ add support for focus management to state
+    - need to accommodate handling of focus & what is currently in focus
+    - introduce trait `StateManageFocus` w/ 2 methods: 
+      - `get_focus_id(): str`
+      - `set_focus_id(id: str)`
+  ☐ add new trait `RenderComponent`: `tw_surface.rs` & `tw_app.rs`?
+    - separate the logic of painting from the app
+    - take box-origin-pos & content-size as input?
+    - paint things that are relative to box-origin-pos?
+    - each component should handle its own input event (when it has focus)
+  ☐ what should the specificity of input event handling be? 
     - Currently the `DefaultInputEventHandler` does not consume input events and it peeks at them
     - There isn't a way for apps to override any container defaults
     - Should this be inverted? Apps get first dibs input event & consume if they handle it?

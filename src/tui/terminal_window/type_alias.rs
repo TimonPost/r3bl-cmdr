@@ -24,4 +24,4 @@ use crate::*;
 // Type aliases.
 pub type SharedWindow = Arc<RwLock<TWData>>;
 pub type SharedRender<S, A> = Arc<RwLock<SafeRender<S, A>>>;
-pub type SafeRender<S, A> = dyn Render<S, A> + Send + Sync;
+pub type SafeRender<S, A> = dyn TWApp<S, A> + Send + Sync;

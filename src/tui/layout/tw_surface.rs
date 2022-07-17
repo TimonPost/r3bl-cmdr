@@ -79,6 +79,7 @@ impl LayoutManagement for TWSurface {
     });
   }
 
+  // TODO: extract this into a RenderComponent trait
   fn print_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()> {
     throws!({
       for text in text_vec {
@@ -118,6 +119,9 @@ impl LayoutManagement for TWSurface {
     });
   }
 }
+
+// TODO: impl this & move to TWApp
+trait RenderComponent {}
 
 impl PerformPositioningAndSizing for TWSurface {
   /// 🌳 Root: Handle first box to add to stack of boxes, explicitly sized &

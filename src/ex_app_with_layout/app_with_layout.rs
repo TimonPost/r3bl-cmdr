@@ -32,7 +32,7 @@ struct RenderProps<'a> {
 }
 
 #[async_trait]
-impl Render<AppState, AppAction> for AppWithLayout {
+impl TWApp<AppState, AppAction> for AppWithLayout {
   async fn render(
     &mut self, state: &AppState, _shared_store: &SharedStore<AppState, AppAction>, window_size: Size,
   ) -> CommonResult<TWCommandQueue> {
@@ -60,11 +60,11 @@ impl Render<AppState, AppAction> for AppWithLayout {
   }
 
   async fn handle_event(
-    &self, input_event: &InputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>,
+    &self, input_event: &TWInputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>,
     _terminal_size: Size,
   ) -> CommonResult<()> {
     throws!({
-      if let InputEvent::DisplayableKeypress(typed_char) = input_event {
+      if let TWInputEvent::DisplayableKeypress(typed_char) = input_event {
         match typed_char {
           '+' => {
             spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
@@ -77,7 +77,7 @@ impl Render<AppState, AppAction> for AppWithLayout {
           _ => {}
         }
       }
-      if let InputEvent::NonDisplayableKeypress(key_event) = input_event {
+      if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
         match key_event {
           KeyEvent {
             code: KeyCode::Up,

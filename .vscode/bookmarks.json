@@ -9,7 +9,12 @@
 					"label": ""
 				},
 				{
-					"line": 222,
+					"line": 122,
+					"column": 0,
+					"label": ""
+				},
+				{
+					"line": 218,
 					"column": 16,
 					"label": ""
 				}
@@ -19,7 +24,7 @@
 			"path": "src/tui/crossterm_helpers/tw_command.rs",
 			"bookmarks": [
 				{
-					"line": 155,
+					"line": 154,
 					"column": 9,
 					"label": ""
 				}

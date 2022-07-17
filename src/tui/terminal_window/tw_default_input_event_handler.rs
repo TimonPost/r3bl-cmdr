@@ -27,37 +27,36 @@ pub enum Continuation {
   ResizeAndContinue(Size),
 }
 
-pub struct DefaultInputEventHandler;
+pub struct TWDefaultInputEventHandler;
 
-impl DefaultInputEventHandler {
-  /// This function does **not** consume the `input_event` argument.
-  /// [InputEvent] implements [Copy] (no need to pass references into this
-  /// function).
-  pub async fn no_consume(input_event: InputEvent, exit_keys: &[KeyEvent]) -> Continuation {
+impl TWDefaultInputEventHandler {
+  /// This function does **not** consume the `input_event` argument. [InputEvent] implements [Copy]
+  /// (no need to pass references into this function).
+  pub async fn no_consume(input_event: TWInputEvent, exit_keys: &[KeyEvent]) -> Continuation {
     // Early return if any exit key sequence is pressed.
-    if let Continuation::Exit = DefaultInputEventHandler::from(input_event, exit_keys) {
+    if let Continuation::Exit = TWDefaultInputEventHandler::from(input_event, exit_keys) {
       return Continuation::Exit;
     }
 
     // Default input event handling.
     match input_event {
-      InputEvent::NonDisplayableKeypress(key_event) => {
+      TWInputEvent::NonDisplayableKeypress(key_event) => {
         call_if_true!(
           DEBUG,
           log_no_err!(INFO, "default_event_handler -> NonDisplayableKeypress: {:?}", key_event)
         );
       }
-      InputEvent::DisplayableKeypress(character) => {
+      TWInputEvent::DisplayableKeypress(character) => {
         call_if_true!(
           DEBUG,
           log_no_err!(INFO, "default_event_handler -> DisplayableKeypress: {:?}", character)
         );
       }
-      InputEvent::Resize(size) => {
+      TWInputEvent::Resize(size) => {
         call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Resize: {:?}", size));
         return Continuation::ResizeAndContinue(size);
       }
-      InputEvent::Mouse(mouse_event) => {
+      TWInputEvent::Mouse(mouse_event) => {
         call_if_true!(
           DEBUG,
           log_no_err!(INFO, "default_event_handler -> Mouse: {:?}", mouse_event)
@@ -74,8 +73,8 @@ impl DefaultInputEventHandler {
     Continuation::Continue
   }
 
-  fn from(input_event: InputEvent, exit_keys: &[KeyEvent]) -> Continuation {
-    if let InputEvent::NonDisplayableKeypress(key_event) = input_event {
+  fn from(input_event: TWInputEvent, exit_keys: &[KeyEvent]) -> Continuation {
+    if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
       if exit_keys.contains(&key_event) {
         return Continuation::Exit;
       }

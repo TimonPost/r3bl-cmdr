@@ -26,7 +26,7 @@ use r3bl_rs_utils::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum InputEvent {
+pub enum TWInputEvent {
   DisplayableKeypress(char),
   NonDisplayableKeypress(KeyEvent),
   Resize(Size),
@@ -35,16 +35,16 @@ pub enum InputEvent {
 }
 
 /// For [ToString].
-impl Display for InputEvent {
+impl Display for TWInputEvent {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }
 
-impl Default for InputEvent {
-  fn default() -> Self { InputEvent::None }
+impl Default for TWInputEvent {
+  fn default() -> Self { TWInputEvent::None }
 }
 
 /// Typecast / convert [Event] to [InputEvent].
-impl From<Event> for InputEvent {
+impl From<Event> for TWInputEvent {
   fn from(event: Event) -> Self {
     match event {
       Key(key_event) => key_event.into(),
@@ -55,10 +55,10 @@ impl From<Event> for InputEvent {
 }
 
 /// Typecast / convert [(u16, u16)] to [InputEvent::TerminalSize].
-impl From<(/* rows: */ u16, /* cols: */ u16)> for InputEvent {
+impl From<(/* rows: */ u16, /* cols: */ u16)> for TWInputEvent {
   fn from(size: (u16, u16)) -> Self {
     let (rows, cols) = size;
-    InputEvent::Resize(Size {
+    TWInputEvent::Resize(Size {
       width: cols,
       height: rows,
     })
@@ -66,22 +66,22 @@ impl From<(/* rows: */ u16, /* cols: */ u16)> for InputEvent {
 }
 
 /// Typecast / convert [MouseEvent] to [InputEvent::InputMouseEvent].
-impl From<MouseEvent> for InputEvent {
-  fn from(mouse_event: MouseEvent) -> Self { InputEvent::Mouse(mouse_event) }
+impl From<MouseEvent> for TWInputEvent {
+  fn from(mouse_event: MouseEvent) -> Self { TWInputEvent::Mouse(mouse_event) }
 }
 
 /// Typecast / convert [KeyEvent] to [InputEvent::].
-impl From<KeyEvent> for InputEvent {
+impl From<KeyEvent> for TWInputEvent {
   fn from(key_event: KeyEvent) -> Self {
     match key_event {
       // Check if "normal character" is pressed.
       KeyEvent {
         code: KeyCode::Char(character),
         modifiers: KeyModifiers::NONE,
-      } => InputEvent::DisplayableKeypress(character),
+      } => TWInputEvent::DisplayableKeypress(character),
 
       // All other key presses.
-      _ => InputEvent::NonDisplayableKeypress(key_event),
+      _ => TWInputEvent::NonDisplayableKeypress(key_event),
     }
   }
 }

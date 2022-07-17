@@ -103,7 +103,7 @@ impl TerminalWindow {
         if let Some(input_event) = maybe_input_event {
           call_if_true!(DEBUG, log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event));
 
-          match DefaultInputEventHandler::no_consume(input_event, &exit_keys).await {
+          match TWDefaultInputEventHandler::no_consume(input_event, &exit_keys).await {
             Continuation::Exit => {
               break;
             }
@@ -165,7 +165,7 @@ where
   /// Pass the event to the shared_render for further processing.
   pub async fn handle_input(
     shared_window: &SharedWindow, shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>,
-    input_event: &InputEvent,
+    input_event: &TWInputEvent,
   ) -> CommonResult<()> {
     throws!({
       let latest_state = shared_store.read().await.get_state();

@@ -27,24 +27,23 @@ use crate::*;
 
 /// Async trait docs: https://doc.rust-lang.org/book/ch10-02-traits.html
 #[async_trait]
-pub trait Render<S, A>
+pub trait TWApp<S, A>
 where
   S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send,
   A: Display + Default + Clone + Sync + Send,
 {
-  /// Use the state to render the output (via crossterm). To change the state,
-  /// dispatch an action.
+  /// Use the state to render the output (via crossterm). To change the state, dispatch an action.
   async fn render(
     &mut self, state: &S, shared_store: &SharedStore<S, A>, window_size: Size,
   ) -> CommonResult<TWCommandQueue>;
 
   /// Use the input_event to dispatch an action to the store if needed.
   async fn handle_event(
-    &self, input_event: &InputEvent, state: &S, shared_store: &SharedStore<S, A>, window_size: Size,
+    &self, input_event: &TWInputEvent, state: &S, shared_store: &SharedStore<S, A>, window_size: Size,
   ) -> CommonResult<()>;
 
   /// Wrap a new instance in [Box].
-  fn new_owned() -> Box<dyn Render<S, A>>
+  fn new_owned() -> Box<dyn TWApp<S, A>>
   where
     Self: Default + Sync + Send + 'static,
   {

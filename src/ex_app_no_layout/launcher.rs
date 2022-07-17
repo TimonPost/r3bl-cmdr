@@ -34,7 +34,7 @@ pub async fn run_app() -> CommonResult<()> {
     store.add_reducer(AppReducer::new()).await;
 
     // Create an App (renders & responds to user input).
-    let shared_render = AppNoLayout::new_shared();
+    let shared_app = AppNoLayout::new_shared();
 
     // Exit if these keys are pressed.
     let exit_keys: Vec<KeyEvent> = vec![KeyEvent {
@@ -43,6 +43,6 @@ pub async fn run_app() -> CommonResult<()> {
     }];
 
     // Create a window.
-    TerminalWindow::main_event_loop(store, shared_render, exit_keys).await?
+    TerminalWindow::main_event_loop(store, shared_app, exit_keys).await?
   });
 }
