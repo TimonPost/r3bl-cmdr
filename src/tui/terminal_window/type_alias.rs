@@ -21,7 +21,13 @@ use tokio::sync::RwLock;
 
 use crate::*;
 
-// Type aliases.
+// TWData.
 pub type SharedWindow = Arc<RwLock<TWData>>;
-pub type SharedRender<S, A> = Arc<RwLock<SafeRender<S, A>>>;
-pub type SafeRender<S, A> = dyn TWApp<S, A> + Send + Sync;
+
+// TWApp.
+pub type SafeTWApp<S, A> = dyn TWApp<S, A> + Send + Sync;
+pub type SharedTWApp<S, A> = Arc<RwLock<SafeTWApp<S, A>>>;
+
+// RenderComponent.
+pub type SafeRenderComponent<S, A> = dyn RenderComponent<S, A> + Send + Sync;
+pub type SharedRenderComponent<S, A> = Arc<RwLock<SafeRenderComponent<S, A>>>;

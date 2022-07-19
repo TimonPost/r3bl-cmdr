@@ -42,6 +42,6 @@ pub mod event_stream_ext;
 
 // Re-export everything from attached source files.
 pub use event_stream_ext::*;
+pub use tw_command::*;
 pub use tw_input_event::*;
 pub use tw_raw_mode::*;
-pub use tw_command::*;

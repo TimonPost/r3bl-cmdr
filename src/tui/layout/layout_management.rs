@@ -21,14 +21,12 @@ use crate::*;
 
 /// Public API interface to create nested & responsive layout based UIs.
 pub trait LayoutManagement {
-  /// Set the origin pos (x, y) & tw_surface size (width, height) of our box
-  /// (container).
+  /// Set the origin pos (x, y) & tw_surface size (width, height) of our box (container).
   fn surface_start(&mut self, bounds_props: TWAreaProps) -> CommonResult<()>;
 
   fn surface_end(&mut self) -> CommonResult<()>;
 
-  /// Add a new layout on the stack w/ the direction & (width, height)
-  /// percentages.
+  /// Add a new layout on the stack w/ the direction & (width, height) percentages.
   fn box_start(&mut self, tw_box_props: TWBoxProps) -> CommonResult<()>;
 
   fn box_end(&mut self) -> CommonResult<()>;
@@ -37,16 +35,15 @@ pub trait LayoutManagement {
   fn print_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()>;
 }
 
-/// Internal (semi-private) methods that actually perform the layout and
-/// positioning.
-pub(in crate::tui) trait PerformPositioningAndSizing {
-  /// Update `content_cursor_pos`. If it hasn't been set yet, it will be
-  /// initialized to `(0, 0)`.
-  fn calc_where_to_insert_new_content_in_box(&mut self, pos: Size) -> CommonResult<Position>;
+/// Methods that actually perform the layout and positioning.
+pub trait PerformPositioningAndSizing {
+  /// Update `content_cursor_pos`. If it hasn't been set yet, it will be initialized to `(0, 0)`.
+  fn calc_where_to_insert_next_content_in_box(&mut self, pos: Size) -> CommonResult<Position>;
 
-  /// Update `box_cursor_pos`. This needs to be called before adding a new
-  /// [TWBox].
-  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position>;
+  /// Update `box_cursor_pos`. This needs to be called before adding a new [TWBox].
+  fn calc_where_to_insert_new_box_in_tw_surface(
+    &mut self, allocated_size: Size,
+  ) -> CommonResult<Position>;
 
   /// Get the [TWBox] at the "top" of the `stack`.
   fn current_box(&mut self) -> CommonResult<&mut TWBox>;

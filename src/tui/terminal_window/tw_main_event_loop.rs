@@ -65,10 +65,19 @@ impl TerminalWindow {
   /// A: Default + Clone + Sync + Send,
   /// ```
   pub async fn main_event_loop<S, A>(
-    store: Store<S, A>, shared_render: SharedRender<S, A>, exit_keys: Vec<KeyEvent>,
+    store: Store<S, A>, shared_render: SharedTWApp<S, A>, exit_keys: Vec<KeyEvent>,
   ) -> CommonResult<()>
   where
-    S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static + StateManageFocus,
+    S: Display
+      + Default
+      + Clone
+      + PartialEq
+      + Debug
+      + Hash
+      + Sync
+      + Send
+      + 'static
+      + StateManageFocus,
     A: Display + Default + Clone + Sync + Send + 'static,
   {
     raw_mode!({
@@ -87,7 +96,13 @@ impl TerminalWindow {
       let mut stream = EventStream::new();
 
       // Perform first render.
-      TWSubscriber::render(&shared_store, &shared_render, shared_window.read().await.size, None).await?;
+      TWSubscriber::render(
+        &shared_store,
+        &shared_render,
+        shared_window.read().await.size,
+        None,
+      )
+      .await?;
 
       shared_window
         .read()
@@ -101,7 +116,10 @@ impl TerminalWindow {
 
         // Process the input_event.
         if let Some(input_event) = maybe_input_event {
-          call_if_true!(DEBUG, log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event));
+          call_if_true!(
+            DEBUG,
+            log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event)
+          );
 
           match TWDefaultInputEventHandler::no_consume(input_event, &exit_keys).await {
             Continuation::Exit => {
@@ -112,7 +130,13 @@ impl TerminalWindow {
               TWSubscriber::render(&shared_store, &shared_render, new_size, None).await?;
             }
             Continuation::Continue => {
-              TWSubscriber::handle_input(&shared_window, &shared_store, &shared_render, &input_event).await?
+              TWSubscriber::handle_input(
+                &shared_window,
+                &shared_store,
+                &shared_render,
+                &input_event,
+              )
+              .await?
             }
           };
         }
@@ -124,10 +148,11 @@ impl TerminalWindow {
 
 struct TWSubscriber<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static + StateManageFocus,
+  S:
+    Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static + StateManageFocus,
   A: Display + Default + Clone + Sync + Send + 'static,
 {
-  shared_render: SharedRender<S, A>,
+  shared_render: SharedTWApp<S, A>,
   shared_store: SharedStore<S, A>,
   shared_window: SharedWindow,
 }
@@ -135,25 +160,37 @@ where
 #[async_trait]
 impl<S, A> AsyncSubscriber<S> for TWSubscriber<S, A>
 where
-S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static + StateManageFocus,
-A: Display + Default + Clone + Sync + Send,
+  S:
+    Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static + StateManageFocus,
+  A: Display + Default + Clone + Sync + Send,
 {
   async fn run(&self, my_state: S) {
     let window_size = self.shared_window.read().await.size;
-    let result = TWSubscriber::render(&self.shared_store, &self.shared_render, window_size, Some(my_state)).await;
+    let result = TWSubscriber::render(
+      &self.shared_store,
+      &self.shared_render,
+      window_size,
+      Some(my_state),
+    )
+    .await;
     if let Err(e) = result {
-      call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::run -> Error: {}", e))
+      call_if_true!(
+        DEBUG,
+        log_no_err!(ERROR, "MySubscriber::run -> Error: {}", e)
+      )
     }
   }
 }
 
 impl<S, A> TWSubscriber<S, A>
 where
-S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static + StateManageFocus,
-A: Display + Default + Clone + Sync + Send,
+  S:
+    Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + 'static + StateManageFocus,
+  A: Display + Default + Clone + Sync + Send,
 {
   fn new_box(
-    shared_render: &SharedRender<S, A>, shared_store: &SharedStore<S, A>, shared_window: &SharedWindow,
+    shared_render: &SharedTWApp<S, A>, shared_store: &SharedStore<S, A>,
+    shared_window: &SharedWindow,
   ) -> Box<Self> {
     Box::new(TWSubscriber {
       shared_render: shared_render.clone(),
@@ -164,8 +201,8 @@ A: Display + Default + Clone + Sync + Send,
 
   /// Pass the event to the shared_render for further processing.
   pub async fn handle_input(
-    shared_window: &SharedWindow, shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>,
-    input_event: &TWInputEvent,
+    shared_window: &SharedWindow, shared_store: &SharedStore<S, A>,
+    shared_render: &SharedTWApp<S, A>, input_event: &TWInputEvent,
   ) -> CommonResult<()> {
     throws!({
       let latest_state = shared_store.read().await.get_state();
@@ -179,7 +216,8 @@ A: Display + Default + Clone + Sync + Send,
   }
 
   pub async fn render(
-    shared_store: &SharedStore<S, A>, shared_render: &SharedRender<S, A>, window_size: Size, my_state: Option<S>,
+    shared_store: &SharedStore<S, A>, shared_render: &SharedTWApp<S, A>, window_size: Size,
+    my_state: Option<S>,
   ) -> CommonResult<()> {
     throws!({
       let state: S = if my_state.is_none() {
@@ -196,13 +234,21 @@ A: Display + Default + Clone + Sync + Send,
       match render_result {
         Err(error) => {
           TWCommand::flush();
-          call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::render() error ❌: {}", error));
+          call_if_true!(
+            DEBUG,
+            log_no_err!(ERROR, "MySubscriber::render() error ❌: {}", error)
+          );
         }
         Ok(tw_command_queue) => {
           tw_command_queue.flush(true);
           call_if_true!(
             DEBUG,
-            log_no_err!(INFO, "MySubscriber::render() ok ✅: {}, {}", window_size, state)
+            log_no_err!(
+              INFO,
+              "MySubscriber::render() ok ✅: {}, {}",
+              window_size,
+              state
+            )
           );
         }
       }

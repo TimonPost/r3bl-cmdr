@@ -17,7 +17,7 @@
 
 use r3bl_rs_utils::*;
 
-use crate::{layout::*, *};
+use crate::*;
 
 /// Represents a rectangular area of the terminal screen, and not necessarily
 /// the full terminal screen.
@@ -37,7 +37,10 @@ impl LayoutManagement for TWSurface {
       if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceStart,
-          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
+          LayoutError::format_msg_with_stack_len(
+            &self.stack_of_boxes,
+            "Stack of boxes should be empty",
+          ),
         )?
       }
       self.origin_pos = pos;
@@ -51,7 +54,10 @@ impl LayoutManagement for TWSurface {
       if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceEnd,
-          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
+          LayoutError::format_msg_with_stack_len(
+            &self.stack_of_boxes,
+            "Stack of boxes should be empty",
+          ),
         )?
       }
     });
@@ -72,14 +78,16 @@ impl LayoutManagement for TWSurface {
       if self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedBoxEnd,
-          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should not be empty"),
+          LayoutError::format_msg_with_stack_len(
+            &self.stack_of_boxes,
+            "Stack of boxes should not be empty",
+          ),
         )?
       }
       self.stack_of_boxes.pop();
     });
   }
 
-  // TODO: extract this into a RenderComponent trait
   fn print_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()> {
     throws!({
       for text in text_vec {
@@ -93,24 +101,26 @@ impl LayoutManagement for TWSurface {
         // Update the `content_cursor_pos` (will be initialized for `self.current_box()`
         // if it doesn't exist yet).
         let content_size = (content_cols, content_rows).into();
-        let content_relative_pos = self.calc_where_to_insert_new_content_in_box(content_size)?;
+        let content_relative_pos = self.calc_where_to_insert_next_content_in_box(content_size)?;
 
         // Get the current box & its style.
         let current_box = self.current_box()?;
         let box_origin_pos = current_box.origin_pos; // Adjusted for style margin.
-        let _box_bound_size = current_box.bounds_size; // Adjusted for style margin.
+        let _box_bounding_size = current_box.bounding_size; // Adjusted for style margin.
 
         // TODO: Use `_box_bound_size` and `_content_col` to wrap or clip text.
 
         // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
-        let move_cursor_to_abs_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_relative_pos);
+        let move_cursor_to_rel_cmd =
+          TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_relative_pos);
         let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
-        let print_cmd = TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
+        let print_cmd =
+          TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
         let reset_cmd = TWCommand::ResetColor;
 
         // Queue a bunch of `TWCommand`s to paint the text.
         self.render_buffer += tw_queue! {
-          move_cursor_to_abs_cmd,
+          move_cursor_to_rel_cmd,
           style_cmd,
           print_cmd,
           reset_cmd
@@ -119,9 +129,6 @@ impl LayoutManagement for TWSurface {
     });
   }
 }
-
-// TODO: impl this & move to TWApp
-trait RenderComponent {}
 
 impl PerformPositioningAndSizing for TWSurface {
   /// 🌳 Root: Handle first box to add to stack of boxes, explicitly sized &
@@ -168,11 +175,11 @@ impl PerformPositioningAndSizing for TWSurface {
     throws!({
       let current_box = self.current_box()?;
 
-      let container_bounds = current_box.bounds_size;
+      let container_bounds = current_box.bounding_size;
 
       let requested_size_allocation = Size::from((
-        calc_percentage(width_pc, container_bounds.width),
-        calc_percentage(height_pc, container_bounds.height),
+        calc_percentage(width_pc, container_bounds.cols),
+        calc_percentage(height_pc, container_bounds.rows),
       ));
 
       let old_position = unwrap_or_err! {
@@ -202,7 +209,9 @@ impl PerformPositioningAndSizing for TWSurface {
   ///
   /// Returns the [Position] where the next [TWBox] can be added to the stack of
   /// boxes.
-  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position> {
+  fn calc_where_to_insert_new_box_in_tw_surface(
+    &mut self, allocated_size: Size,
+  ) -> CommonResult<Position> {
     let current_box = self.current_box()?;
     let box_cursor_pos = current_box.box_cursor_pos;
 
@@ -227,7 +236,9 @@ impl PerformPositioningAndSizing for TWSurface {
 
   /// Update the `content_cursor_pos` of the current [TWBox] and return the
   /// original [Position] that was there prior to this update.h
-  fn calc_where_to_insert_new_content_in_box(&mut self, content_size: Size) -> CommonResult<Position> {
+  fn calc_where_to_insert_next_content_in_box(
+    &mut self, content_size: Size,
+  ) -> CommonResult<Position> {
     throws_with_return!({
       // Get current content_cursor_pos or initialize it to (0, 0).
       let current_box = self.current_box()?;

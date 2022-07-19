@@ -34,8 +34,8 @@ pub enum TWInputEvent {
   None,
 }
 
-/// For [ToString].
 impl Display for TWInputEvent {
+  /// For [ToString].
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }
 
@@ -43,8 +43,8 @@ impl Default for TWInputEvent {
   fn default() -> Self { TWInputEvent::None }
 }
 
-/// Typecast / convert [Event] to [InputEvent].
 impl From<Event> for TWInputEvent {
+  /// Typecast / convert [Event] to [TWInputEvent].
   fn from(event: Event) -> Self {
     match event {
       Key(key_event) => key_event.into(),
@@ -54,24 +54,22 @@ impl From<Event> for TWInputEvent {
   }
 }
 
-/// Typecast / convert [(u16, u16)] to [InputEvent::TerminalSize].
 impl From<(/* rows: */ u16, /* cols: */ u16)> for TWInputEvent {
+  /// Typecast / convert [(u16, u16)] to [TWInputEvent::Resize].
   fn from(size: (u16, u16)) -> Self {
     let (rows, cols) = size;
-    TWInputEvent::Resize(Size {
-      width: cols,
-      height: rows,
-    })
+    TWInputEvent::Resize(Size { cols, rows })
   }
 }
 
-/// Typecast / convert [MouseEvent] to [InputEvent::InputMouseEvent].
 impl From<MouseEvent> for TWInputEvent {
+  /// Typecast / convert [MouseEvent] to [TWInputEvent::Mouse].
   fn from(mouse_event: MouseEvent) -> Self { TWInputEvent::Mouse(mouse_event) }
 }
 
-/// Typecast / convert [KeyEvent] to [InputEvent::].
 impl From<KeyEvent> for TWInputEvent {
+  /// Typecast / convert [KeyEvent] to [TWInputEvent::DisplayableKeypress], or
+  /// [TWInputEvent::NonDisplayableKeypress].
   fn from(key_event: KeyEvent) -> Self {
     match key_event {
       // Check if "normal character" is pressed.

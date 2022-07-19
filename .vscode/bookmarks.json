@@ -1,36 +1,6 @@
 {
 	"files": [
 		{
-			"path": "src/tui/layout/tw_surface.rs",
-			"bookmarks": [
-				{
-					"line": 81,
-					"column": 5,
-					"label": ""
-				},
-				{
-					"line": 122,
-					"column": 0,
-					"label": ""
-				},
-				{
-					"line": 218,
-					"column": 16,
-					"label": ""
-				}
-			]
-		},
-		{
-			"path": "src/tui/crossterm_helpers/tw_command.rs",
-			"bookmarks": [
-				{
-					"line": 154,
-					"column": 9,
-					"label": ""
-				}
-			]
-		},
-		{
 			"path": "src/tui/terminal_window/main_event_loop.rs",
 			"bookmarks": [
 				{

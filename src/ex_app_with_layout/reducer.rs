@@ -34,7 +34,10 @@ impl AsyncReducer<AppState, AppAction> for AppReducer {
 
     reduce_mut(&mut id_with_focus, &mut stack, action);
 
-    AppState { stack, id_with_focus }
+    AppState {
+      stack,
+      id_with_focus,
+    }
   }
 }
 

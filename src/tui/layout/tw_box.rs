@@ -38,7 +38,7 @@ pub struct TWBox {
   pub id: String,
   pub dir: Direction,
   pub origin_pos: Position,
-  pub bounds_size: Size,
+  pub bounding_size: Size,
   pub req_size_percent: RequestedSizePercent,
   pub box_cursor_pos: Option<Position>,
   pub content_cursor_pos: Option<Position>,
@@ -50,18 +50,18 @@ impl TWBox {
 
   /// Explicitly set the position & size of our box.
   pub fn make_root_box(
-    id: String, size: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent, dir: Direction,
-    computed_style: Option<Style>,
+    id: String, size: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent,
+    dir: Direction, computed_style: Option<Style>,
   ) -> TWBox {
     let bounds_size = Size::from((
-      calc_percentage(width_pc, size.width),
-      calc_percentage(height_pc, size.height),
+      calc_percentage(width_pc, size.cols),
+      calc_percentage(height_pc, size.rows),
     ));
     TWBoxBuilder::new()
       .set_id(id)
       .set_dir(dir)
       .set_origin_pos(origin_pos)
-      .set_bounds_size(bounds_size)
+      .set_bounding_size(bounds_size)
       .set_req_size_percent((width_pc, height_pc).into())
       .set_box_cursor_pos(origin_pos.as_some())
       .set_computed_style(computed_style)
@@ -71,15 +71,15 @@ impl TWBox {
   /// Actual position and size for our box will be calculated based on provided
   /// hints.
   pub fn make_box(
-    id: String, dir: Direction, container_bounds: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent,
-    computed_style: Option<Style>,
+    id: String, dir: Direction, container_bounds: Size, origin_pos: Position, width_pc: Percent,
+    height_pc: Percent, computed_style: Option<Style>,
   ) -> Self {
     // Adjust `bounds_size` & `origin` based on the style's margin.
     let mut style_adjusted_origin = origin_pos;
 
     let mut style_adjusted_bounds_size = Size::from((
-      calc_percentage(width_pc, container_bounds.width),
-      calc_percentage(height_pc, container_bounds.height),
+      calc_percentage(width_pc, container_bounds.cols),
+      calc_percentage(height_pc, container_bounds.rows),
     ));
 
     if let Some(ref style) = computed_style {
@@ -95,7 +95,7 @@ impl TWBox {
       .set_id(id)
       .set_dir(dir)
       .set_origin_pos(style_adjusted_origin)
-      .set_bounds_size(style_adjusted_bounds_size)
+      .set_bounding_size(style_adjusted_bounds_size)
       .set_req_size_percent(req_size_pc)
       .set_computed_style(computed_style)
       .build()
@@ -122,10 +122,13 @@ impl Debug for TWBox {
       .field("id", &self.id)
       .field("dir", &self.dir)
       .field("origin", &self.origin_pos)
-      .field("bounds_size", &self.bounds_size)
+      .field("bounds_size", &self.bounding_size)
       .field("req_size_percent", &self.req_size_percent)
       .field("box_cursor_pos", format_option!(&self.box_cursor_pos))
-      .field("content_cursor_pos", format_option!(&self.content_cursor_pos))
+      .field(
+        "content_cursor_pos",
+        format_option!(&self.content_cursor_pos),
+      )
       .field("styles", format_option!(&self.computed_style))
       .finish()
   }

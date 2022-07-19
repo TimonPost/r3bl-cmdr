@@ -34,7 +34,10 @@ fn test_simple_2_col_layout() -> CommonResult<()> {
     create_main_container(&mut tw_surface)?;
     tw_surface.surface_end()?;
     println!("{}", &tw_surface.render_buffer);
-    println!("{}", serde_json::to_string_pretty(&tw_surface.render_buffer).unwrap());
+    println!(
+      "{}",
+      serde_json::to_string_pretty(&tw_surface.render_buffer).unwrap()
+    );
   });
 }
 
@@ -60,7 +63,7 @@ fn create_main_container(tw_surface: &mut TWSurface) -> CommonResult<()> {
       assert_eq!(layout_item.id, "container");
       assert_eq!(layout_item.dir, Direction::Horizontal);
       assert_eq!(layout_item.origin_pos, (0, 0).into());
-      assert_eq!(layout_item.bounds_size, (500, 500).into());
+      assert_eq!(layout_item.bounding_size, (500, 500).into());
       assert_eq!(layout_item.req_size_percent, (100, 100).try_into()?);
       assert_eq!(layout_item.box_cursor_pos, Some((0, 0).into()));
       assert_eq!(layout_item.content_cursor_pos, None);
@@ -92,7 +95,7 @@ fn create_left_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
       assert_eq!(layout_item.id, "col_1");
       assert_eq!(layout_item.dir, Direction::Vertical);
       assert_eq!(layout_item.origin_pos, (2, 2).into()); // Take margin into account.
-      assert_eq!(layout_item.bounds_size, (246, 496).into()); // Take margin into account.
+      assert_eq!(layout_item.bounding_size, (246, 496).into()); // Take margin into account.
       assert_eq!(layout_item.req_size_percent, (50, 100).try_into()?);
       assert_eq!(layout_item.box_cursor_pos, None);
       assert_eq!(layout_item.content_cursor_pos, Some((0, 2).into()));
@@ -127,7 +130,7 @@ fn create_right_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
       assert_eq!(current_box.id, "col_2");
       assert_eq!(current_box.dir, Direction::Vertical);
       assert_eq!(current_box.origin_pos, (253, 3).into()); // Take margin into account.
-      assert_eq!(current_box.bounds_size, (244, 494).into()); // Take margin into account.
+      assert_eq!(current_box.bounding_size, (244, 494).into()); // Take margin into account.
       assert_eq!(current_box.req_size_percent, (50, 100).try_into()?);
       assert_eq!(current_box.box_cursor_pos, None);
       assert_eq!(current_box.content_cursor_pos, Some((0, 2).into()));

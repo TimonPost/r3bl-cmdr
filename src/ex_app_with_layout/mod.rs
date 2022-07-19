@@ -23,8 +23,8 @@ pub mod state;
 pub mod action;
 
 // Re-export.
+pub use action::*;
 pub use app_with_layout::*;
+pub use launcher::*;
 pub use reducer::*;
 pub use state::*;
-pub use action::*;
-pub use launcher::*;
