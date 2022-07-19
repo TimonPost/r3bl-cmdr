@@ -15,9 +15,11 @@
  *   limitations under the License.
  */
 
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::*;
+use r3bl_cmdr::*;
+use r3bl_rs_utils::*;
 
-use crate::*;
+use super::*;
 
 pub async fn run_app() -> CommonResult<()> {
   throws!({
@@ -28,10 +30,7 @@ pub async fn run_app() -> CommonResult<()> {
     }
 
     // Create store.
-    let mut store: Store<AppState, AppAction> = Store::default();
-
-    // Attach reducer.
-    store.add_reducer(AppReducer::new()).await;
+    let store = create_store().await;
 
     // Create an App (renders & responds to user input).
     let shared_app = AppWithLayout::new_shared();
@@ -45,4 +44,10 @@ pub async fn run_app() -> CommonResult<()> {
     // Create a window.
     TerminalWindow::main_event_loop(store, shared_app, exit_keys).await?
   });
+}
+
+async fn create_store() -> Store<AppState, AppAction> {
+  let mut store: Store<AppState, AppAction> = Store::default();
+  store.add_reducer(AppReducer::new()).await;
+  store
 }

@@ -15,16 +15,23 @@
  *   limitations under the License.
  */
 
-// Attach files.
-pub mod tw_manage_focus;
-pub mod type_alias;
-pub mod tw_main_event_loop;
-pub mod tw_default_input_handler;
-pub mod tw_app;
+use std::fmt::{Display, Formatter};
 
-// Re-export.
-pub use tw_manage_focus::*;
-pub use tw_default_input_handler::*;
-pub use tw_main_event_loop::*;
-pub use tw_app::*;
-pub use type_alias::*;
+/// Action.
+#[derive(Clone, Debug)]
+#[non_exhaustive]
+pub enum AppAction {
+  Startup,
+  AddPop(i32),
+  SubPop(i32),
+  Clear,
+  Noop,
+}
+
+impl Default for AppAction {
+  fn default() -> Self { AppAction::Noop }
+}
+
+impl Display for AppAction {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
+}

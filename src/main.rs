@@ -31,15 +31,16 @@ pub use ex_app_with_layout::*;
 pub use ex_editor::*;
 use reedline::*;
 
+const HELP_MSG: &str = "Type a number to run corresponding example:
+  1. App with no layout ❌
+  2. App with layout ✅
+  3. Text editor 📜
+or type Ctrl+C / Ctrl+D / 'x' to exit";
+
 #[tokio::main]
 async fn main() -> CommonResult<()> {
   throws!({
-    println!(
-      "Type a number to run corresponding example or type CtrlC / CtrlD / 'x' to exit:
-      1. App with no layout ❌
-      2. App with layout ✅
-      3. Text editor 📜"
-    );
+    println!("{}", HELP_MSG);
     let selection = get_user_selection();
     run_ex_for_user_selection(selection).await?;
   })

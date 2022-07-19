@@ -28,10 +28,7 @@ pub async fn run_app() -> CommonResult<()> {
     }
 
     // Create store.
-    let mut store: Store<AppState, AppAction> = Store::default();
-
-    // Attach reducer.
-    store.add_reducer(AppReducer::new()).await;
+    let store = create_store().await;
 
     // Create an App (renders & responds to user input).
     let shared_app = AppNoLayout::new_shared();

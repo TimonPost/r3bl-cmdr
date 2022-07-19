@@ -17,8 +17,10 @@
 
 use async_trait::async_trait;
 use crossterm::event::*;
+use r3bl_cmdr::*;
+use r3bl_rs_utils::*;
 
-use crate::*;
+use super::*;
 
 /// Async trait object that implements the [Render] trait.
 #[derive(Default, Debug, Clone, Copy)]

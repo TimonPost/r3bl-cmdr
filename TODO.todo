@@ -1,7 +1,7 @@
 ■ r3bl-cmdr ■
 
 think about containers, containment, and keyboard focus management:
-  ✔ move cursor to relative & absolute @done(22-07-17 11:53)
+  ✔ move cursor to relative & absolute (🔱 move-cursor-rel-abs) @done(22-07-17 11:53)
     - the pos + size of a box is provided to a *component* 
     - the *component* paints itself thinking it starts at 0, 0 
     - the *component* is actually relative to the box when it is rendered 
@@ -9,7 +9,7 @@ think about containers, containment, and keyboard focus management:
       - `MoveCursorPositionAbs(Position)`
       - `MoveCursorPositionRelTo(Position, Position)`
     - rename `Render` to `TWApp`
-  ☐ add support for focus management to state
+  ✔ add support for focus management to state (🔱 state-focus-mgmt) @done(22-07-19 11:03)
     - need to accommodate handling of focus & what is currently in focus
     - introduce trait `StateManageFocus` w/ 2 methods: 
       - `get_focus_id(): str`

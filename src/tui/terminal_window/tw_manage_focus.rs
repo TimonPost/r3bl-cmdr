@@ -15,16 +15,7 @@
  *   limitations under the License.
  */
 
-// Attach files.
-pub mod tw_manage_focus;
-pub mod type_alias;
-pub mod tw_main_event_loop;
-pub mod tw_default_input_handler;
-pub mod tw_app;
-
-// Re-export.
-pub use tw_manage_focus::*;
-pub use tw_default_input_handler::*;
-pub use tw_main_event_loop::*;
-pub use tw_app::*;
-pub use type_alias::*;
+pub trait StateManageFocus {
+  fn get_focus_id(&self) -> String;
+  fn set_focus_id(&mut self, arg: String);
+}

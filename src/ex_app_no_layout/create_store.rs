@@ -18,7 +18,15 @@
 use std::fmt::{Display, Formatter};
 
 use async_trait::async_trait;
-use r3bl_rs_utils::redux::AsyncReducer;
+use r3bl_cmdr::*;
+use r3bl_rs_utils::*;
+
+// Create a new store and attach the reducer.
+pub async fn create_store() -> Store<AppState, AppAction> {
+  let mut store: Store<AppState, AppAction> = Store::default();
+  store.add_reducer(AppReducer::new()).await;
+  store
+}
 
 /// Action.
 #[derive(Clone, Debug)]
@@ -35,6 +43,11 @@ impl Default for AppAction {
   fn default() -> Self { AppAction::Noop }
 }
 
+impl StateManageFocus for AppState {
+  fn get_focus_id(&self) -> String { self.id_with_focus.clone() }
+  fn set_focus_id(&mut self, arg: String) { self.id_with_focus = arg }
+}
+
 impl Display for AppAction {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }
@@ -43,14 +56,26 @@ impl Display for AppAction {
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
 pub struct AppState {
   pub stack: Vec<i32>,
+  pub id_with_focus: String,
 }
 
 impl Default for AppState {
-  fn default() -> Self { Self { stack: vec![0] } }
+  fn default() -> Self {
+    Self {
+      stack: vec![0],
+      id_with_focus: "".into(),
+    }
+  }
 }
 
 impl Display for AppState {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "State {{ stack: {:?} }}", self.stack) }
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    write!(
+      f,
+      "State {{ stack: {:?}, id_with_focus: {:?} }}",
+      self.stack, self.id_with_focus
+    )
+  }
 }
 
 /// Reducer.
@@ -88,6 +113,9 @@ impl AsyncReducer<AppState, AppAction> for AppReducer {
       _ => {}
     }
 
-    AppState { stack }
+    AppState {
+      stack,
+      id_with_focus: state.id_with_focus.clone(),
+    }
   }
 }

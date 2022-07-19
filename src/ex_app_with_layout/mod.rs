@@ -18,9 +18,13 @@
 // Attach sources.
 pub mod app_with_layout;
 pub mod launcher;
-pub mod create_store;
+pub mod reducer;
+pub mod state;
+pub mod action;
 
 // Re-export.
 pub use app_with_layout::*;
-pub use create_store::*;
+pub use reducer::*;
+pub use state::*;
+pub use action::*;
 pub use launcher::*;
