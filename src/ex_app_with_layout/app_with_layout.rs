@@ -28,12 +28,6 @@ pub struct AppWithLayout {
   pub lolcat: Lolcat,
 }
 
-struct RenderProps<'a> {
-  pub lolcat: &'a mut Lolcat,
-  pub state: &'a AppState,
-  pub shared_store: &'a SharedStore<AppState, AppAction>,
-}
-
 #[async_trait]
 impl TWApp<AppState, AppAction> for AppWithLayout {
   async fn render(
@@ -50,15 +44,7 @@ impl TWApp<AppState, AppAction> for AppWithLayout {
           .set_size(window_size)
           .build(),
       )?;
-      create_main_container(
-        &mut tw_surface,
-        &mut RenderProps {
-          lolcat: &mut self.lolcat,
-          state,
-          shared_store,
-        },
-      )
-      .await?;
+      create_main_container(&mut tw_surface, &mut self.lolcat, state, shared_store).await?;
       tw_surface.surface_end()?;
       tw_surface.render_buffer
     });
@@ -118,7 +104,8 @@ fn debug_log(action: AppAction) {
 
 /// Main container "container".
 async fn create_main_container<'a>(
-  tw_surface: &mut TWSurface, render_props: &mut RenderProps<'a>,
+  tw_surface: &mut TWSurface, lolcat: &'a mut Lolcat, state: &'a AppState,
+  shared_store: &'a SharedStore<AppState, AppAction>,
 ) -> CommonResult<()> {
   throws!({
     tw_surface.box_start(
@@ -128,15 +115,16 @@ async fn create_main_container<'a>(
         .set_req_size((100, 100).try_into()?)
         .build(),
     )?;
-    create_left_col(tw_surface, render_props).await?;
-    create_right_col(tw_surface, render_props)?;
+    create_left_col(tw_surface, lolcat, state, shared_store).await?;
+    create_right_col(tw_surface, lolcat, state, shared_store);
     tw_surface.box_end()?;
   });
 }
 
 /// Left column "col_1".
 async fn create_left_col<'a>(
-  tw_surface: &mut TWSurface, render_props: &mut RenderProps<'a>,
+  tw_surface: &mut TWSurface, lolcat: &'a mut Lolcat, state: &'a AppState,
+  shared_store: &'a SharedStore<AppState, AppAction>,
 ) -> CommonResult<()> {
   throws!({
     tw_surface.box_start(
@@ -147,14 +135,12 @@ async fn create_left_col<'a>(
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    let mut column_component = ColumnComponent {
-      lolcat: render_props.lolcat,
-    };
+    let mut column_component = ColumnComponent { lolcat };
 
     let current_box = tw_surface.current_box()?;
 
     let tw_queue: TWCommandQueue = column_component
-      .render(current_box, render_props.state, render_props.shared_store)
+      .render(current_box, state, shared_store)
       .await?;
 
     tw_surface.render_buffer += tw_queue;
@@ -185,8 +171,8 @@ impl<'a> RenderComponent<AppState, AppAction> for ColumnComponent<'a> {
         TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_pos);
       let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
       let first_line = box_bounding_size.truncate_at_cols(first_line);
-      let first_line = colorize_using_lolcat_from! {
-        self,
+      let first_line = colorize_using_lolcat! {
+        &mut self.lolcat,
         "{}",
         first_line
       };
@@ -198,8 +184,8 @@ impl<'a> RenderComponent<AppState, AppAction> for ColumnComponent<'a> {
       content_pos.add_row_with_bounds(1, box_bounding_size);
       let move_cursor_to_second_line_cmd =
         TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_pos);
-      let second_line = colorize_using_lolcat_from! {
-        self,
+      let second_line = colorize_using_lolcat! {
+        &mut self.lolcat,
         "{}",
         box_bounding_size.truncate_at_cols(second_line)
       };
@@ -241,7 +227,8 @@ impl<'a> RenderComponent<AppState, AppAction> for ColumnComponent<'a> {
 
 /// Right column "col_2".
 fn create_right_col(
-  tw_surface: &mut TWSurface, render_props: &mut RenderProps,
+  tw_surface: &mut TWSurface, lolcat: &mut Lolcat, state: &AppState,
+  shared_store: &SharedStore<AppState, AppAction>,
 ) -> CommonResult<()> {
   throws!({
     tw_surface.box_start(
@@ -254,15 +241,15 @@ fn create_right_col(
     )?;
 
     let first_line = "col 2 - Hello".to_string();
-    colorize_using_lolcat_from! {
-      render_props,
+    colorize_using_lolcat! {
+      lolcat,
       "{}",
       first_line
     };
 
     let second_line = "col 2 - Hello".to_string();
-    colorize_using_lolcat_from! {
-      render_props,
+    colorize_using_lolcat! {
+      lolcat,
       "{}",
       second_line
     };

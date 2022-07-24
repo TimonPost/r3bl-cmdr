@@ -24,14 +24,14 @@ use rand::{thread_rng, Rng};
 
 use crate::*;
 
-/// Given a struct that contains a [Lolcat] property, colorize the token tree
-/// that follows.
+/// Given a mutable [Lolcat], colorize the token tree that follows.
 ///
 /// ```ignore
 /// #[derive(Default, Debug, Clone, Copy)]
 /// pub struct App {
 ///   pub lolcat: Lolcat,
 /// }
+///
 /// #[async_trait]
 /// impl Render<AppState, AppAction> for App {
 ///   async fn render(
@@ -42,7 +42,9 @@ use crate::*;
 ///   ) -> CommonResult<CommandQueue> {
 ///     throws_with_return!({
 ///       let content = format!("{}", state);
-///       let colored_content = colorize!(self, "{}", state);
+///       let colored_content = colorize_using_lolcat!(
+///         &mut self.lolcat, "{}", state
+///       );
 ///       tw_queue!(
 ///         TWCommand::Print(colored_content),
 ///       );
@@ -61,9 +63,9 @@ use crate::*;
 ///
 /// See [my_print!] for more information on how this macro is written.
 #[macro_export]
-macro_rules! colorize_using_lolcat_from {
-  ($has_lolcat: expr, $($arg:tt)*) => {
-    format!("{}", std::format_args!($($arg)*)).color_with(&mut $has_lolcat.lolcat);
+macro_rules! colorize_using_lolcat {
+  ($lolcat: expr, $($arg:tt)*) => {
+    format!("{}", std::format_args!($($arg)*)).color_with($lolcat);
   };
 }
 

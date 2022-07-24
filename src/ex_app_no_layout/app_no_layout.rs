@@ -39,7 +39,7 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
       let col: UnitType = window_size.cols / 2 - content_size / 2;
       let row: UnitType = window_size.rows / 2;
 
-      let colored_content = colorize_using_lolcat_from!(self, "{}", state);
+      let colored_content = colorize_using_lolcat!(&mut self.lolcat, "{}", state);
 
       let queue = tw_queue!(
         TWCommand::ClearScreen,
