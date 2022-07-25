@@ -24,9 +24,9 @@ pub mod tw_app;
 pub mod tw_render_component;
 
 // Re-export.
-pub use tw_render_component::*;
 pub use tw_app::*;
 pub use tw_default_input_handler::*;
 pub use tw_main_event_loop::*;
 pub use tw_manage_focus::*;
+pub use tw_render_component::*;
 pub use type_alias::*;

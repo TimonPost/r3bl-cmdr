@@ -37,10 +37,7 @@ impl LayoutManagement for TWSurface {
       if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceStart,
-          LayoutError::format_msg_with_stack_len(
-            &self.stack_of_boxes,
-            "Stack of boxes should be empty",
-          ),
+          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
         )?
       }
       self.origin_pos = pos;
@@ -54,10 +51,7 @@ impl LayoutManagement for TWSurface {
       if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceEnd,
-          LayoutError::format_msg_with_stack_len(
-            &self.stack_of_boxes,
-            "Stack of boxes should be empty",
-          ),
+          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
         )?
       }
     });
@@ -78,10 +72,7 @@ impl LayoutManagement for TWSurface {
       if self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedBoxEnd,
-          LayoutError::format_msg_with_stack_len(
-            &self.stack_of_boxes,
-            "Stack of boxes should not be empty",
-          ),
+          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should not be empty"),
         )?
       }
       self.stack_of_boxes.pop();
@@ -111,11 +102,9 @@ impl LayoutManagement for TWSurface {
         // TODO: Use `_box_bound_size` and `_content_col` to wrap or clip text.
 
         // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
-        let move_cursor_to_rel_cmd =
-          TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_relative_pos);
+        let move_cursor_to_rel_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_relative_pos);
         let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
-        let print_cmd =
-          TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
+        let print_cmd = TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
         let reset_cmd = TWCommand::ResetColor;
 
         // Queue a bunch of `TWCommand`s to paint the text.
@@ -209,9 +198,7 @@ impl PerformPositioningAndSizing for TWSurface {
   ///
   /// Returns the [Position] where the next [TWBox] can be added to the stack of
   /// boxes.
-  fn calc_where_to_insert_new_box_in_tw_surface(
-    &mut self, allocated_size: Size,
-  ) -> CommonResult<Position> {
+  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position> {
     let current_box = self.current_box()?;
     let box_cursor_pos = current_box.box_cursor_pos;
 
@@ -236,9 +223,7 @@ impl PerformPositioningAndSizing for TWSurface {
 
   /// Update the `content_cursor_pos` of the current [TWBox] and return the
   /// original [Position] that was there prior to this update.h
-  fn calc_where_to_insert_next_content_in_box(
-    &mut self, content_size: Size,
-  ) -> CommonResult<Position> {
+  fn calc_where_to_insert_next_content_in_box(&mut self, content_size: Size) -> CommonResult<Position> {
     throws_with_return!({
       // Get current content_cursor_pos or initialize it to (0, 0).
       let current_box = self.current_box()?;

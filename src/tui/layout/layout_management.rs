@@ -41,9 +41,7 @@ pub trait PerformPositioningAndSizing {
   fn calc_where_to_insert_next_content_in_box(&mut self, pos: Size) -> CommonResult<Position>;
 
   /// Update `box_cursor_pos`. This needs to be called before adding a new [TWBox].
-  fn calc_where_to_insert_new_box_in_tw_surface(
-    &mut self, allocated_size: Size,
-  ) -> CommonResult<Position>;
+  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position>;
 
   /// Get the [TWBox] at the "top" of the `stack`.
   fn current_box(&mut self) -> CommonResult<&mut TWBox>;
