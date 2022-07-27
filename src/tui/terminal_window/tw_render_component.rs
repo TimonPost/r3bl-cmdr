@@ -53,7 +53,7 @@ where
   /// 1. `self.calc_where_to_insert_next_content_in_box(content_size)` is not called
   /// 2. `current_box.content_cursor_pos` is not updated
   /// 3. The RenderComponent param owns all the painting inside the bounds that it is given
-  async fn render(
+  async fn render_component(
     &mut self, current_box: &TWBox, state: &S, shared_store: &SharedStore<S, A>,
   ) -> CommonResult<TWCommandQueue>;
 }

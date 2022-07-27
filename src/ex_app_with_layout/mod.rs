@@ -21,10 +21,12 @@ pub mod launcher;
 pub mod reducer;
 pub mod state;
 pub mod action;
+pub mod column_render_component;
 
 // Re-export.
 pub use action::*;
 pub use app_with_layout::*;
+pub use column_render_component::*;
 pub use launcher::*;
 pub use reducer::*;
 pub use state::*;

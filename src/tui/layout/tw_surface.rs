@@ -78,45 +78,6 @@ impl LayoutManagement for TWSurface {
       self.stack_of_boxes.pop();
     });
   }
-
-  fn print_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()> {
-    throws!({
-      for text in text_vec {
-        // Get the line of text.
-        let content_rows: UnitType = 1;
-
-        // TODO: Use `convert_to_base_unit!(text.len());` w/ graphemes & text wrapping.
-        let _content_cols = convert_to_base_unit!(text.len());
-        let content_cols: UnitType = 0;
-
-        // Update the `content_cursor_pos` (will be initialized for `self.current_box()`
-        // if it doesn't exist yet).
-        let content_size = (content_cols, content_rows).into();
-        let content_relative_pos = self.calc_where_to_insert_next_content_in_box(content_size)?;
-
-        // Get the current box & its style.
-        let current_box = self.current_box()?;
-        let box_origin_pos = current_box.origin_pos; // Adjusted for style margin.
-        let _box_bounding_size = current_box.bounding_size; // Adjusted for style margin.
-
-        // TODO: Use `_box_bound_size` and `_content_col` to wrap or clip text.
-
-        // Take `box_origin_pos` into account when calculating the `new_absolute_pos`.
-        let move_cursor_to_rel_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_relative_pos);
-        let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
-        let print_cmd = TWCommand::PrintWithAttributes(text.to_string(), current_box.get_computed_style());
-        let reset_cmd = TWCommand::ResetColor;
-
-        // Queue a bunch of `TWCommand`s to paint the text.
-        self.render_buffer += tw_queue! {
-          move_cursor_to_rel_cmd,
-          style_cmd,
-          print_cmd,
-          reset_cmd
-        };
-      }
-    });
-  }
 }
 
 impl PerformPositioningAndSizing for TWSurface {
@@ -219,28 +180,6 @@ impl PerformPositioningAndSizing for TWSurface {
     current_box.box_cursor_pos = new_pos.as_some();
 
     Ok(new_pos)
-  }
-
-  /// Update the `content_cursor_pos` of the current [TWBox] and return the
-  /// original [Position] that was there prior to this update.h
-  fn calc_where_to_insert_next_content_in_box(&mut self, content_size: Size) -> CommonResult<Position> {
-    throws_with_return!({
-      // Get current content_cursor_pos or initialize it to (0, 0).
-      let current_box = self.current_box()?;
-      let current_pos = unwrap_option_or_compute_if_none! {
-        current_box.content_cursor_pos,
-        || (0, 0).into()
-      };
-
-      // Calculate new_pos based on content_size.
-      let new_pos = current_pos + content_size;
-
-      // Update the content_cursor_pos.
-      current_box.content_cursor_pos = Some(new_pos);
-
-      // Return current_pos.
-      current_pos
-    });
   }
 
   /// Get the last box on the stack (if none found then return Err).

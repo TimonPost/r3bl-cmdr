@@ -30,16 +30,10 @@ pub trait LayoutManagement {
   fn box_start(&mut self, tw_box_props: TWBoxProps) -> CommonResult<()>;
 
   fn box_end(&mut self) -> CommonResult<()>;
-
-  /// Painting operations.
-  fn print_inside_box(&mut self, text_vec: Vec<&str>) -> CommonResult<()>;
 }
 
 /// Methods that actually perform the layout and positioning.
 pub trait PerformPositioningAndSizing {
-  /// Update `content_cursor_pos`. If it hasn't been set yet, it will be initialized to `(0, 0)`.
-  fn calc_where_to_insert_next_content_in_box(&mut self, pos: Size) -> CommonResult<Position>;
-
   /// Update `box_cursor_pos`. This needs to be called before adding a new [TWBox].
   fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position>;
 

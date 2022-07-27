@@ -41,7 +41,6 @@ pub struct TWBox {
   pub bounding_size: Size,
   pub req_size_percent: RequestedSizePercent,
   pub box_cursor_pos: Option<Position>,
-  pub content_cursor_pos: Option<Position>,
   pub computed_style: Option<Style>,
 }
 
@@ -125,7 +124,6 @@ impl Debug for TWBox {
       .field("bounds_size", &self.bounding_size)
       .field("req_size_percent", &self.req_size_percent)
       .field("box_cursor_pos", format_option!(&self.box_cursor_pos))
-      .field("content_cursor_pos", format_option!(&self.content_cursor_pos))
       .field("styles", format_option!(&self.computed_style))
       .finish()
   }

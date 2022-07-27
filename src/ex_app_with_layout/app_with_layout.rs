@@ -112,7 +112,7 @@ async fn create_main_container<'a>(
         .build(),
     )?;
     create_left_col(tw_surface, lolcat, state, shared_store).await?;
-    create_right_col(tw_surface, lolcat, state, shared_store);
+    create_right_col(tw_surface, lolcat, state, shared_store).await?;
     tw_surface.box_end()?;
   });
 }
@@ -131,91 +131,23 @@ async fn create_left_col<'a>(
         .set_req_size((50, 100).try_into()?)
         .build(),
     )?;
-    let mut column_component = ColumnComponent { lolcat };
 
-    let current_box = tw_surface.current_box()?;
-
-    let tw_queue: TWCommandQueue = column_component.render(current_box, state, shared_store).await?;
+    let tw_queue = with_mut_returns! {
+      ColumnRenderComponent { lolcat },
+      as it,
+      return {
+        let current_box = tw_surface.current_box()?;
+        it.render_component(current_box, state, shared_store).await?
+      }
+    };
 
     tw_surface.render_buffer += tw_queue;
     tw_surface.box_end()?;
   });
 }
 
-struct ColumnComponent<'a> {
-  lolcat: &'a mut Lolcat,
-}
-
-#[async_trait]
-impl<'a> RenderComponent<AppState, AppAction> for ColumnComponent<'a> {
-  async fn render(
-    &mut self, current_box: &TWBox, _state: &AppState, _shared_store: &SharedStore<AppState, AppAction>,
-  ) -> CommonResult<TWCommandQueue> {
-    throws_with_return!({
-      let first_line = "col 1 - Hello".to_string();
-      let second_line = "col 1 - World".to_string();
-
-      let box_origin_pos = current_box.origin_pos; // Adjusted for style margin (if any).
-      let box_bounding_size = current_box.bounding_size; // Adjusted for style margin (if any).
-      let mut content_pos = Position { col: 0, row: 0 };
-
-      // First line.
-      let move_cursor_to_first_line_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_pos);
-      let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
-      let first_line = box_bounding_size.truncate_at_cols(first_line);
-      let first_line = colorize_using_lolcat! {
-        &mut self.lolcat,
-        "{}",
-        first_line
-      };
-
-      let print_first_line_cmd = TWCommand::PrintWithAttributes(first_line, current_box.get_computed_style());
-
-      // Second line.
-      content_pos.add_row_with_bounds(1, box_bounding_size);
-      let move_cursor_to_second_line_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_pos);
-      let second_line = colorize_using_lolcat! {
-        &mut self.lolcat,
-        "{}",
-        box_bounding_size.truncate_at_cols(second_line)
-      };
-      let print_second_line_cmd = TWCommand::PrintWithAttributes(second_line, current_box.get_computed_style());
-
-      // Reset.
-      let reset_color_cmd = TWCommand::ResetColor;
-
-      let queue = tw_queue! {
-        move_cursor_to_first_line_cmd,
-        style_cmd,
-        print_first_line_cmd,
-        move_cursor_to_second_line_cmd,
-        print_second_line_cmd,
-        reset_color_cmd
-      };
-
-      call_if_true!(DEBUG, {
-        log_no_err! {
-          INFO,
-          "🦜 ColumnComponent::render -> current_box: {:?},
-            \n - box_origin_pos: {:?},
-            \n - box_bounding_size: {:?}, 
-            \n - content_pos: {:?},
-            \n - queue: {:?}",
-          current_box,
-          box_origin_pos,
-          box_bounding_size,
-          content_pos,
-          queue
-        };
-      });
-
-      queue
-    });
-  }
-}
-
 /// Right column "col_2".
-fn create_right_col(
+async fn create_right_col(
   tw_surface: &mut TWSurface, lolcat: &mut Lolcat, state: &AppState, shared_store: &SharedStore<AppState, AppAction>,
 ) -> CommonResult<()> {
   throws!({
@@ -242,8 +174,16 @@ fn create_right_col(
       second_line
     };
 
-    tw_surface.print_inside_box(vec![first_line.as_str()])?;
-    tw_surface.print_inside_box(vec![second_line.as_str()])?;
+    let tw_queue = with_mut_returns! {
+      ColumnRenderComponent { lolcat },
+      as it,
+      return {
+        let current_box = tw_surface.current_box()?;
+        it.render_component(current_box, state, shared_store).await?
+      }
+    };
+
+    tw_surface.render_buffer += tw_queue;
     tw_surface.box_end()?;
   });
 }
