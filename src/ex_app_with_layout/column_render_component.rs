@@ -31,47 +31,53 @@ impl<'a> RenderComponent<AppState, AppAction> for ColumnRenderComponent<'a> {
     &mut self, current_box: &TWBox, _state: &AppState, _shared_store: &SharedStore<AppState, AppAction>,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
-      let first_line = "col 1 - Hello".to_string();
-      let second_line = "col 1 - World".to_string();
+      // Fixed strings.
+      let line_1 = "col 1 - Hello".to_string();
+      let line_2 = "col 1 - World".to_string();
 
+      // Setup intermediate vars.
       let box_origin_pos = current_box.origin_pos; // Adjusted for style margin (if any).
       let box_bounding_size = current_box.bounding_size; // Adjusted for style margin (if any).
-      let mut content_pos = Position { col: 0, row: 0 };
+      let mut content_cursor_pos = Position { col: 0, row: 0 };
 
-      // First line.
-      let move_cursor_to_first_line_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_pos);
-      let style_cmd = TWCommand::ApplyColors(current_box.get_computed_style());
-      let first_line = box_bounding_size.truncate_at_cols(first_line);
-      let first_line = colorize_using_lolcat! {
-        &mut self.lolcat,
-        "{}",
-        first_line
-      };
+      // Line 1.
+      let cmd_move_cursor_to_first_line = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_cursor_pos);
+      let cmd_style = TWCommand::ApplyColors(current_box.get_computed_style());
+      let cmd_print_line_1 = TWCommand::PrintWithAttributes(
+        colorize_using_lolcat! {
+          &mut self.lolcat,
+          "{}",
+          line_1.unicode_string().truncate_to_fit_size(box_bounding_size)
+        },
+        current_box.get_computed_style(),
+      );
 
-      let print_first_line_cmd = TWCommand::PrintWithAttributes(first_line, current_box.get_computed_style());
-
-      // Second line.
-      content_pos.add_row_with_bounds(1, box_bounding_size);
-      let move_cursor_to_second_line_cmd = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_pos);
-      let second_line = colorize_using_lolcat! {
-        &mut self.lolcat,
-        "{}",
-        box_bounding_size.truncate_at_cols(second_line)
-      };
-      let print_second_line_cmd = TWCommand::PrintWithAttributes(second_line, current_box.get_computed_style());
+      // Line 2.
+      content_cursor_pos.add_row_with_bounds(1, box_bounding_size);
+      let cmd_move_cursor_to_second_line = TWCommand::MoveCursorPositionRelTo(box_origin_pos, content_cursor_pos);
+      let cmd_print_line_2 = TWCommand::PrintWithAttributes(
+        colorize_using_lolcat! {
+          &mut self.lolcat,
+          "{}",
+          line_2.unicode_string().truncate_to_fit_size(box_bounding_size)
+        },
+        current_box.get_computed_style(),
+      );
 
       // Reset.
-      let reset_color_cmd = TWCommand::ResetColor;
+      let cmd_reset_color = TWCommand::ResetColor;
 
+      // Assemble the command queue.
       let queue = tw_queue! {
-        move_cursor_to_first_line_cmd,
-        style_cmd,
-        print_first_line_cmd,
-        move_cursor_to_second_line_cmd,
-        print_second_line_cmd,
-        reset_color_cmd
+        cmd_move_cursor_to_first_line,
+        cmd_style,
+        cmd_print_line_1,
+        cmd_move_cursor_to_second_line,
+        cmd_print_line_2,
+        cmd_reset_color
       };
 
+      // Debug.
       call_if_true!(DEBUG, {
         log_no_err! {
           INFO,
@@ -83,11 +89,12 @@ impl<'a> RenderComponent<AppState, AppAction> for ColumnRenderComponent<'a> {
           current_box,
           box_origin_pos,
           box_bounding_size,
-          content_pos,
+          content_cursor_pos,
           queue
         };
       });
 
+      // Return the command queue.
       queue
     });
   }
