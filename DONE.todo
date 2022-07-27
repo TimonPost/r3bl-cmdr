@@ -1,3 +1,33 @@
+graphemes:
+  ✔ handle graphemes in truncate @done(22-07-27 11:26)
+    - currently in `Size`, should be moved into separate module
+    - add graphemes to tui_core in r3bl_rs_utils
+
+think about containers, containment, and keyboard focus management:
+  ✔ move cursor to relative & absolute (🔱 move-cursor-rel-abs) @done(22-07-17 11:53)
+    - the pos + size of a box is provided to a *component* 
+    - the *component* paints itself thinking it starts at 0, 0 
+    - the *component* is actually relative to the box when it is rendered 
+    - add TWCommands to handle above: 
+      - `MoveCursorPositionAbs(Position)`
+      - `MoveCursorPositionRelTo(Position, Position)`
+    - rename `Render` to `TWApp`
+  ✔ add support for focus management to state (🔱 state-focus-mgmt) @done(22-07-19 11:03)
+    - need to accommodate handling of focus & what is currently in focus
+    - introduce trait `StateManageFocus` w/ 2 methods: 
+      - `get_focus_id(): str`
+      - `set_focus_id(id: str)`
+  ✔ add new trait `RenderComponent` (🔱 better-box-containment) @done(22-07-21 17:45)
+    - files: 
+      - `tw_surface.rs`, 
+      - `tw_app.rs`, 
+      - `app_with_layout.rs`
+    - separate the logic of painting from the app
+    - take box-origin-pos & content-size as input?
+    - paint things that are relative to box-origin-pos?
+    - each component should handle its own input event (when it has focus)
+  ✔ clean up old stuff that has been replace by `RenderComponent` @done(22-07-27 11:26)
+
 example handling:
   ✔ create a simple way of asking user for which ex to run @done(22-07-15 14:11)
   ✔ use simple readline and then route the request to the correct ex @done(22-07-15 14:11)

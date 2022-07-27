@@ -40,7 +40,7 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
 
       let colored_content = colorize_using_lolcat!(&mut self.lolcat, "{}", state);
 
-      let queue = tw_queue!(
+      let queue = tw_command_queue!(
         TWCommand::ClearScreen,
         TWCommand::ResetColor,
         TWCommand::MoveCursorPositionAbs((col, row).into()),

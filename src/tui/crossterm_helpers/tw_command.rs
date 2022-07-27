@@ -62,16 +62,28 @@ macro_rules! exec {
 /// It will return a [TWCommandQueue]. Here's an example.
 ///
 /// ```ignore
-/// let mut queue = queue!(
+/// let mut queue = tw_command_queue!(
 ///   TWCommand::ClearScreen,
 ///   TWCommand::ResetColor
-/// );
+/// ); // Returns the newly created queue.
+/// ```
+///
+/// Another example.
+///
+/// ```ignore
+/// let mut queue = tw_command_queue!(); // Returns the newly created queue.
+/// tw_command_queue!(
+///   queue push
+///   TWCommand::ClearScreen,
+///   TWCommand::ResetColor
+/// ); // Returns nothing.
 /// ```
 ///
 /// Decl macro docs:
 /// - https://veykril.github.io/tlborm/decl-macros/macros-methodical.html#repetitions
 #[macro_export]
-macro_rules! tw_queue {
+macro_rules! tw_command_queue {
+  // Create a new queue & return it. If any ($element)* are passed, then add it to new queue.
   (
     $(                      /* Start a repetition. */
       $element:expr         /* Expression. */
@@ -89,6 +101,13 @@ macro_rules! tw_queue {
       )*
       queue
     }
+  };
+  // Add a bunch of TWCommands $element* to the existing $queue & return nothing.
+  ($queue:ident push $($element:expr),+) => {
+    $(
+      /* Each repeat will contain the following statement, with $element replaced. */
+      $queue.push($element);
+    )*
   };
 }
 
@@ -143,7 +162,10 @@ impl AddAssign for TWCommandQueue {
 }
 
 impl TWCommandQueue {
-  pub fn push(&mut self, cmd_wrapper: TWCommand) { self.queue.push(cmd_wrapper); }
+  pub fn push(&mut self, cmd_wrapper: TWCommand) -> &mut Self {
+    self.queue.push(cmd_wrapper);
+    self
+  }
 
   #[allow(unreachable_patterns)]
   pub fn flush(&self, clear_before_flush: bool) {

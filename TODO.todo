@@ -1,45 +1,19 @@
 ■ r3bl-cmdr ■
 
-think about containers, containment, and keyboard focus management:
-  ✔ move cursor to relative & absolute (🔱 move-cursor-rel-abs) @done(22-07-17 11:53)
-    - the pos + size of a box is provided to a *component* 
-    - the *component* paints itself thinking it starts at 0, 0 
-    - the *component* is actually relative to the box when it is rendered 
-    - add TWCommands to handle above: 
-      - `MoveCursorPositionAbs(Position)`
-      - `MoveCursorPositionRelTo(Position, Position)`
-    - rename `Render` to `TWApp`
-  ✔ add support for focus management to state (🔱 state-focus-mgmt) @done(22-07-19 11:03)
-    - need to accommodate handling of focus & what is currently in focus
-    - introduce trait `StateManageFocus` w/ 2 methods: 
-      - `get_focus_id(): str`
-      - `set_focus_id(id: str)`
-  ✔ add new trait `RenderComponent` (🔱 better-box-containment) @done(22-07-21 17:45)
-    - files: 
-      - `tw_surface.rs`, 
-      - `tw_app.rs`, 
-      - `app_with_layout.rs`
-    - separate the logic of painting from the app
-    - take box-origin-pos & content-size as input?
-    - paint things that are relative to box-origin-pos?
-    - each component should handle its own input event (when it has focus)
-  ☐ handle graphemes in truncate 
-    - currently in `Size`, should be moved into separate module
-  ☐ clean up old stuff that has been replace by `RenderComponent`
-  ☐ route input events based on who has focus
-  ☐ what should the specificity of input event handling be? (🔱 input-event-specificity)
-    - Currently the `DefaultInputEventHandler` does not consume input events and it peeks at them
-    - There isn't a way for apps to override any container defaults
-    - Should this be inverted? Apps get first dibs input event & consume if they handle it?
-
-graphemes & focus mgmt support:
+focus mgmt support:
   ☐ extend `StateManageFocus` so it has methods that allow access to a `HashMap<String, Position>`
     - an `id: String` is not enough to store in the `StateManageFocus` trait
     - each `id` may have a `Position` associated with it
     - this is used to draw the "cursor" (whatever that means to a `RenderComponent`)
       - for an editor, it will be the insertion point
       - for a text viewer, it will be the cursor position which can be moved around
+  ☐ route input events based on who has focus
+  ☐ what should the specificity of input event handling be? (🔱 input-event-specificity)
+    - Currently the `DefaultInputEventHandler` does not consume input events and it peeks at them
+    - There isn't a way for apps to override any container defaults
+    - Should this be inverted? Apps get first dibs input event & consume if they handle it?
 
+graphemes & focus mgmt support demo:
   ☐ create a POC `RenderComponent` that shows a cursor & graphemes
     - display a string eg: `Hi 📦 🙏🏽 👨🏾‍🤝‍👨🏿.`
     - allow component to have focus
