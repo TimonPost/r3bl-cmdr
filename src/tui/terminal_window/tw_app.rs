@@ -16,7 +16,7 @@
  */
 
 use std::{fmt::{Debug, Display},
-          hash::Hash,
+          
           sync::Arc};
 
 use async_trait::async_trait;
@@ -30,7 +30,7 @@ use crate::*;
 #[async_trait]
 pub trait TWApp<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Debug + Hash + Sync + Send + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Debug + Sync + Send + StateManageFocus,
   A: Display + Default + Clone + Sync + Send,
 {
   /// Use the state to render the output (via crossterm). To change the state, dispatch an action.

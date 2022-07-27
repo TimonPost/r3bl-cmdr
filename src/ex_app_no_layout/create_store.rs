@@ -43,38 +43,31 @@ impl Default for AppAction {
   fn default() -> Self { AppAction::Noop }
 }
 
-impl StateManageFocus for AppState {
-  fn get_focus_id(&self) -> String { self.id_with_focus.clone() }
-  fn set_focus_id(&mut self, arg: String) { self.id_with_focus = arg }
-}
-
 impl Display for AppAction {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }
 
 /// State.
-#[derive(Clone, PartialEq, Eq, Debug, Hash)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct AppState {
   pub stack: Vec<i32>,
-  pub id_with_focus: String,
+  pub data: StateManageFocusData,
 }
+
+impl StateManageFocus for AppState {}
 
 impl Default for AppState {
   fn default() -> Self {
     Self {
       stack: vec![0],
-      id_with_focus: "".into(),
+      data: StateManageFocusData::default(),
     }
   }
 }
 
 impl Display for AppState {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(
-      f,
-      "State {{ stack: {:?}, id_with_focus: {:?} }}",
-      self.stack, self.id_with_focus
-    )
+    write!(f, "State {{ stack: {:?}, data: {:?} }}", self.stack, self.data)
   }
 }
 
@@ -85,37 +78,38 @@ pub struct AppReducer;
 #[async_trait]
 impl AsyncReducer<AppState, AppAction> for AppReducer {
   async fn run(&self, action: &AppAction, state: &AppState) -> AppState {
-    let mut stack = state.stack.clone();
+    let mut stack_copy = state.stack.clone();
+    let _data_copy = state.data.clone();
 
     match action {
       AppAction::AddPop(arg) => {
-        if stack.is_empty() {
-          stack.push(*arg)
+        if stack_copy.is_empty() {
+          stack_copy.push(*arg)
         } else {
-          let top = stack.pop().unwrap();
+          let top = stack_copy.pop().unwrap();
           let sum = top + arg;
-          stack.push(sum);
+          stack_copy.push(sum);
         }
       }
 
       AppAction::SubPop(arg) => {
-        if stack.is_empty() {
-          stack.push(*arg)
+        if stack_copy.is_empty() {
+          stack_copy.push(*arg)
         } else {
-          let top = stack.pop().unwrap();
+          let top = stack_copy.pop().unwrap();
           let sum = top - arg;
-          stack.push(sum);
+          stack_copy.push(sum);
         }
       }
 
-      AppAction::Clear => stack = vec![],
+      AppAction::Clear => stack_copy = vec![],
 
       _ => {}
     }
 
     AppState {
-      stack,
-      id_with_focus: state.id_with_focus.clone(),
+      stack: stack_copy,
+      data: _data_copy,
     }
   }
 }

@@ -15,8 +15,7 @@
  *   limitations under the License.
  */
 
-use std::{fmt::{Debug, Display},
-          hash::Hash};
+use std::fmt::{Debug, Display};
 
 use async_trait::async_trait;
 use r3bl_rs_utils::*;
@@ -27,7 +26,7 @@ use crate::*;
 #[async_trait]
 pub trait RenderComponent<S, A>
 where
-  S: Default + Display + Clone + PartialEq + Debug + Hash + Sync + Send + StateManageFocus,
+  S: Default + Display + Clone + PartialEq + Debug + Sync + Send + StateManageFocus,
   A: Default + Display + Clone + Sync + Send,
 {
   /// Arguments: Get from `current_box`:

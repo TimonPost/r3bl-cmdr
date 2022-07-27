@@ -17,12 +17,12 @@
 
 use std::fmt::{Display, Formatter};
 
-use r3bl_cmdr::StateManageFocus;
+use r3bl_cmdr::{StateManageFocus, StateManageFocusData};
 
 /// State.
-#[derive(Clone, PartialEq, Eq, Debug, Hash)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct AppState {
-  pub id_with_focus: String,
+  pub data: StateManageFocusData,
   pub stack: Vec<i32>,
 }
 
@@ -30,22 +30,15 @@ impl Default for AppState {
   fn default() -> Self {
     Self {
       stack: vec![0],
-      id_with_focus: "".into(),
+      data: StateManageFocusData::default(),
     }
   }
 }
 
-impl StateManageFocus for AppState {
-  fn get_focus_id(&self) -> String { self.id_with_focus.clone() }
-  fn set_focus_id(&mut self, arg: String) { self.id_with_focus = arg }
-}
+impl StateManageFocus for AppState {}
 
 impl Display for AppState {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(
-      f,
-      "State {{ stack: {:?}, id_with_focus: {:?} }}",
-      self.stack, self.id_with_focus
-    )
+    write!(f, "State {{ stack: {:?}, data: {:?} }}", self.stack, self.data)
   }
 }
