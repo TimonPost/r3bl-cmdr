@@ -14,6 +14,21 @@
 					"label": ""
 				}
 			]
+		},
+		{
+			"path": "src/tui/terminal_window/tw_main_event_loop.rs",
+			"bookmarks": [
+				{
+					"line": 173,
+					"column": 2,
+					"label": ""
+				},
+				{
+					"line": 188,
+					"column": 2,
+					"label": ""
+				}
+			]
 		}
 	]
 }

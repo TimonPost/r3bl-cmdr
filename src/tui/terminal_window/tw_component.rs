@@ -24,7 +24,7 @@ use crate::*;
 
 /// See [TWApp].
 #[async_trait]
-pub trait RenderComponent<S, A>
+pub trait Component<S, A>
 where
   S: Default + Display + Clone + PartialEq + Eq + Debug + Sync + Send + StateManageFocus,
   A: Default + Display + Clone + Sync + Send,
@@ -47,12 +47,7 @@ where
   ///
   /// Clipping, scrolling, overdrawing:
   ///   - Each implementation of this trait is solely responsible of taking care of these behaviors
-  ///
-  /// Differences from the [TWSurface] [LayoutManagement::print_inside_box] method:
-  /// 1. `self.calc_where_to_insert_next_content_in_box(content_size)` is not called
-  /// 2. `current_box.content_cursor_pos` is not updated
-  /// 3. The RenderComponent param owns all the painting inside the bounds that it is given
-  async fn render_component(
+  async fn render(
     &mut self, current_box: &TWBox, state: &S, shared_store: &SharedStore<S, A>,
   ) -> CommonResult<TWCommandQueue>;
 }

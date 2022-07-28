@@ -29,9 +29,9 @@ pub type SharedWindow = Arc<RwLock<TWData>>;
 pub type SafeTWApp<S, A> = dyn TWApp<S, A> + Send + Sync;
 pub type SharedTWApp<S, A> = Arc<RwLock<SafeTWApp<S, A>>>;
 
-// RenderComponent.
-pub type SafeRenderComponent<S, A> = dyn RenderComponent<S, A> + Send + Sync;
-pub type SharedRenderComponent<S, A> = Arc<RwLock<SafeRenderComponent<S, A>>>;
+// Component.
+pub type SafeComponent<S, A> = dyn Component<S, A> + Send + Sync;
+pub type SharedComponent<S, A> = Arc<RwLock<SafeComponent<S, A>>>;
 
 // Continuation enum.
 #[non_exhaustive]

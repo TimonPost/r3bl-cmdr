@@ -33,9 +33,9 @@ pub struct StateManageFocusData {
 /// 1. An `id` [String] is used to store which [crate::TWBox] id currently holds keyboard focus.
 ///    This is global.
 /// 2. Each `id` may have a [Position] associated with it, which is used to draw the "cursor" (the
-///    meaning of which depends on the specific [crate::RenderComponent] impl). This cursor is
+///    meaning of which depends on the specific [crate::Component] impl). This cursor is
 ///    scoped to each `id` so it isn't strictly a single global value (like `id` itself). Here are
-///    examples of what a "cursor" might mean for various [crate::RenderComponent]s:
+///    examples of what a "cursor" might mean for various [crate::Component]s:
 ///    - for an editor, it will be the insertion point where text is added / removed
 ///    - for a text viewer, it will be the cursor position which can be moved around
 pub trait StateManageFocus {

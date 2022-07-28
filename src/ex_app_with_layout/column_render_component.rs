@@ -26,8 +26,8 @@ pub struct ColumnRenderComponent<'a> {
 }
 
 #[async_trait]
-impl<'a> RenderComponent<AppState, AppAction> for ColumnRenderComponent<'a> {
-  async fn render_component(
+impl<'a> Component<AppState, AppAction> for ColumnRenderComponent<'a> {
+  async fn render(
     &mut self, current_box: &TWBox, _state: &AppState, _shared_store: &SharedStore<AppState, AppAction>,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({

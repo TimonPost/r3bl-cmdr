@@ -146,7 +146,7 @@ async fn create_left_col<'a>(
       as it,
       return {
         let current_box = tw_surface.current_box()?;
-        it.render_component(current_box, state, shared_store).await?
+        it.render(current_box, state, shared_store).await?
       }
     };
 
@@ -188,7 +188,7 @@ async fn create_right_col(
       as it,
       return {
         let current_box = tw_surface.current_box()?;
-        it.render_component(current_box, state, shared_store).await?
+        it.render(current_box, state, shared_store).await?
       }
     };
 
