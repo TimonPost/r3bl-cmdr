@@ -26,7 +26,7 @@ use crate::*;
 #[async_trait]
 pub trait RenderComponent<S, A>
 where
-  S: Default + Display + Clone + PartialEq + Debug + Sync + Send + StateManageFocus,
+  S: Default + Display + Clone + PartialEq + Eq + Debug + Sync + Send + StateManageFocus,
   A: Default + Display + Clone + Sync + Send,
 {
   /// Arguments: Get from `current_box`:

@@ -60,14 +60,14 @@ impl TerminalWindow {
   ///
   /// ```ignore
   /// where
-  /// S: Default + Clone + PartialEq + Debug + Sync + Send,
+  /// S: Default + Clone + PartialEq + Eq + Debug + Sync + Send,
   /// A: Default + Clone + Sync + Send,
   /// ```
   pub async fn main_event_loop<S, A>(
     store: Store<S, A>, shared_render: SharedTWApp<S, A>, exit_keys: Vec<KeyEvent>,
   ) -> CommonResult<()>
   where
-    S: Display + Default + Clone + PartialEq + Debug + Sync + Send + 'static + StateManageFocus,
+    S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
     A: Display + Default + Clone + Sync + Send + 'static,
   {
     raw_mode!({
@@ -123,7 +123,7 @@ impl TerminalWindow {
 
 struct TWSubscriber<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Debug + Sync + Send + 'static + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
   A: Display + Default + Clone + Sync + Send + 'static,
 {
   shared_render: SharedTWApp<S, A>,
@@ -134,7 +134,7 @@ where
 #[async_trait]
 impl<S, A> AsyncSubscriber<S> for TWSubscriber<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Debug + Sync + Send + 'static + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
   A: Display + Default + Clone + Sync + Send,
 {
   async fn run(&self, my_state: S) {
@@ -148,7 +148,7 @@ where
 
 impl<S, A> TWSubscriber<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Debug + Sync + Send + 'static + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
   A: Display + Default + Clone + Sync + Send,
 {
   fn new_box(
