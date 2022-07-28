@@ -35,10 +35,10 @@
 //! - Windows Terminal (bash): https://www.makeuseof.com/windows-terminal-vs-powershell/
 
 // Attach source files.
-pub mod tw_raw_mode;
+pub mod event_stream_ext;
 pub mod tw_command;
 pub mod tw_input_event;
-pub mod event_stream_ext;
+pub mod tw_raw_mode;
 
 // Re-export everything from attached source files.
 pub use event_stream_ext::*;

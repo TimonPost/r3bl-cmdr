@@ -67,7 +67,7 @@ impl TerminalWindow {
     store: Store<S, A>, shared_app: SharedTWApp<S, A>, exit_keys: Vec<KeyEvent>,
   ) -> CommonResult<()>
   where
-    S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
+    S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static,
     A: Display + Default + Clone + Sync + Send + 'static,
   {
     raw_mode!({
@@ -86,7 +86,13 @@ impl TerminalWindow {
       let mut stream = EventStream::new();
 
       // Perform first render.
-      AppManager::render_app(&shared_store, &shared_app, shared_window.read().await.size, None).await?;
+      AppManager::render_app(
+        &shared_store,
+        &shared_app,
+        shared_window.read().await.size,
+        None,
+      )
+      .await?;
 
       shared_window
         .read()
@@ -100,11 +106,19 @@ impl TerminalWindow {
 
         // Process the input_event.
         if let Some(input_event) = maybe_input_event {
-          call_if_true!(DEBUG, log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event));
+          call_if_true!(
+            DEBUG,
+            log_no_err!(INFO, "main_event_loop -> Tick: ⏰ {}", input_event)
+          );
 
           // Pass event to the app first. It has greater specificity than the default handler.
-          let propagation_result_from_app =
-            AppManager::route_input_to_app(&shared_window, &shared_store, &shared_app, &input_event).await?;
+          let propagation_result_from_app = AppManager::route_input_to_app(
+            &shared_window,
+            &shared_store,
+            &shared_app,
+            &input_event,
+          )
+          .await?;
 
           // If event not consumed by app, propagate to the default input handler.
           if let EventPropagation::Propagate = propagation_result_from_app {
@@ -132,7 +146,7 @@ impl TerminalWindow {
 
 struct AppManager<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static,
   A: Display + Default + Clone + Sync + Send + 'static,
 {
   shared_app: SharedTWApp<S, A>,
@@ -143,21 +157,30 @@ where
 #[async_trait]
 impl<S, A> AsyncSubscriber<S> for AppManager<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static,
   A: Display + Default + Clone + Sync + Send,
 {
   async fn run(&self, my_state: S) {
     let window_size = self.shared_window.read().await.size;
-    let result = AppManager::render_app(&self.shared_store, &self.shared_app, window_size, Some(my_state)).await;
+    let result = AppManager::render_app(
+      &self.shared_store,
+      &self.shared_app,
+      window_size,
+      Some(my_state),
+    )
+    .await;
     if let Err(e) = result {
-      call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::run -> Error: {}", e))
+      call_if_true!(
+        DEBUG,
+        log_no_err!(ERROR, "MySubscriber::run -> Error: {}", e)
+      )
     }
   }
 }
 
 impl<S, A> AppManager<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + 'static,
   A: Display + Default + Clone + Sync + Send,
 {
   fn new_box(
@@ -181,13 +204,14 @@ where
       shared_app
         .read()
         .await
-        .handle_event(input_event, &latest_state, shared_store, window_size)
+        .app_handle_event(input_event, &latest_state, shared_store, window_size)
         .await?
     });
   }
 
   pub async fn render_app(
-    shared_store: &SharedStore<S, A>, shared_app: &SharedTWApp<S, A>, window_size: Size, maybe_state: Option<S>,
+    shared_store: &SharedStore<S, A>, shared_app: &SharedTWApp<S, A>, window_size: Size,
+    maybe_state: Option<S>,
   ) -> CommonResult<()> {
     throws!({
       let state: S = if maybe_state.is_none() {
@@ -196,17 +220,29 @@ where
         maybe_state.unwrap()
       };
 
-      let render_result = shared_app.write().await.render(&state, shared_store, window_size).await;
+      let render_result = shared_app
+        .write()
+        .await
+        .app_render(&state, shared_store, window_size)
+        .await;
       match render_result {
         Err(error) => {
           TWCommand::flush();
-          call_if_true!(DEBUG, log_no_err!(ERROR, "MySubscriber::render() error ❌: {}", error));
+          call_if_true!(
+            DEBUG,
+            log_no_err!(ERROR, "MySubscriber::render() error ❌: {}", error)
+          );
         }
         Ok(tw_command_queue) => {
           tw_command_queue.flush(true);
           call_if_true!(
             DEBUG,
-            log_no_err!(INFO, "MySubscriber::render() ok ✅: {}, {}", window_size, state)
+            log_no_err!(
+              INFO,
+              "MySubscriber::render() ok ✅: {}, {}",
+              window_size,
+              state
+            )
           );
         }
       }

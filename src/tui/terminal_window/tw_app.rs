@@ -29,21 +29,22 @@ use crate::*;
 #[async_trait]
 pub trait TWApp<S, A>
 where
-  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send + StateManageFocus,
+  S: Display + Default + Clone + PartialEq + Eq + Debug + Sync + Send,
   A: Display + Default + Clone + Sync + Send,
 {
   /// Use the state to render the output (via crossterm). To change the state, dispatch an action.
-  async fn render(
+  async fn app_render(
     &mut self, state: &S, shared_store: &SharedStore<S, A>, window_size: Size,
   ) -> CommonResult<TWCommandQueue>;
 
   /// Use the input_event to dispatch an action to the store if needed.
-  async fn handle_event(
-    &self, input_event: &TWInputEvent, state: &S, shared_store: &SharedStore<S, A>, window_size: Size,
+  async fn app_handle_event(
+    &self, input_event: &TWInputEvent, state: &S, shared_store: &SharedStore<S, A>,
+    window_size: Size,
   ) -> CommonResult<EventPropagation>;
 
   /// Wrap a new instance in [Box].
-  fn new_owned() -> Box<SafeTWApp<S, A>>
+  fn new_owned() -> BoxedSafeTWApp<S, A>
   where
     Self: Default + Sync + Send + 'static,
   {

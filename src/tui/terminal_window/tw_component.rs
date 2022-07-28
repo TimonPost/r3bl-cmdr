@@ -26,7 +26,7 @@ use crate::*;
 #[async_trait]
 pub trait Component<S, A>
 where
-  S: Default + Display + Clone + PartialEq + Eq + Debug + Sync + Send + StateManageFocus,
+  S: Default + Display + Clone + PartialEq + Eq + Debug + Sync + Send,
   A: Default + Display + Clone + Sync + Send,
 {
   /// Arguments: Get from `current_box`:
@@ -50,4 +50,8 @@ where
   async fn render(
     &mut self, current_box: &TWBox, state: &S, shared_store: &SharedStore<S, A>,
   ) -> CommonResult<TWCommandQueue>;
+
+  async fn handle_event(
+    &mut self, current_box: &TWBox, state: &S, shared_store: &SharedStore<S, A>,
+  ) -> CommonResult<EventPropagation>;
 }

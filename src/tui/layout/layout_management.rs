@@ -22,7 +22,7 @@ use crate::*;
 /// Public API interface to create nested & responsive layout based UIs.
 pub trait LayoutManagement {
   /// Set the origin pos (x, y) & tw_surface size (width, height) of our box (container).
-  fn surface_start(&mut self, bounds_props: TWAreaProps) -> CommonResult<()>;
+  fn surface_start(&mut self, bounds_props: TWSurfaceProps) -> CommonResult<()>;
 
   fn surface_end(&mut self) -> CommonResult<()>;
 
@@ -35,7 +35,9 @@ pub trait LayoutManagement {
 /// Methods that actually perform the layout and positioning.
 pub trait PerformPositioningAndSizing {
   /// Update `box_cursor_pos`. This needs to be called before adding a new [TWBox].
-  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position>;
+  fn calc_where_to_insert_new_box_in_tw_surface(
+    &mut self, allocated_size: Size,
+  ) -> CommonResult<Position>;
 
   /// Get the [TWBox] at the "top" of the `stack`.
   fn current_box(&mut self) -> CommonResult<&mut TWBox>;
@@ -52,7 +54,7 @@ pub trait PerformPositioningAndSizing {
 }
 
 /// Properties that are needed to create a [TWBox].
-#[derive(Clone, Debug, Default, Builder)]
+#[derive(Clone, Debug, Default)]
 pub struct TWBoxProps {
   pub id: String,
   pub dir: Direction,
@@ -61,8 +63,8 @@ pub struct TWBoxProps {
 }
 
 /// Properties that are needed to create a [TWSurface].
-#[derive(Clone, Debug, Default, Builder)]
-pub struct TWAreaProps {
+#[derive(Clone, Debug, Default)]
+pub struct TWSurfaceProps {
   pub pos: Position,
   pub size: Size,
 }

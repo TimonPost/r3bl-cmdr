@@ -31,13 +31,16 @@ pub struct TWSurface {
 }
 
 impl LayoutManagement for TWSurface {
-  fn surface_start(&mut self, TWAreaProps { pos, size }: TWAreaProps) -> CommonResult<()> {
+  fn surface_start(&mut self, TWSurfaceProps { pos, size }: TWSurfaceProps) -> CommonResult<()> {
     throws!({
       // Expect stack to be empty!
       if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceStart,
-          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
+          LayoutError::format_msg_with_stack_len(
+            &self.stack_of_boxes,
+            "Stack of boxes should be empty",
+          ),
         )?
       }
       self.origin_pos = pos;
@@ -51,7 +54,10 @@ impl LayoutManagement for TWSurface {
       if !self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedSurfaceEnd,
-          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should be empty"),
+          LayoutError::format_msg_with_stack_len(
+            &self.stack_of_boxes,
+            "Stack of boxes should be empty",
+          ),
         )?
       }
     });
@@ -72,7 +78,10 @@ impl LayoutManagement for TWSurface {
       if self.no_boxes_added() {
         LayoutError::new_err_with_msg(
           LayoutErrorType::MismatchedBoxEnd,
-          LayoutError::format_msg_with_stack_len(&self.stack_of_boxes, "Stack of boxes should not be empty"),
+          LayoutError::format_msg_with_stack_len(
+            &self.stack_of_boxes,
+            "Stack of boxes should not be empty",
+          ),
         )?
       }
       self.stack_of_boxes.pop();
@@ -159,7 +168,9 @@ impl PerformPositioningAndSizing for TWSurface {
   ///
   /// Returns the [Position] where the next [TWBox] can be added to the stack of
   /// boxes.
-  fn calc_where_to_insert_new_box_in_tw_surface(&mut self, allocated_size: Size) -> CommonResult<Position> {
+  fn calc_where_to_insert_new_box_in_tw_surface(
+    &mut self, allocated_size: Size,
+  ) -> CommonResult<Position> {
     let current_box = self.current_box()?;
     let box_cursor_pos = current_box.box_cursor_pos;
 

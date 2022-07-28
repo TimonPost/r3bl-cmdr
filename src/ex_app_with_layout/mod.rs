@@ -16,12 +16,12 @@
  */
 
 // Attach sources.
+pub mod action;
 pub mod app_with_layout;
+pub mod column_render_component;
 pub mod launcher;
 pub mod reducer;
 pub mod state;
-pub mod action;
-pub mod column_render_component;
 
 // Re-export.
 pub use action::*;

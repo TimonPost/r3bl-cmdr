@@ -36,17 +36,28 @@ impl TWDefaultInputEventHandler {
       TWInputEvent::NonDisplayableKeypress(key_event) => {
         call_if_true!(
           DEBUG,
-          log_no_err!(INFO, "default_event_handler -> NonDisplayableKeypress: {:?}", key_event)
+          log_no_err!(
+            INFO,
+            "default_event_handler -> NonDisplayableKeypress: {:?}",
+            key_event
+          )
         );
       }
       TWInputEvent::DisplayableKeypress(character) => {
         call_if_true!(
           DEBUG,
-          log_no_err!(INFO, "default_event_handler -> DisplayableKeypress: {:?}", character)
+          log_no_err!(
+            INFO,
+            "default_event_handler -> DisplayableKeypress: {:?}",
+            character
+          )
         );
       }
       TWInputEvent::Resize(size) => {
-        call_if_true!(DEBUG, log_no_err!(INFO, "default_event_handler -> Resize: {:?}", size));
+        call_if_true!(
+          DEBUG,
+          log_no_err!(INFO, "default_event_handler -> Resize: {:?}", size)
+        );
         return Continuation::ResizeAndContinue(size);
       }
       TWInputEvent::Mouse(mouse_event) => {

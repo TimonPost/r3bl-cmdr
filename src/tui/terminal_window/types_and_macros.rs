@@ -27,10 +27,12 @@ pub type SharedWindow = Arc<RwLock<TWData>>;
 
 // TWApp.
 pub type SafeTWApp<S, A> = dyn TWApp<S, A> + Send + Sync;
+pub type BoxedSafeTWApp<S, A> = Box<SafeTWApp<S, A>>;
 pub type SharedTWApp<S, A> = Arc<RwLock<SafeTWApp<S, A>>>;
 
 // Component.
 pub type SafeComponent<S, A> = dyn Component<S, A> + Send + Sync;
+pub type BoxedSafeComponent<S, A> = Box<SafeComponent<S, A>>;
 pub type SharedComponent<S, A> = Arc<RwLock<SafeComponent<S, A>>>;
 
 // Continuation enum.

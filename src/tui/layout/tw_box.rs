@@ -49,8 +49,8 @@ impl TWBox {
 
   /// Explicitly set the position & size of our box.
   pub fn make_root_box(
-    id: String, size: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent, dir: Direction,
-    computed_style: Option<Style>,
+    id: String, size: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent,
+    dir: Direction, computed_style: Option<Style>,
   ) -> TWBox {
     let bounds_size = Size::from((
       calc_percentage(width_pc, size.cols),
@@ -70,8 +70,8 @@ impl TWBox {
   /// Actual position and size for our box will be calculated based on provided
   /// hints.
   pub fn make_box(
-    id: String, dir: Direction, container_bounds: Size, origin_pos: Position, width_pc: Percent, height_pc: Percent,
-    computed_style: Option<Style>,
+    id: String, dir: Direction, container_bounds: Size, origin_pos: Position, width_pc: Percent,
+    height_pc: Percent, computed_style: Option<Style>,
   ) -> Self {
     // Adjust `bounds_size` & `origin` based on the style's margin.
     let mut style_adjusted_origin = origin_pos;

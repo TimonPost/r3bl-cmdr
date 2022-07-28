@@ -16,7 +16,6 @@
  */
 
 use async_trait::async_trait;
-use r3bl_cmdr::StateManageFocusData;
 use r3bl_rs_utils::redux::AsyncReducer;
 
 use super::*;
@@ -28,19 +27,15 @@ pub struct AppReducer;
 #[async_trait]
 impl AsyncReducer<AppState, AppAction> for AppReducer {
   async fn run(&self, action: &AppAction, state: &AppState) -> AppState {
-    let AppState {
-      data: data_copy,
-      stack: stack_copy,
-    } = &mut state.clone();
-    reduce_mut(data_copy, stack_copy, action);
+    let AppState { stack: stack_copy } = &mut state.clone();
+    reduce_mut(stack_copy, action);
     AppState {
       stack: stack_copy.to_vec(),
-      data: data_copy.to_owned(),
     }
   }
 }
 
-fn reduce_mut(_data: &mut StateManageFocusData, stack: &mut Vec<i32>, action: &AppAction) {
+fn reduce_mut(stack: &mut Vec<i32>, action: &AppAction) {
   match action {
     AppAction::AddPop(arg) => {
       if stack.is_empty() {

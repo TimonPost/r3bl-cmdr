@@ -1,5 +1,6 @@
-■ r3bl-cmdr ■
-
+╭┄┄┄┄┄┄┄┄┄┄┄╮
+│ r3bl-cmdr │
+╯           ╰┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
 focus mgmt support:
   ✔ extend `StateManageFocus` (🔱 statemanagefocus-cursor-support) @done(22-07-27 18:36)
     - add methods that allow access to a `HashMap<String, Position>`
@@ -9,7 +10,7 @@ focus mgmt support:
       - for an editor, it will be the insertion point
       - for a text viewer, it will be the cursor position which can be moved around
     - add `StateManageFocusData` and fix needless `Hash` trait bound propagation in `r3bl_rs_utils`
-  ✔ what should the specificity of input event handling be? (🔱 input-event-specificity) @done(22-07-28 14:40)
+  ✔ what should input handling specificity be? (🔱 input-event-specificity) @done(22-07-28 14:40)
     - Currently the `DefaultInputEventHandler` does not consume input events and it peeks at them
     - There isn't a way for apps to override any container defaults
     - Should this be inverted? Apps get first dibs input event & consume if they handle it?
@@ -25,30 +26,9 @@ graphemes & focus mgmt support demo:
     - allow component to have a cursor position
     - show cursor moving around the string (respecting grapheme clusters)
       - use JT's approach that's outlined in the README.md? or use `UnicodeStringExt`?
-
-add layout engine:
-  ✔ merge `tw_area_test.rs` + `app_without_layout.rs` -> `app_with_layout.rs` @done(22-07-03 16:47)
-  ✔ make sure to save `app_without_layout.rs` for future use w/ routing below @done(22-07-03 16:26)
-  ✔ rename `tw_area.rs` to `tw_surface` and `TWArea` to `TWSurface` @done(22-07-04 20:27)
-  ☐ paint state & use lolcat
-  
-test 2 col layout:
-  ✔ refactor DEBUG & raw mode & TWCommand @done(22-07-04 20:06)
-  ✔ make sure that the colors work as expected (Color::Red, Color::Rgb, etc) @done(22-07-03 19:43)
-  ✔ row calculation seems wrong (too much space on top of the rendered output) @done(22-07-04 15:10)
-  ✔ clean up decl macros w/ repetitions `tw_command.rs`, `file_logging.rs`, `decl_macros.rs` @done(22-07-04 20:23)
-  ✔ emit clear screen & reset color commands before rendering each frame (artifacts appear on resize) @done(22-07-04 21:00)
-  ✔ does margin (cols) work as expected? (different in vscode terminal vs real terminal) @done(22-07-07 13:41)
-  ☐ make sure that the attributes work as expected (dim, strike through, etc)
-  ☐ handle situation when cursor is moved PAST the bounds of the window (< 0 or > max)
-    - add row and col offset?
-    - track cursor position?
-    - Example: https://github.com/nazmulidris/cli-editor/blob/main/src/main.rs
-
-performance & completeness:
-  ☐ stress test app w/ full screen repaint on mouse move
-  ☐ add all the remaining crossterm commands to `TWCommand`
-  
+  ☐ implement simplest editor component (single line text field)
+  ☐ implement simplest checkbox selection component (modal?)
+    
 introduce first DSL (JSX-like syntax):
   ✔ implement `style!` proc macro as first DSL JSX like syntax for TUI @done(22-07-06 15:29)
   ✔ split `tui_core` from `tui` and move it into `r3bl_rs_utils` @done(22-07-06 15:29)
@@ -57,31 +37,23 @@ introduce first DSL (JSX-like syntax):
     - based on: https://github.com/r3bl-org/r3bl-rs-utils/blob/main/macro/src/make_style/mod.rs
     - create tui category in DL
     - make sure to publicize this article on mailchimp, reddit, users.rust-lang.org
+    
+support for text wrapping:
+  ☐ `textwrap` crate
 
 routing:
   ☐ introduce routing concept to switch between apps (with + without layout)
-
-focus mgmt:
-  ☐ figure out keyboard focus management
-  ☐ what does input event routing look like?
-  ☐ extend state to have a focus field (current id w/ focus)
-  ☐ how does this affect rendering of a layout (paint focus highlight?)
-  ☐ key input processing & state mgmt (redux?)
-  ☐ implement simplest editor component (single line text field)
-  ☐ implement simplest checkbox selection component (modal?)
-
-support for graphemes & text wrapping:
-  ☐ `unicode-width` crate
-  ☐ `textwrap` crate
-  ☐ Update `tw_surface.rs::print_inside_box()` to support graphemes & text wrapping
-
+  
 pre built components - editor:
+  ☐ example editor Sodium: https://github.com/redox-os/sodium
+  ☐ syntax highlighting video: https://youtu.be/4vw5iJMLQx0
+  ☐ syntax highlighting crate: https://docs.rs/syntect/latest/syntect/
   ☐ scrolling: data buffer, cursor pos (row, col), scrolling (row offset, col offset)
     - [src](https://github.com/nazmulidris/cli-editor/blob/main/src/main.rs)
-    - [viewer tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-part-4-fd4a8b8641f8)
-    - [editor tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-part-5-e363c16f542b)
-    - [search tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-part-6-3cff61dc2de5)
-    - [syntax highlighting tutorial](https://medium.com/@otukof/build-your-text-editor-with-rust-final-part-4c841a649900)
+    - [viewer tutorial](https://tinyurl.com/2fdmgwxs)
+    - [editor tutorial](https://tinyurl.com/2b72v7u6)
+    - [search tutorial](https://tinyurl.com/27eukjbp)
+    - [syntax highlighting tutorial](https://tinyurl.com/2burb3by)
   ☐ undo & redo
 
 pre built components - multi select chooser:

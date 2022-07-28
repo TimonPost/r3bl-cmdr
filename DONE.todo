@@ -1,8 +1,29 @@
+test 2 col layout:
+  ✔ refactor DEBUG & raw mode & TWCommand @done(22-07-04 20:06)
+  ✔ make sure that the colors work as expected (Color::Red, Color::Rgb, etc) @done(22-07-03 19:43)
+  ✔ row calculation seems wrong (too much space on top of the rendered output) @done(22-07-04 15:10)
+  ✔ clean up decl macros w/ repetitions `tw_command.rs`, `file_logging.rs`, `decl_macros.rs` @done(22-07-04 20:23)
+  ✔ emit clear screen & reset color commands before rendering each frame (artifacts appear on resize) @done(22-07-04 21:00)
+  ✔ does margin (cols) work as expected? (different in vscode terminal vs real terminal) @done(22-07-07 13:41)
+  ✔ make sure that the attributes work as expected (dim, strike through, etc) @done(22-07-29 13:14)
+  ✔ handle situation when cursor is moved PAST the bounds of the window (< 0 or > max) @done(22-07-29 13:14)
+    - add row and col offset?
+    - track cursor position?
+    - Example: https://github.com/nazmulidris/cli-editor/blob/main/src/main.rs
+
+add layout engine:
+  ✔ merge `tw_area_test.rs` + `app_without_layout.rs` -> `app_with_layout.rs` @done(22-07-03 16:47)
+  ✔ make sure to save `app_without_layout.rs` for future use w/ routing below @done(22-07-03 16:26)
+  ✔ rename `tw_area.rs` to `tw_surface` and `TWArea` to `TWSurface` @done(22-07-04 20:27)
+  ✔ paint state & use lolcat @done(22-07-29 13:13)
+  
 graphemes:
   ✔ handle graphemes in truncate @done(22-07-27 11:26)
     - currently in `Size`, should be moved into separate module
     - add graphemes to tui_core in r3bl_rs_utils
-
+  ✔ `unicode-width` crate @done(22-07-29 13:12)
+  ✔ Update `tw_surface.rs::print_inside_box()` to support graphemes & text wrapping @done(22-07-29 13:12)
+  
 think about containers, containment, and keyboard focus management:
   ✔ move cursor to relative & absolute (🔱 move-cursor-rel-abs) @done(22-07-17 11:53)
     - the pos + size of a box is provided to a *component* 

@@ -17,8 +17,8 @@
 
 // Attach sources.
 pub mod app_no_layout;
-pub mod launcher;
 pub mod create_store;
+pub mod launcher;
 
 // Re-export.
 pub use app_no_layout::*;

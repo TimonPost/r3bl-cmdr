@@ -28,8 +28,9 @@ pub struct AppNoLayout {
 
 #[async_trait]
 impl TWApp<AppState, AppAction> for AppNoLayout {
-  async fn render(
-    &mut self, state: &AppState, _shared_store: &SharedStore<AppState, AppAction>, window_size: Size,
+  async fn app_render(
+    &mut self, state: &AppState, _shared_store: &SharedStore<AppState, AppAction>,
+    window_size: Size,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
       let content = format!("{}", state);
@@ -49,21 +50,30 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
       );
 
       call_if_true!(DEBUG, {
-        log_no_err!(INFO, "⛵ AppNoLayout::render -> size, state: {} {}", window_size, state);
+        log_no_err!(
+          INFO,
+          "⛵ AppNoLayout::render -> size, state: {} {}",
+          window_size,
+          state
+        );
         log_no_err!(INFO, "⛵ AppNoLayout::render -> queue: {}", queue);
       });
       queue
     });
   }
 
-  async fn handle_event(
-    &self, input_event: &TWInputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>,
-    _terminal_size: Size,
+  async fn app_handle_event(
+    &self, input_event: &TWInputEvent, _state: &AppState,
+    shared_store: &SharedStore<AppState, AppAction>, _terminal_size: Size,
   ) -> CommonResult<EventPropagation> {
     throws_with_return!({
       call_if_true!(
         DEBUG,
-        log_no_err!(INFO, "⛵ AppNoLayout::handle_event -> input_event: {}", input_event)
+        log_no_err!(
+          INFO,
+          "⛵ AppNoLayout::handle_event -> input_event: {}",
+          input_event
+        )
       );
 
       let mut event_consumed = false;

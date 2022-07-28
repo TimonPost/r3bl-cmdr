@@ -21,19 +21,30 @@ use r3bl_rs_utils::*;
 
 use super::*;
 
-pub struct ColumnRenderComponent<'a> {
-  pub lolcat: &'a mut Lolcat,
+#[derive(Debug, Clone, Default)]
+pub struct ColumnRenderComponent {
+  pub lolcat: Lolcat,
 }
 
 #[async_trait]
-impl<'a> Component<AppState, AppAction> for ColumnRenderComponent<'a> {
+impl Component<AppState, AppAction> for ColumnRenderComponent {
+  async fn handle_event(
+    &mut self, _current_box: &TWBox, _state: &AppState,
+    _shared_store: &SharedStore<AppState, AppAction>,
+  ) -> CommonResult<EventPropagation> {
+    // FIXME: handle arrow keys & dispatch actions
+    // FIXME: spawn_and_consume_event!() events
+    todo!();
+  }
+
   async fn render(
-    &mut self, current_box: &TWBox, _state: &AppState, _shared_store: &SharedStore<AppState, AppAction>,
+    &mut self, current_box: &TWBox, _state: &AppState,
+    _shared_store: &SharedStore<AppState, AppAction>,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
       // Fixed strings.
-      let line_1 = "col - Hello".to_string();
-      let line_2 = "col - World".to_string();
+      let line_1 = format!("{} - Hello", current_box.id);
+      let line_2 = format!("{} - World", current_box.id);
 
       // Setup intermediate vars.
       let box_origin_pos = current_box.origin_pos; // Adjusted for style margin (if any).
@@ -74,7 +85,6 @@ impl<'a> Component<AppState, AppAction> for ColumnRenderComponent<'a> {
         TWCommand::ResetColor
       };
 
-      // Debug.
       call_if_true!(DEBUG, {
         log_no_err! {
           INFO,

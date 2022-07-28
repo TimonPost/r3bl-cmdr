@@ -7,6 +7,7 @@
     "chrono",
     "CMDS",
     "constness",
+    "consts",
     "dialup",
     "dimens",
     "Horiz",
@@ -23,6 +24,7 @@
     "nonblocking",
     "paren",
     "plasticcard",
+    "powf",
     "qself",
     "reedline",
     "repr",
@@ -31,6 +33,7 @@
     "rustc",
     "rustup",
     "simplelog",
+    "srgb",
     "statemanagefocus",
     "stmts",
     "Stylesheet",
@@ -38,7 +41,8 @@
     "turbofish",
     "useragent",
     "VDOM",
-    "vecmac"
+    "vecmac",
+    "xffu"
   ],
   "copyrighter.author": "R3BL LLC",
   "copyrighter.license": "Apache2",

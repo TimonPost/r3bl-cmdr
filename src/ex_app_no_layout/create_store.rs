@@ -18,7 +18,6 @@
 use std::fmt::{Display, Formatter};
 
 use async_trait::async_trait;
-use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
 // Create a new store and attach the reducer.
@@ -51,23 +50,15 @@ impl Display for AppAction {
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct AppState {
   pub stack: Vec<i32>,
-  pub data: StateManageFocusData,
 }
 
-impl StateManageFocus for AppState {}
-
 impl Default for AppState {
-  fn default() -> Self {
-    Self {
-      stack: vec![0],
-      data: StateManageFocusData::default(),
-    }
-  }
+  fn default() -> Self { Self { stack: vec![0] } }
 }
 
 impl Display for AppState {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "State {{ stack: {:?}, data: {:?} }}", self.stack, self.data)
+    write!(f, "State {{ stack: {:?} }}", self.stack)
   }
 }
 
@@ -79,7 +70,6 @@ pub struct AppReducer;
 impl AsyncReducer<AppState, AppAction> for AppReducer {
   async fn run(&self, action: &AppAction, state: &AppState) -> AppState {
     let mut stack_copy = state.stack.clone();
-    let _data_copy = state.data.clone();
 
     match action {
       AppAction::AddPop(arg) => {
@@ -107,9 +97,6 @@ impl AsyncReducer<AppState, AppAction> for AppReducer {
       _ => {}
     }
 
-    AppState {
-      stack: stack_copy,
-      data: _data_copy,
-    }
+    AppState { stack: stack_copy }
   }
 }

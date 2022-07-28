@@ -17,28 +17,18 @@
 
 use std::fmt::{Display, Formatter};
 
-use r3bl_cmdr::{StateManageFocus, StateManageFocusData};
-
 /// State.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct AppState {
-  pub data: StateManageFocusData,
   pub stack: Vec<i32>,
 }
 
 impl Default for AppState {
-  fn default() -> Self {
-    Self {
-      stack: vec![0],
-      data: StateManageFocusData::default(),
-    }
-  }
+  fn default() -> Self { Self { stack: vec![0] } }
 }
-
-impl StateManageFocus for AppState {}
 
 impl Display for AppState {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "State {{ stack: {:?}, data: {:?} }}", self.stack, self.data)
+    write!(f, "State {{ stack: {:?} }}", self.stack)
   }
 }

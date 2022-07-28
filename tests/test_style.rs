@@ -133,7 +133,8 @@ fn test_cascade_style() {
     color_fg: Color::Red
   };
 
-  let mut computed_style = style_bold_green_fg + style_dim + style_yellow_bg + style_margin + style_red_fg;
+  let mut computed_style =
+    style_bold_green_fg + style_dim + style_yellow_bg + style_margin + style_red_fg;
 
   assert!(computed_style.get_bitflags().contains(
     StyleFlag::COLOR_FG_SET
@@ -175,7 +176,10 @@ fn test_stylesheet() {
   assert_eq!(result.as_ref().unwrap().len(), 2);
   assert_eq!(result.as_ref().unwrap()[0].id, "style1");
   assert_eq!(result.as_ref().unwrap()[1].id, "style2");
-  assert_eq!(stylesheet.find_styles_by_ids(vec!["style3", "style4"]), None);
+  assert_eq!(
+    stylesheet.find_styles_by_ids(vec!["style3", "style4"]),
+    None
+  );
 }
 
 /// Helper function.

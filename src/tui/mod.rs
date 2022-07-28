@@ -19,10 +19,10 @@
 extern crate bitflags;
 
 // Attach sources.
-pub mod layout;
 pub mod crossterm_helpers;
-pub mod terminal_window;
+pub mod layout;
 pub mod lolcat;
+pub mod terminal_window;
 
 // Re-export.
 pub use crossterm_helpers::*;

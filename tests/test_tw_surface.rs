@@ -25,29 +25,29 @@ fn test_simple_2_col_layout() -> CommonResult<()> {
       stylesheet: create_stylesheet()?,
       ..TWSurface::default()
     };
-    tw_surface.surface_start(
-      TWAreaPropsBuilder::new()
-        .set_pos((0, 0).into())
-        .set_size((500, 500).into())
-        .build(),
-    )?;
+    tw_surface.surface_start(TWSurfaceProps {
+      pos: (0, 0).into(),
+      size: (500, 500).into(),
+    })?;
     create_main_container(&mut tw_surface)?;
     tw_surface.surface_end()?;
     println!("{}", &tw_surface.render_buffer);
-    println!("{}", serde_json::to_string_pretty(&tw_surface.render_buffer).unwrap());
+    println!(
+      "{}",
+      serde_json::to_string_pretty(&tw_surface.render_buffer).unwrap()
+    );
   });
 }
 
 /// Main container "container".
 fn create_main_container(tw_surface: &mut TWSurface) -> CommonResult<()> {
   throws!({
-    tw_surface.box_start(
-      TWBoxPropsBuilder::new()
-        .set_id("container".to_string())
-        .set_dir(Direction::Horizontal)
-        .set_req_size((100, 100).try_into()?)
-        .build(),
-    )?;
+    tw_surface.box_start(TWBoxProps {
+      id: "container".to_string(),
+      dir: Direction::Horizontal,
+      req_size: (100, 100).try_into()?,
+      ..Default::default()
+    })?;
     make_container_assertions(tw_surface)?;
     create_left_col(tw_surface)?;
     create_right_col(tw_surface)?;
@@ -71,14 +71,12 @@ fn create_main_container(tw_surface: &mut TWSurface) -> CommonResult<()> {
 /// Left column "col_1".
 fn create_left_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
   throws!({
-    tw_surface.box_start(
-      TWBoxPropsBuilder::new()
-        .set_styles(tw_surface.stylesheet.find_styles_by_ids(vec!["style1"]))
-        .set_id("col_1".to_string())
-        .set_dir(Direction::Vertical)
-        .set_req_size((50, 100).try_into()?)
-        .build(),
-    )?;
+    tw_surface.box_start(TWBoxProps {
+      styles: tw_surface.stylesheet.find_styles_by_ids(vec!["style1"]),
+      id: "col_1".to_string(),
+      dir: Direction::Vertical,
+      req_size: (50, 100).try_into()?,
+    })?;
     make_left_col_assertions(tw_surface)?;
     tw_surface.box_end()?;
   });
@@ -103,14 +101,12 @@ fn create_left_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
 /// Right column "col_2".
 fn create_right_col(tw_surface: &mut TWSurface) -> CommonResult<()> {
   throws!({
-    tw_surface.box_start(
-      TWBoxPropsBuilder::new()
-        .set_styles(tw_surface.stylesheet.find_styles_by_ids(vec!["style2"]))
-        .set_id("col_2".to_string())
-        .set_dir(Direction::Vertical)
-        .set_req_size((50, 100).try_into()?)
-        .build(),
-    )?;
+    tw_surface.box_start(TWBoxProps {
+      styles: tw_surface.stylesheet.find_styles_by_ids(vec!["style2"]),
+      id: "col_2".to_string(),
+      dir: Direction::Vertical,
+      req_size: (50, 100).try_into()?,
+    })?;
     make_right_col_assertions(tw_surface)?;
     tw_surface.box_end()?;
   });

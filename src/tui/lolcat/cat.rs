@@ -136,7 +136,9 @@ impl Lolcat {
   ///   colored_print.
   /// - Print newlines correctly, resetting background.
   /// - If constantly_flush is on, it won't wait till a newline to flush stdout.
-  fn format_iter<I: Iterator<Item = char>>(&mut self, mut iter: I, constantly_flush: bool) -> OutputCollector {
+  fn format_iter<I: Iterator<Item = char>>(
+    &mut self, mut iter: I, constantly_flush: bool,
+  ) -> OutputCollector {
     let mut original_seed = self.color_wheel_control.seed;
     let mut ignore_whitespace = self.color_wheel_control.background_mode;
     let mut output_vec: OutputCollectorType = vec![];
@@ -156,7 +158,7 @@ impl Lolcat {
           // CSI sequences are \e \[ [bytes in 0x30-0x3F] [bytes in 0x20-0x2F] [final byte
           // in 0x40-0x7E] nF Escape seq are \e [bytes in 0x20-0x2F] [byte in
           // 0x30-0x7E] Fp Escape seq are \e [byte in 0x30-0x3F] [I have no
-          // idea, but `sl` creates one where the next byte is the end of the escape
+          // clue, but `sl` creates one where the next byte is the end of the escape
           // sequence, so assume that] Fe Escape seq are \e [byte in 0x40-0x5F]
           // [I have no idea, '' though sl doesn't make one] Fs Escape seq are
           // \e [byte in 0x60-0x7E] [I have no idea, '' though sl doesn't make one]
@@ -166,17 +168,21 @@ impl Lolcat {
           // everything in the escape sequence, even if it is a color (that will be
           // overridden)
           my_print!(&mut output_vec, "\x1b");
-          let mut escape_sequence_character = iter.next().expect("Escape character with no escape sequence after it");
+          let mut escape_sequence_character = iter
+            .next()
+            .expect("Escape character with no escape sequence after it");
           my_print!(&mut output_vec, "{}", escape_sequence_character);
           match escape_sequence_character {
             '[' => loop {
-              escape_sequence_character = iter.next().expect("CSI escape sequence did not terminate");
+              escape_sequence_character =
+                iter.next().expect("CSI escape sequence did not terminate");
               my_print!(&mut output_vec, "{}", escape_sequence_character);
               match escape_sequence_character {
                 '\x30'..='\x3F' => continue,
                 '\x20'..='\x2F' => {
                   loop {
-                    escape_sequence_character = iter.next().expect("CSI escape sequence did not terminate");
+                    escape_sequence_character =
+                      iter.next().expect("CSI escape sequence did not terminate");
                     my_print!(&mut output_vec, "{}", escape_sequence_character);
                     match escape_sequence_character {
                       '\x20'..='\x2F' => continue,
@@ -193,7 +199,8 @@ impl Lolcat {
               }
             },
             '\x20'..='\x2F' => loop {
-              escape_sequence_character = iter.next().expect("nF escape sequence did not terminate");
+              escape_sequence_character =
+                iter.next().expect("nF escape sequence did not terminate");
               my_print!(&mut output_vec, "{}", escape_sequence_character);
               match escape_sequence_character {
                 '\x20'..='\x2F' => continue,
@@ -289,7 +296,14 @@ impl Lolcat {
       );
     } else {
       let fg = ColorUtils::get_color_tuple(&self.color_wheel_control);
-      my_print!(output_vec, "\x1b[38;2;{};{};{}m{}", fg.0, fg.1, fg.2, character);
+      my_print!(
+        output_vec,
+        "\x1b[38;2;{};{};{}m{}",
+        fg.0,
+        fg.1,
+        fg.2,
+        character
+      );
     }
   }
 }

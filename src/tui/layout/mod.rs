@@ -21,9 +21,9 @@ pub const DEBUG: bool = true;
 
 // Attach source files.
 pub mod layout_error;
+pub mod layout_management;
 pub mod tw_box;
 pub mod tw_surface;
-pub mod layout_management;
 
 // Re-export the public items.
 pub use layout_error::*;
