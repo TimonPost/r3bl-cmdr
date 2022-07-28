@@ -20,13 +20,6 @@ use r3bl_rs_utils::*;
 
 use crate::*;
 
-#[non_exhaustive]
-pub enum Continuation {
-  Exit,
-  Continue,
-  ResizeAndContinue(Size),
-}
-
 pub struct TWDefaultInputEventHandler;
 
 impl TWDefaultInputEventHandler {

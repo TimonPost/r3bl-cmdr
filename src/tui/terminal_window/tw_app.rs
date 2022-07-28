@@ -40,7 +40,7 @@ where
   /// Use the input_event to dispatch an action to the store if needed.
   async fn handle_event(
     &self, input_event: &TWInputEvent, state: &S, shared_store: &SharedStore<S, A>, window_size: Size,
-  ) -> CommonResult<()>;
+  ) -> CommonResult<EventPropagation>;
 
   /// Wrap a new instance in [Box].
   fn new_owned() -> Box<SafeTWApp<S, A>>

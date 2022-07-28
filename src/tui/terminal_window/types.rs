@@ -17,6 +17,7 @@
 
 use std::sync::Arc;
 
+use r3bl_rs_utils::Size;
 use tokio::sync::RwLock;
 
 use crate::*;
@@ -31,3 +32,26 @@ pub type SharedTWApp<S, A> = Arc<RwLock<SafeTWApp<S, A>>>;
 // RenderComponent.
 pub type SafeRenderComponent<S, A> = dyn RenderComponent<S, A> + Send + Sync;
 pub type SharedRenderComponent<S, A> = Arc<RwLock<SafeRenderComponent<S, A>>>;
+
+// Continuation enum.
+#[non_exhaustive]
+pub enum Continuation {
+  Exit,
+  Continue,
+  ResizeAndContinue(Size),
+}
+
+// Event propagation enum.
+#[non_exhaustive]
+pub enum EventPropagation {
+  Consumed,
+  Propagate,
+}
+
+#[macro_export]
+macro_rules! spawn_and_consume_event {
+  ($bool: ident, $shared_store: ident, $action: expr) => {
+    $bool = true;
+    spawn_dispatch_action!($shared_store, $action);
+  };
+}

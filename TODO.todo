@@ -9,11 +9,14 @@ focus mgmt support:
       - for an editor, it will be the insertion point
       - for a text viewer, it will be the cursor position which can be moved around
     - add `StateManageFocusData` and fix needless `Hash` trait bound propagation in `r3bl_rs_utils`
-  ☐ route input events based on who has focus
-  ☐ what should the specificity of input event handling be? (🔱 input-event-specificity)
+  ✔ what should the specificity of input event handling be? (🔱 input-event-specificity) @done(22-07-28 14:40)
     - Currently the `DefaultInputEventHandler` does not consume input events and it peeks at them
     - There isn't a way for apps to override any container defaults
     - Should this be inverted? Apps get first dibs input event & consume if they handle it?
+  ☐ route input events based on who has focus (🔱 input-event-routing)
+  ☐ manage a registry of `RenderComponent` after first render pass?
+    - pass input events to the id -> `RenderComponent` that has focus?
+  ☐ add method to `RenderComponent` trait to handle input even & return an enum (consumed / not)?
 
 graphemes & focus mgmt support demo:
   ☐ create a POC `RenderComponent` that shows a cursor & graphemes

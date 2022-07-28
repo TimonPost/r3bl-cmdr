@@ -59,17 +59,19 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
   async fn handle_event(
     &self, input_event: &TWInputEvent, _state: &AppState, shared_store: &SharedStore<AppState, AppAction>,
     _terminal_size: Size,
-  ) -> CommonResult<()> {
-    throws!({
+  ) -> CommonResult<EventPropagation> {
+    throws_with_return!({
       call_if_true!(
         DEBUG,
         log_no_err!(INFO, "⛵ AppNoLayout::handle_event -> input_event: {}", input_event)
       );
 
+      let mut event_consumed = false;
+
       if let TWInputEvent::DisplayableKeypress(typed_char) = input_event {
         match typed_char {
           '+' => {
-            spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppAction::AddPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
@@ -80,7 +82,7 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
             );
           }
           '-' => {
-            spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppAction::SubPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
@@ -100,7 +102,7 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
             code: KeyCode::Up,
             modifiers: KeyModifiers::NONE,
           } => {
-            spawn_dispatch_action!(shared_store, AppAction::AddPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppAction::AddPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
@@ -114,7 +116,7 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
             code: KeyCode::Down,
             modifiers: KeyModifiers::NONE,
           } => {
-            spawn_dispatch_action!(shared_store, AppAction::SubPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppAction::SubPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
@@ -126,6 +128,12 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
           }
           _ => {}
         }
+      }
+
+      if event_consumed {
+        EventPropagation::Consumed
+      } else {
+        EventPropagation::Propagate
       }
     });
   }
