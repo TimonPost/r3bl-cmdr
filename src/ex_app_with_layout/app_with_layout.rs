@@ -63,7 +63,10 @@ impl TWApp<AppWithLayoutState, AppWithLayoutAction> for AppWithLayout {
           } => {
             event_consumed = true;
             self.switch_focus(KeyCode::Left);
-            debug_log_has_focus(&self.has_focus);
+            debug_log_has_focus(
+              stringify!(AppWithLayout::app_handle_event).into(),
+              &self.has_focus,
+            );
           }
           KeyEvent {
             code: KeyCode::Right,
@@ -71,7 +74,10 @@ impl TWApp<AppWithLayoutState, AppWithLayoutAction> for AppWithLayout {
           } => {
             event_consumed = true;
             self.switch_focus(KeyCode::Right);
-            debug_log_has_focus(&self.has_focus);
+            debug_log_has_focus(
+              stringify!(AppWithLayout::app_handle_event).into(),
+              &self.has_focus,
+            );
           }
           _ => {}
         }

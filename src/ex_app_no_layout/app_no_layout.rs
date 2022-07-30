@@ -56,7 +56,7 @@ impl TWApp<AppNoLayoutState, AppNoLayoutAction> for AppNoLayout {
           window_size,
           state
         );
-        log_no_err!(INFO, "⛵ AppNoLayout::render -> queue: {}", queue);
+        log_no_err!(INFO, "⛵ AppNoLayout::render -> queue: {:?}", queue);
       });
       queue
     });

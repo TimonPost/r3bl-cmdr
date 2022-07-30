@@ -42,11 +42,17 @@ impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponen
         match typed_char {
           '+' => {
             spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::AddPop(1));
-            debug_log_action(AppWithLayoutAction::AddPop(1));
+            debug_log_action(
+              stringify!(ColumnRenderComponent::handle_event).into(),
+              AppWithLayoutAction::AddPop(1),
+            );
           }
           '-' => {
             spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::SubPop(1));
-            debug_log_action(AppWithLayoutAction::SubPop(1));
+            debug_log_action(
+              stringify!(ColumnRenderComponent::handle_event).into(),
+              AppWithLayoutAction::SubPop(1),
+            );
           }
           _ => {}
         }
@@ -59,14 +65,20 @@ impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponen
             modifiers: KeyModifiers::NONE,
           } => {
             spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::AddPop(1));
-            debug_log_action(AppWithLayoutAction::AddPop(1));
+            debug_log_action(
+              stringify!(ColumnRenderComponent::handle_event).into(),
+              AppWithLayoutAction::AddPop(1),
+            );
           }
           KeyEvent {
             code: KeyCode::Down,
             modifiers: KeyModifiers::NONE,
           } => {
             spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::SubPop(1));
-            debug_log_action(AppWithLayoutAction::SubPop(1));
+            debug_log_action(
+              stringify!(ColumnRenderComponent::handle_event).into(),
+              AppWithLayoutAction::SubPop(1),
+            );
           }
           _ => {}
         }
@@ -131,11 +143,7 @@ impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponen
       call_if_true!(DEBUG, {
         log_no_err! {
           INFO,
-          "🦜 ColumnComponent::render -> current_box: {:?},
-            \n - box_origin_pos: {:?},
-            \n - box_bounding_size: {:?}, 
-            \n - content_pos: {:?},
-            \n - queue: {:?}",
+          "🦜 ColumnComponent::render ->\n  - current_box: {:?},\n  - box_origin_pos: {:?},\n  - box_bounding_size: {:?},\n  - content_pos: {:?},\n  - queue: {:?}",
           current_box,
           box_origin_pos,
           box_bounding_size,

@@ -19,23 +19,20 @@ use r3bl_rs_utils::*;
 
 use crate::*;
 
-pub fn debug_log_action(action: AppWithLayoutAction) {
+pub fn debug_log_action(src: String, action: AppWithLayoutAction) {
   call_if_true!(
     DEBUG,
-    log_no_err!(
-      INFO,
-      "⛵ AppWithLayout::handle_event -> dispatch_spawn: {}",
-      action
-    )
+    log_no_err!(INFO, "🚀 {} -> dispatch action: {}", src, action,)
   );
 }
 
-pub fn debug_log_has_focus(has_focus: &HasFocus) {
+pub fn debug_log_has_focus(src: String, has_focus: &HasFocus) {
   call_if_true!(
     DEBUG,
     log_no_err!(
       INFO,
-      "⛵ AppWithLayout::handle_event -> focus change & rerender: {:?}",
+      "👀 {} -> focus change & rerender: {:?}",
+      src,
       has_focus
     )
   );

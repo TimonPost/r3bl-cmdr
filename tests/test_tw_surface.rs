@@ -31,7 +31,7 @@ fn test_simple_2_col_layout() -> CommonResult<()> {
     })?;
     create_main_container(&mut tw_surface)?;
     tw_surface.surface_end()?;
-    println!("{}", &tw_surface.render_buffer);
+    println!("{:?}", &tw_surface.render_buffer);
     println!(
       "{}",
       serde_json::to_string_pretty(&tw_surface.render_buffer).unwrap()
