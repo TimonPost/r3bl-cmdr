@@ -27,10 +27,10 @@ pub struct AppNoLayout {
 }
 
 #[async_trait]
-impl TWApp<AppState, AppAction> for AppNoLayout {
+impl TWApp<AppNoLayoutState, AppNoLayoutAction> for AppNoLayout {
   async fn app_render(
-    &mut self, state: &AppState, _shared_store: &SharedStore<AppState, AppAction>,
-    window_size: Size,
+    &mut self, state: &AppNoLayoutState,
+    _shared_store: &SharedStore<AppNoLayoutState, AppNoLayoutAction>, window_size: Size,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
       let content = format!("{}", state);
@@ -63,8 +63,8 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
   }
 
   async fn app_handle_event(
-    &self, input_event: &TWInputEvent, _state: &AppState,
-    shared_store: &SharedStore<AppState, AppAction>, _terminal_size: Size,
+    &mut self, input_event: &TWInputEvent, _state: &AppNoLayoutState,
+    shared_store: &SharedStore<AppNoLayoutState, AppNoLayoutAction>, _terminal_size: Size,
   ) -> CommonResult<EventPropagation> {
     throws_with_return!({
       call_if_true!(
@@ -81,24 +81,24 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
       if let TWInputEvent::DisplayableKeypress(typed_char) = input_event {
         match typed_char {
           '+' => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::AddPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppNoLayoutAction::AddPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
                 INFO,
                 "⛵ AppNoLayout::handle_event -> + -> dispatch_spawn: {}",
-                AppAction::AddPop(1)
+                AppNoLayoutAction::AddPop(1)
               )
             );
           }
           '-' => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::SubPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppNoLayoutAction::SubPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
                 INFO,
                 "⛵ AppNoLayout::handle_event -> - -> dispatch_spawn: {}",
-                AppAction::SubPop(1)
+                AppNoLayoutAction::SubPop(1)
               )
             );
           }
@@ -112,13 +112,13 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
             code: KeyCode::Up,
             modifiers: KeyModifiers::NONE,
           } => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::AddPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppNoLayoutAction::AddPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
                 INFO,
                 "⛵ AppNoLayout::handle_event -> Up -> dispatch_spawn: {}",
-                AppAction::AddPop(1)
+                AppNoLayoutAction::AddPop(1)
               )
             );
           }
@@ -126,13 +126,13 @@ impl TWApp<AppState, AppAction> for AppNoLayout {
             code: KeyCode::Down,
             modifiers: KeyModifiers::NONE,
           } => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::SubPop(1));
+            spawn_and_consume_event!(event_consumed, shared_store, AppNoLayoutAction::SubPop(1));
             call_if_true!(
               DEBUG,
               log_no_err!(
                 INFO,
                 "⛵ AppNoLayout::handle_event -> Down -> dispatch_spawn: {}",
-                AppAction::SubPop(1)
+                AppNoLayoutAction::SubPop(1)
               )
             );
           }

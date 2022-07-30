@@ -20,7 +20,7 @@ use std::fmt::{Display, Formatter};
 /// Action.
 #[derive(Clone, Debug)]
 #[non_exhaustive]
-pub enum AppAction {
+pub enum AppWithLayoutAction {
   Startup,
   AddPop(i32),
   SubPop(i32),
@@ -28,10 +28,10 @@ pub enum AppAction {
   Noop,
 }
 
-impl Default for AppAction {
-  fn default() -> Self { AppAction::Noop }
+impl Default for AppWithLayoutAction {
+  fn default() -> Self { AppWithLayoutAction::Noop }
 }
 
-impl Display for AppAction {
+impl Display for AppWithLayoutAction {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }

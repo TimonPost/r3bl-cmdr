@@ -52,6 +52,6 @@ where
   ) -> CommonResult<TWCommandQueue>;
 
   async fn handle_event(
-    &mut self, current_box: &TWBox, state: &S, shared_store: &SharedStore<S, A>,
+    &mut self, input_event: &TWInputEvent, state: &S, shared_store: &SharedStore<S, A>,
   ) -> CommonResult<EventPropagation>;
 }

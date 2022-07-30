@@ -78,17 +78,17 @@ where
 #[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub struct HasFocus {
   pub cursor_position_map: CursorPositionMap,
-  pub id_with_focus: String,
+  pub id_with_focus: Option<String>,
 }
 
 pub type CursorPositionMap = HashMap<String, Option<Position>>;
 
 impl HasFocus {
   /// Set the id of the [crate::TWBox] that has keyboard focus.
-  pub fn get_focus_id(&self) -> &str { &self.id_with_focus }
+  pub fn get_id(&self) -> Option<String> { self.id_with_focus.clone() }
 
   /// Get the id of the [crate::TWBox] that has keyboard focus.
-  pub fn set_focus_id(&mut self, id: &str) { self.id_with_focus = id.into(); }
+  pub fn set_id(&mut self, id: &str) { self.id_with_focus = Some(id.into()) }
 
   /// For a given [crate::TWBox] id, set the position of the cursor inside of it.
   pub fn set_cursor_position_for_id(&mut self, id: &str, maybe_position: Option<Position>) {

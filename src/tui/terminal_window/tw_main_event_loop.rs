@@ -121,19 +121,26 @@ impl TerminalWindow {
           .await?;
 
           // If event not consumed by app, propagate to the default input handler.
-          if let EventPropagation::Propagate = propagation_result_from_app {
-            let continuation_result_from_default_handler =
-              TWDefaultInputEventHandler::no_consume(input_event, &exit_keys).await;
-            match continuation_result_from_default_handler {
-              Continuation::Exit => {
-                break;
-              }
-              Continuation::ResizeAndContinue(new_size) => {
-                shared_window.write().await.set_size(new_size);
-                AppManager::render_app(&shared_store, &shared_app, new_size, None).await?;
-              }
-              _ => {}
-            };
+          match propagation_result_from_app {
+            EventPropagation::ConsumedRerender => {
+              let size = shared_window.read().await.size;
+              AppManager::render_app(&shared_store, &shared_app, size, None).await?;
+            }
+            EventPropagation::Propagate => {
+              let continuation_result_from_default_handler =
+                TWDefaultInputEventHandler::no_consume(input_event, &exit_keys).await;
+              match continuation_result_from_default_handler {
+                Continuation::Exit => {
+                  break;
+                }
+                Continuation::ResizeAndContinue(new_size) => {
+                  shared_window.write().await.set_size(new_size);
+                  AppManager::render_app(&shared_store, &shared_app, new_size, None).await?;
+                }
+                _ => {}
+              };
+            }
+            EventPropagation::Consumed => {}
           }
         }
 
@@ -202,7 +209,7 @@ where
       let latest_state = shared_store.read().await.get_state();
       let window_size = shared_window.read().await.size;
       shared_app
-        .read()
+        .write()
         .await
         .app_handle_event(input_event, &latest_state, shared_store, window_size)
         .await?

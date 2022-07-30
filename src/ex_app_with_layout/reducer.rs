@@ -25,19 +25,21 @@ use super::*;
 pub struct AppReducer;
 
 #[async_trait]
-impl AsyncReducer<AppState, AppAction> for AppReducer {
-  async fn run(&self, action: &AppAction, state: &AppState) -> AppState {
-    let AppState { stack: stack_copy } = &mut state.clone();
+impl AsyncReducer<AppWithLayoutState, AppWithLayoutAction> for AppReducer {
+  async fn run(
+    &self, action: &AppWithLayoutAction, state: &AppWithLayoutState,
+  ) -> AppWithLayoutState {
+    let AppWithLayoutState { stack: stack_copy } = &mut state.clone();
     reduce_mut(stack_copy, action);
-    AppState {
+    AppWithLayoutState {
       stack: stack_copy.to_vec(),
     }
   }
 }
 
-fn reduce_mut(stack: &mut Vec<i32>, action: &AppAction) {
+fn reduce_mut(stack: &mut Vec<i32>, action: &AppWithLayoutAction) {
   match action {
-    AppAction::AddPop(arg) => {
+    AppWithLayoutAction::AddPop(arg) => {
       if stack.is_empty() {
         stack.push(*arg)
       } else {
@@ -47,7 +49,7 @@ fn reduce_mut(stack: &mut Vec<i32>, action: &AppAction) {
       }
     }
 
-    AppAction::SubPop(arg) => {
+    AppWithLayoutAction::SubPop(arg) => {
       if stack.is_empty() {
         stack.push(*arg)
       } else {
@@ -57,7 +59,7 @@ fn reduce_mut(stack: &mut Vec<i32>, action: &AppAction) {
       }
     }
 
-    AppAction::Clear => stack.clear(),
+    AppWithLayoutAction::Clear => stack.clear(),
 
     _ => {}
   }

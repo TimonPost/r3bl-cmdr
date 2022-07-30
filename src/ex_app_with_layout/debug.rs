@@ -15,20 +15,28 @@
  *   limitations under the License.
  */
 
-use std::fmt::{Display, Formatter};
+use r3bl_rs_utils::*;
 
-/// State.
-#[derive(Clone, PartialEq, Eq, Debug)]
-pub struct AppWithLayoutState {
-  pub stack: Vec<i32>,
+use crate::*;
+
+pub fn debug_log_action(action: AppWithLayoutAction) {
+  call_if_true!(
+    DEBUG,
+    log_no_err!(
+      INFO,
+      "⛵ AppWithLayout::handle_event -> dispatch_spawn: {}",
+      action
+    )
+  );
 }
 
-impl Default for AppWithLayoutState {
-  fn default() -> Self { Self { stack: vec![0] } }
-}
-
-impl Display for AppWithLayoutState {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    write!(f, "State {{ stack: {:?} }}", self.stack)
-  }
+pub fn debug_log_has_focus(has_focus: &HasFocus) {
+  call_if_true!(
+    DEBUG,
+    log_no_err!(
+      INFO,
+      "⛵ AppWithLayout::handle_event -> focus change & rerender: {:?}",
+      has_focus
+    )
+  );
 }

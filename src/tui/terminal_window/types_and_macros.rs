@@ -46,6 +46,7 @@ pub enum Continuation {
 // Event propagation enum.
 #[non_exhaustive]
 pub enum EventPropagation {
+  ConsumedRerender,
   Consumed,
   Propagate,
 }

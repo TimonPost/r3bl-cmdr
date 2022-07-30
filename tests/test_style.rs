@@ -160,12 +160,12 @@ fn test_stylesheet() {
 
   let style1 = make_a_style("style1");
   let result = stylesheet.add_style(style1);
-  assert!(result.is_ok());
+  result.unwrap();
   assert_eq!(stylesheet.styles.len(), 1);
 
   let style2 = make_a_style("style2");
   let result = stylesheet.add_style(style2);
-  assert!(result.is_ok());
+  result.unwrap();
   assert_eq!(stylesheet.styles.len(), 2);
 
   assert_eq!(stylesheet.find_style_by_id("style1").unwrap().id, "style1");

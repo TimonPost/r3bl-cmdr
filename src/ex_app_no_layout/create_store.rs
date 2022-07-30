@@ -21,8 +21,8 @@ use async_trait::async_trait;
 use r3bl_rs_utils::*;
 
 // Create a new store and attach the reducer.
-pub async fn create_store() -> Store<AppState, AppAction> {
-  let mut store: Store<AppState, AppAction> = Store::default();
+pub async fn create_store() -> Store<AppNoLayoutState, AppNoLayoutAction> {
+  let mut store: Store<AppNoLayoutState, AppNoLayoutAction> = Store::default();
   store.add_reducer(AppReducer::new()).await;
   store
 }
@@ -30,7 +30,7 @@ pub async fn create_store() -> Store<AppState, AppAction> {
 /// Action.
 #[derive(Clone, Debug)]
 #[non_exhaustive]
-pub enum AppAction {
+pub enum AppNoLayoutAction {
   Startup,
   AddPop(i32),
   SubPop(i32),
@@ -38,25 +38,25 @@ pub enum AppAction {
   Noop,
 }
 
-impl Default for AppAction {
-  fn default() -> Self { AppAction::Noop }
+impl Default for AppNoLayoutAction {
+  fn default() -> Self { AppNoLayoutAction::Noop }
 }
 
-impl Display for AppAction {
+impl Display for AppNoLayoutAction {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}", self) }
 }
 
 /// State.
 #[derive(Clone, PartialEq, Eq, Debug)]
-pub struct AppState {
+pub struct AppNoLayoutState {
   pub stack: Vec<i32>,
 }
 
-impl Default for AppState {
+impl Default for AppNoLayoutState {
   fn default() -> Self { Self { stack: vec![0] } }
 }
 
-impl Display for AppState {
+impl Display for AppNoLayoutState {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     write!(f, "State {{ stack: {:?} }}", self.stack)
   }
@@ -67,12 +67,12 @@ impl Display for AppState {
 pub struct AppReducer;
 
 #[async_trait]
-impl AsyncReducer<AppState, AppAction> for AppReducer {
-  async fn run(&self, action: &AppAction, state: &AppState) -> AppState {
+impl AsyncReducer<AppNoLayoutState, AppNoLayoutAction> for AppReducer {
+  async fn run(&self, action: &AppNoLayoutAction, state: &AppNoLayoutState) -> AppNoLayoutState {
     let mut stack_copy = state.stack.clone();
 
     match action {
-      AppAction::AddPop(arg) => {
+      AppNoLayoutAction::AddPop(arg) => {
         if stack_copy.is_empty() {
           stack_copy.push(*arg)
         } else {
@@ -82,7 +82,7 @@ impl AsyncReducer<AppState, AppAction> for AppReducer {
         }
       }
 
-      AppAction::SubPop(arg) => {
+      AppNoLayoutAction::SubPop(arg) => {
         if stack_copy.is_empty() {
           stack_copy.push(*arg)
         } else {
@@ -92,11 +92,11 @@ impl AsyncReducer<AppState, AppAction> for AppReducer {
         }
       }
 
-      AppAction::Clear => stack_copy = vec![],
+      AppNoLayoutAction::Clear => stack_copy = vec![],
 
       _ => {}
     }
 
-    AppState { stack: stack_copy }
+    AppNoLayoutState { stack: stack_copy }
   }
 }

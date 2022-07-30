@@ -68,14 +68,14 @@ fn test_percent_works_as_expected() {
 
 #[test]
 fn test_percent_parsing_fails_as_expected() {
-  assert!(Percent::try_from(-1i32).is_err());
+  Percent::try_from(-1i32).unwrap_err();
 
-  assert!(Percent::try_from(0i32).is_ok());
-  assert!(Percent::try_from(0u16).is_ok());
+  Percent::try_from(0i32).unwrap();
+  Percent::try_from(0u16).unwrap();
 
-  assert!(Percent::try_from(100i32).is_ok());
-  assert!(Percent::try_from(100u16).is_ok());
+  Percent::try_from(100i32).unwrap();
+  Percent::try_from(100u16).unwrap();
 
-  assert!(Percent::try_from(101i32).is_err());
-  assert!(Percent::try_from(101u16).is_err());
+  Percent::try_from(101i32).unwrap_err();
+  Percent::try_from(101u16).unwrap_err();
 }

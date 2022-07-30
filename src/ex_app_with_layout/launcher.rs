@@ -46,8 +46,8 @@ pub async fn run_app() -> CommonResult<()> {
   });
 }
 
-async fn create_store() -> Store<AppState, AppAction> {
-  let mut store: Store<AppState, AppAction> = Store::default();
+async fn create_store() -> Store<AppWithLayoutState, AppWithLayoutAction> {
+  let mut store: Store<AppWithLayoutState, AppWithLayoutAction> = Store::default();
   store.add_reducer(AppReducer::new()).await;
   store
 }

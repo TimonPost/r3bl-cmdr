@@ -19,12 +19,12 @@
 			"path": "src/tui/terminal_window/tw_main_event_loop.rs",
 			"bookmarks": [
 				{
-					"line": 201,
+					"line": 208,
 					"column": 2,
 					"label": ""
 				},
 				{
-					"line": 219,
+					"line": 226,
 					"column": 2,
 					"label": ""
 				}

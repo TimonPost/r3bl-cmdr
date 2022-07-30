@@ -28,7 +28,7 @@ use super::*;
 /// Async trait object that implements the [TWApp] trait.
 #[derive(Default)]
 pub struct AppWithLayout {
-  pub component_registry: ComponentRegistry<AppState, AppAction>,
+  pub component_registry: ComponentRegistry<AppWithLayoutState, AppWithLayoutAction>,
   pub has_focus: HasFocus,
 }
 
@@ -47,62 +47,52 @@ const COL_1_ID: &str = "col_1";
 const COL_2_ID: &str = "col_2";
 
 #[async_trait]
-impl TWApp<AppState, AppAction> for AppWithLayout {
+impl TWApp<AppWithLayoutState, AppWithLayoutAction> for AppWithLayout {
   async fn app_handle_event(
-    &self, input_event: &TWInputEvent, _state: &AppState,
-    shared_store: &SharedStore<AppState, AppAction>, _terminal_size: Size,
+    &mut self, input_event: &TWInputEvent, _state: &AppWithLayoutState,
+    _shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>, _terminal_size: Size,
   ) -> CommonResult<EventPropagation> {
-    // FIXME: route event to component_registry[id w/ focus]
     throws_with_return!({
       let mut event_consumed = false;
-
-      if let TWInputEvent::DisplayableKeypress(typed_char) = input_event {
-        match typed_char {
-          '+' => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::AddPop(1));
-            debug_log(AppAction::AddPop(1));
-          }
-          '-' => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::SubPop(1));
-            debug_log(AppAction::SubPop(1));
-          }
-          _ => {}
-        }
-      }
 
       if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
         match key_event {
           KeyEvent {
-            code: KeyCode::Up,
+            code: KeyCode::Left,
             modifiers: KeyModifiers::NONE,
           } => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::AddPop(1));
-            debug_log(AppAction::AddPop(1));
+            event_consumed = true;
+            self.switch_focus(KeyCode::Left);
+            debug_log_has_focus(&self.has_focus);
           }
           KeyEvent {
-            code: KeyCode::Down,
+            code: KeyCode::Right,
             modifiers: KeyModifiers::NONE,
           } => {
-            spawn_and_consume_event!(event_consumed, shared_store, AppAction::SubPop(1));
-            debug_log(AppAction::SubPop(1));
+            event_consumed = true;
+            self.switch_focus(KeyCode::Right);
+            debug_log_has_focus(&self.has_focus);
           }
           _ => {}
         }
       }
 
       if event_consumed {
-        EventPropagation::Consumed
-      } else {
-        EventPropagation::Propagate
+        return Ok(EventPropagation::ConsumedRerender);
       }
+
+      // FIXME: route event to component_registry[id w/ focus]
+
+      EventPropagation::Propagate
     });
   }
 
   async fn app_render(
-    &mut self, state: &AppState, shared_store: &SharedStore<AppState, AppAction>, window_size: Size,
+    &mut self, state: &AppWithLayoutState,
+    shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>, window_size: Size,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
-      self.create_components_and_populate_registry().await;
+      self.create_components_populate_registry_init_focus().await;
       let mut tw_surface = TWSurface {
         stylesheet: self.create_stylesheet()?,
         ..TWSurface::default()
@@ -121,7 +111,19 @@ impl TWApp<AppState, AppAction> for AppWithLayout {
 }
 
 impl AppWithLayout {
-  async fn create_components_and_populate_registry(&mut self) {
+  fn switch_focus(&mut self, code: KeyCode) {
+    if let Some(_id) = self.has_focus.get_id() {
+      if code == KeyCode::Left {
+        self.has_focus.set_id(COL_1_ID)
+      } else {
+        self.has_focus.set_id(COL_2_ID)
+      }
+    } else {
+      log_no_err!(ERROR, "No focus id has been set, and it should be set!");
+    }
+  }
+
+  async fn create_components_populate_registry_init_focus(&mut self) {
     let _component = ColumnRenderComponent::default();
     let shared_component_r1 = Arc::new(RwLock::new(_component));
     let shared_component_r2 = shared_component_r1.clone();
@@ -135,12 +137,17 @@ impl AppWithLayout {
     if self.component_registry.id_does_not_exist(COL_2_ID) {
       self.component_registry.put(COL_2_ID, shared_component_r2);
     }
+
+    // Init has focus.
+    if self.has_focus.get_id().is_none() {
+      self.has_focus.set_id(COL_1_ID);
+    }
   }
 
   /// Main container CONTAINER_ID.
   async fn create_main_container<'a>(
-    &mut self, tw_surface: &mut TWSurface, state: &'a AppState,
-    shared_store: &'a SharedStore<AppState, AppAction>,
+    &mut self, tw_surface: &mut TWSurface, state: &'a AppWithLayoutState,
+    shared_store: &'a SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<()> {
     throws!({
       tw_surface.box_start(TWBoxProps {
@@ -161,8 +168,8 @@ impl AppWithLayout {
 
   /// Left column COL_1_ID.
   async fn create_left_col<'a>(
-    &mut self, tw_surface: &mut TWSurface, _state: &'a AppState,
-    _shared_store: &'a SharedStore<AppState, AppAction>,
+    &mut self, tw_surface: &mut TWSurface, _state: &'a AppWithLayoutState,
+    _shared_store: &'a SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<()> {
     throws!({
       tw_surface.box_start(TWBoxProps {
@@ -188,8 +195,8 @@ impl AppWithLayout {
 
   /// Right column COL_2_ID.
   async fn create_right_col(
-    &mut self, tw_surface: &mut TWSurface, _state: &AppState,
-    _shared_store: &SharedStore<AppState, AppAction>,
+    &mut self, tw_surface: &mut TWSurface, _state: &AppWithLayoutState,
+    _shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<()> {
     throws!({
       tw_surface.box_start(TWBoxProps {
@@ -235,15 +242,4 @@ impl AppWithLayout {
       stylesheet
     })
   }
-}
-
-fn debug_log(action: AppAction) {
-  call_if_true!(
-    DEBUG,
-    log_no_err!(
-      INFO,
-      "⛵ AppWithLayout::handle_event -> dispatch_spawn: {}",
-      action
-    )
-  );
 }

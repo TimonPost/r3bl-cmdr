@@ -16,6 +16,7 @@
  */
 
 use async_trait::async_trait;
+use crossterm::event::*;
 use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
@@ -27,19 +28,61 @@ pub struct ColumnRenderComponent {
 }
 
 #[async_trait]
-impl Component<AppState, AppAction> for ColumnRenderComponent {
+impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponent {
   async fn handle_event(
-    &mut self, _current_box: &TWBox, _state: &AppState,
-    _shared_store: &SharedStore<AppState, AppAction>,
+    &mut self, input_event: &TWInputEvent, _state: &AppWithLayoutState,
+    shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<EventPropagation> {
-    // FIXME: handle arrow keys & dispatch actions
+    // FIXME: handle up/down/+/- keys & dispatch actions
     // FIXME: spawn_and_consume_event!() events
-    todo!();
+    throws_with_return!({
+      let mut event_consumed = false;
+
+      if let TWInputEvent::DisplayableKeypress(typed_char) = input_event {
+        match typed_char {
+          '+' => {
+            spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::AddPop(1));
+            debug_log_action(AppWithLayoutAction::AddPop(1));
+          }
+          '-' => {
+            spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::SubPop(1));
+            debug_log_action(AppWithLayoutAction::SubPop(1));
+          }
+          _ => {}
+        }
+      }
+
+      if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
+        match key_event {
+          KeyEvent {
+            code: KeyCode::Up,
+            modifiers: KeyModifiers::NONE,
+          } => {
+            spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::AddPop(1));
+            debug_log_action(AppWithLayoutAction::AddPop(1));
+          }
+          KeyEvent {
+            code: KeyCode::Down,
+            modifiers: KeyModifiers::NONE,
+          } => {
+            spawn_and_consume_event!(event_consumed, shared_store, AppWithLayoutAction::SubPop(1));
+            debug_log_action(AppWithLayoutAction::SubPop(1));
+          }
+          _ => {}
+        }
+      }
+
+      if event_consumed {
+        EventPropagation::Consumed
+      } else {
+        EventPropagation::Propagate
+      }
+    });
   }
 
   async fn render(
-    &mut self, current_box: &TWBox, _state: &AppState,
-    _shared_store: &SharedStore<AppState, AppAction>,
+    &mut self, current_box: &TWBox, _state: &AppWithLayoutState,
+    _shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
       // Fixed strings.
