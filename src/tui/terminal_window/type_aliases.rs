@@ -17,7 +17,6 @@
 
 use std::sync::Arc;
 
-use r3bl_rs_utils::Size;
 use tokio::sync::RwLock;
 
 use crate::*;
@@ -35,26 +34,3 @@ pub type SafeComponent<S, A> = dyn Component<S, A> + Send + Sync;
 pub type BoxedSafeComponent<S, A> = Box<SafeComponent<S, A>>;
 pub type SharedComponent<S, A> = Arc<RwLock<SafeComponent<S, A>>>;
 
-// Continuation enum.
-#[non_exhaustive]
-pub enum Continuation {
-  Exit,
-  Continue,
-  ResizeAndContinue(Size),
-}
-
-// Event propagation enum.
-#[non_exhaustive]
-pub enum EventPropagation {
-  ConsumedRerender,
-  Consumed,
-  Propagate,
-}
-
-#[macro_export]
-macro_rules! spawn_and_consume_event {
-  ($bool: ident, $shared_store: ident, $action: expr) => {
-    $bool = true;
-    spawn_dispatch_action!($shared_store, $action);
-  };
-}

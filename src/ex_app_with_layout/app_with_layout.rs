@@ -185,6 +185,7 @@ impl AppWithLayout {
         req_size: (50, 100).try_into()?,
       })?;
 
+      // UGLY: consider adding a macro for this block
       if let Some(shared_component) = self.component_registry.get(COL_1_ID) {
         let current_box = tw_surface.current_box()?;
         let queue = shared_component
@@ -212,6 +213,7 @@ impl AppWithLayout {
         req_size: (50, 100).try_into()?,
       })?;
 
+      // UGLY: consider adding a macro for this block
       if let Some(shared_component) = self.component_registry.get(COL_2_ID) {
         let current_box = tw_surface.current_box()?;
         let queue = shared_component

@@ -59,7 +59,7 @@ macro_rules! exec {
     };
 
     // Call this generated function. It will fail if there are problems w/ log!(). In this case, if
-    // DEBUG is true, then it will dump the error to stderr.
+    // `DEBUG` is true, then it will dump the error to stderr.
     if let Err(logging_err) = _fn_wrap_for_logging_err() {
       let msg = format!(
         "❌ Failed to log exec output of {}, {}",
@@ -154,7 +154,7 @@ pub enum TWCommand {
 
 impl Debug for TWCommand {
   /// When [TWCommandQueue] is printed as debug, each [TWCommand] is printed using this method.
-  /// Note that [exec!] does not use this; it has its own way of logging output.
+  /// Also [exec!] does not use this; it has its own way of logging output.
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(
       f,
@@ -202,7 +202,7 @@ impl TWCommand {
 
 /// This works w/ [TWCommand] items. It allows them to be added in sequence, and then flushed at the
 /// end. Here's an example.
-/// 
+///
 /// ```ignore
 /// let mut queue = CommandQueue::default();
 /// queue.add(TWCommand::ClearScreen);
