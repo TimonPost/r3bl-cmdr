@@ -53,41 +53,50 @@ impl TWApp<AppWithLayoutState, AppWithLayoutAction> for AppWithLayout {
     _shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>, _terminal_size: Size,
   ) -> CommonResult<EventPropagation> {
     throws_with_return!({
-      let mut event_consumed = false;
+      // let mut event_consumed = false;
 
-      if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
-        match key_event {
-          KeyEvent {
-            code: KeyCode::Left,
-            modifiers: KeyModifiers::NONE,
-          } => {
-            event_consumed = true;
-            self.switch_focus(KeyCode::Left);
-            debug_log_has_focus(
-              stringify!(AppWithLayout::app_handle_event).into(),
-              &self.has_focus,
-            );
-          }
-          KeyEvent {
-            code: KeyCode::Right,
-            modifiers: KeyModifiers::NONE,
-          } => {
-            event_consumed = true;
-            self.switch_focus(KeyCode::Right);
-            debug_log_has_focus(
-              stringify!(AppWithLayout::app_handle_event).into(),
-              &self.has_focus,
-            );
-          }
-          _ => {}
-        }
-      }
+      // // Handle Left, Right to switch focus between columns.
+      // if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
+      //   match key_event {
+      //     KeyEvent {
+      //       code: KeyCode::Left,
+      //       modifiers: KeyModifiers::NONE,
+      //     } => {
+      //       event_consumed = true;
+      //       self.switch_focus(KeyCode::Left);
+      //       debug_log_has_focus(
+      //         stringify!(AppWithLayout::app_handle_event).into(),
+      //         &self.has_focus,
+      //       );
+      //     }
+      //     KeyEvent {
+      //       code: KeyCode::Right,
+      //       modifiers: KeyModifiers::NONE,
+      //     } => {
+      //       event_consumed = true;
+      //       self.switch_focus(KeyCode::Right);
+      //       debug_log_has_focus(
+      //         stringify!(AppWithLayout::app_handle_event).into(),
+      //         &self.has_focus,
+      //       );
+      //     }
+      //     _ => {}
+      //   }
+      // }
 
-      if event_consumed {
+      // if event_consumed {
+      //   return Ok(EventPropagation::ConsumedRerender);
+      // }
+
+      if let Continuation::Break = self.handle_left_right_input_to_switch_focus(input_event) {
         return Ok(EventPropagation::ConsumedRerender);
       }
 
-      // FIXME: route event to component_registry[id w/ focus]
+      if let Some(_shared_component_has_focus) =
+        self.component_registry.get_has_focus(&self.has_focus)
+      {
+        // FIXME: route event to component_registry[id w/ focus]
+      };
 
       EventPropagation::Propagate
     });
@@ -117,6 +126,47 @@ impl TWApp<AppWithLayoutState, AppWithLayoutAction> for AppWithLayout {
 }
 
 impl AppWithLayout {
+  fn handle_left_right_input_to_switch_focus(
+    &mut self, input_event: &TWInputEvent,
+  ) -> Continuation {
+    let mut event_consumed = false;
+
+    // Handle Left, Right to switch focus between columns.
+    if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
+      match key_event {
+        KeyEvent {
+          code: KeyCode::Left,
+          modifiers: KeyModifiers::NONE,
+        } => {
+          event_consumed = true;
+          self.switch_focus(KeyCode::Left);
+          debug_log_has_focus(
+            stringify!(AppWithLayout::app_handle_event).into(),
+            &self.has_focus,
+          );
+        }
+        KeyEvent {
+          code: KeyCode::Right,
+          modifiers: KeyModifiers::NONE,
+        } => {
+          event_consumed = true;
+          self.switch_focus(KeyCode::Right);
+          debug_log_has_focus(
+            stringify!(AppWithLayout::app_handle_event).into(),
+            &self.has_focus,
+          );
+        }
+        _ => {}
+      }
+    }
+
+    if event_consumed {
+      Continuation::Break
+    } else {
+      Continuation::Continue
+    }
+  }
+
   fn switch_focus(&mut self, code: KeyCode) {
     if let Some(_id) = self.has_focus.get_id() {
       if code == KeyCode::Left {

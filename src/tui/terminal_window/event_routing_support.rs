@@ -24,6 +24,7 @@ pub enum Continuation {
   Exit,
   Continue,
   ResizeAndContinue(Size),
+  Break,
 }
 
 /// This works w/ the input event routing system to provide the caller w/ information about whether

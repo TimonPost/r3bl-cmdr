@@ -59,6 +59,12 @@ where
   }
   pub fn id_does_not_exist(&self, name: &str) -> bool { !self.components.contains_key(name) }
   pub fn get(&self, name: &str) -> Option<&SharedComponent<S, A>> { self.components.get(name) }
+  pub fn get_has_focus(&self, has_focus: &HasFocus) -> Option<&SharedComponent<S, A>> {
+    match has_focus.id {
+      Some(ref id_has_focus) => self.get(id_has_focus),
+      None => None,
+    }
+  }
 }
 
 // ╭┄┄┄┄┄┄┄┄┄┄╮
@@ -77,18 +83,20 @@ where
 ///    - for a text viewer, it will be the cursor position which can be moved around
 #[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub struct HasFocus {
+  /// Map of id to its [Position]. Each cursor ([Position]) is scoped to an id. The map is global.
   pub cursor_position_map: CursorPositionMap,
-  pub id_with_focus: Option<String>,
+  /// This id has keyboard focus. This is global.
+  pub id: Option<String>,
 }
 
 pub type CursorPositionMap = HashMap<String, Option<Position>>;
 
 impl HasFocus {
   /// Set the id of the [crate::TWBox] that has keyboard focus.
-  pub fn get_id(&self) -> Option<String> { self.id_with_focus.clone() }
+  pub fn get_id(&self) -> Option<String> { self.id.clone() }
 
   /// Get the id of the [crate::TWBox] that has keyboard focus.
-  pub fn set_id(&mut self, id: &str) { self.id_with_focus = Some(id.into()) }
+  pub fn set_id(&mut self, id: &str) { self.id = Some(id.into()) }
 
   /// For a given [crate::TWBox] id, set the position of the cursor inside of it.
   pub fn set_cursor_position_for_id(&mut self, id: &str, maybe_position: Option<Position>) {

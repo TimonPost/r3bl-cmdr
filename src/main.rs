@@ -24,17 +24,20 @@ use r3bl_rs_utils::*;
 pub mod ex_app_no_layout;
 pub mod ex_app_with_layout;
 pub mod ex_editor;
+pub mod ex_lolcat;
 
 // Use things from sources.
 pub use ex_app_no_layout::*;
 pub use ex_app_with_layout::*;
 pub use ex_editor::*;
+pub use ex_lolcat::*;
 use reedline::*;
 
 const HELP_MSG: &str = "Type a number to run corresponding example:
   1. App with no layout ❌
   2. App with layout ✅
-  3. Text editor 📜
+  3. lolcat 🦜
+  4. Text editor 📜
 or type Ctrl+C / Ctrl+D / 'x' to exit";
 
 #[tokio::main]
@@ -52,7 +55,8 @@ async fn run_ex_for_user_selection(selection: Cow<'_, str>) -> CommonResult<()> 
       match selection.as_ref() {
         "1" => throws!(ex_app_no_layout::run_app().await?),
         "2" => throws!(ex_app_with_layout::run_app().await?),
-        "3" => todo!("TODO: implement editor ex!"),
+        "3" => throws!(ex_lolcat::run_app().await?),
+        "4" => todo!("TODO: implement editor ex!"),
         _ => unimplemented!(),
       }
     }
