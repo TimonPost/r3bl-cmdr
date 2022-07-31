@@ -18,15 +18,17 @@
 use std::{collections::HashMap,
           fmt::{Debug, Display}};
 
-use r3bl_rs_utils::Position;
+use r3bl_rs_utils::*;
 
-use crate::SharedComponent;
+use crate::*;
 
 // ╭┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄╮
 // │ ComponentRegistry │
 // ╯                   ╰┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+/// This map is used to cache [Component]s that have been created and are meant to be reused
+/// between multiple renders. It is entirely up to the [TWApp] how to use this map. The
+/// methods provided allow components to be added to the map.
 #[derive(Default)]
-// FIXME: add docs
 pub struct ComponentRegistry<S, A>
 where
   S: Default + Display + Clone + PartialEq + Eq + Debug + Sync + Send,
@@ -65,6 +67,7 @@ where
       None => None,
     }
   }
+  pub fn remove(&mut self, id: &str) -> Option<SharedComponent<S, A>> { self.components.remove(id) }
 }
 
 // ╭┄┄┄┄┄┄┄┄┄┄╮
@@ -73,12 +76,12 @@ where
 /// There are certain fields that need to be in each state struct to represent global information
 /// about keyboard focus.
 ///
-/// 1. An `id` [String] is used to store which [crate::TWBox] id currently holds keyboard focus.
+/// 1. An `id` [String] is used to store which [TWBox] id currently holds keyboard focus.
 ///    This is global.
 /// 2. Each `id` may have a [Position] associated with it, which is used to draw the "cursor" (the
-///    meaning of which depends on the specific [crate::Component] impl). This cursor is scoped to
+///    meaning of which depends on the specific [Component] impl). This cursor is scoped to
 ///    each `id` so it isn't strictly a single global value (like `id` itself). Here are examples of
-///    what a "cursor" might mean for various [crate::Component]s:
+///    what a "cursor" might mean for various [Component]s:
 ///    - for an editor, it will be the insertion point where text is added / removed
 ///    - for a text viewer, it will be the cursor position which can be moved around
 #[derive(Clone, PartialEq, Eq, Debug, Default)]
@@ -92,19 +95,27 @@ pub struct HasFocus {
 pub type CursorPositionMap = HashMap<String, Option<Position>>;
 
 impl HasFocus {
-  /// Set the id of the [crate::TWBox] that has keyboard focus.
+  /// Set the id of the [TWBox] that has keyboard focus.
   pub fn get_id(&self) -> Option<String> { self.id.clone() }
 
-  /// Get the id of the [crate::TWBox] that has keyboard focus.
+  /// Get the id of the [TWBox] that has keyboard focus.
   pub fn set_id(&mut self, id: &str) { self.id = Some(id.into()) }
 
-  /// For a given [crate::TWBox] id, set the position of the cursor inside of it.
+  /// Check whether the given id currently has keyboard focus.
+  pub fn does_id_have_focus(&self, id: &str) -> bool { self.id == Some(id.to_string()) }
+
+  /// Check whether the id of the [TWBox] currently has keyboard focus.
+  pub fn does_current_box_have_focus(&self, current_box: &TWBox) -> bool {
+    self.does_id_have_focus(&current_box.id)
+  }
+
+  /// For a given [TWBox] id, set the position of the cursor inside of it.
   pub fn set_cursor_position_for_id(&mut self, id: &str, maybe_position: Option<Position>) {
     let map = &mut self.cursor_position_map;
     map.insert(id.into(), maybe_position);
   }
 
-  /// For a given [crate::TWBox] id, get the position of the cursor inside of it.
+  /// For a given [TWBox] id, get the position of the cursor inside of it.
   pub fn get_cursor_position_for_id(&self, id: &str) -> Option<Position> {
     let map = &self.cursor_position_map;
     if map.contains_key(id) {

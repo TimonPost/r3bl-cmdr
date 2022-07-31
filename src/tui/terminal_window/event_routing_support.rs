@@ -24,6 +24,7 @@ pub enum Continuation {
   Exit,
   Continue,
   ResizeAndContinue(Size),
+  Return,
   Break,
 }
 

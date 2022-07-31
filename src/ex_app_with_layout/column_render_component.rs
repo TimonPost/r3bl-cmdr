@@ -29,12 +29,13 @@ pub struct ColumnRenderComponent {
 
 #[async_trait]
 impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponent {
+  /// Handle following input events (and consume them):
+  /// - Up, `+`   : fire `AddPop(1)`
+  /// - Down, `-` : fire `SubPop(1)`
   async fn handle_event(
     &mut self, input_event: &TWInputEvent, _state: &AppWithLayoutState,
     shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<EventPropagation> {
-    // FIXME: handle up/down/+/- keys & dispatch actions
-    // FIXME: spawn_and_consume_event!() events
     throws_with_return!({
       let mut event_consumed = false;
 
@@ -93,7 +94,7 @@ impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponen
   }
 
   async fn render(
-    &mut self, current_box: &TWBox, _state: &AppWithLayoutState,
+    &mut self, has_focus: &HasFocus, current_box: &TWBox, _state: &AppWithLayoutState,
     _shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<TWCommandQueue> {
     throws_with_return!({
@@ -139,6 +140,18 @@ impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponen
         ),
         TWCommand::ResetColor
       };
+
+      // Paint is_focused.
+      if has_focus.does_current_box_have_focus(current_box) {
+        tw_command_queue! {
+          queue push
+          TWCommand::MoveCursorPositionRelTo(
+            box_origin_pos,
+            content_cursor_pos.add_row_with_bounds(1, box_bounding_size)
+          ),
+          TWCommand::PrintWithAttributes("👀".into(), None)
+        };
+      }
 
       call_if_true!(DEBUG, {
         log_no_err! {

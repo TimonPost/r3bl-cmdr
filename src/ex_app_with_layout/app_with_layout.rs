@@ -53,51 +53,24 @@ impl TWApp<AppWithLayoutState, AppWithLayoutAction> for AppWithLayout {
     _shared_store: &SharedStore<AppWithLayoutState, AppWithLayoutAction>, _terminal_size: Size,
   ) -> CommonResult<EventPropagation> {
     throws_with_return!({
-      // let mut event_consumed = false;
-
-      // // Handle Left, Right to switch focus between columns.
-      // if let TWInputEvent::NonDisplayableKeypress(key_event) = input_event {
-      //   match key_event {
-      //     KeyEvent {
-      //       code: KeyCode::Left,
-      //       modifiers: KeyModifiers::NONE,
-      //     } => {
-      //       event_consumed = true;
-      //       self.switch_focus(KeyCode::Left);
-      //       debug_log_has_focus(
-      //         stringify!(AppWithLayout::app_handle_event).into(),
-      //         &self.has_focus,
-      //       );
-      //     }
-      //     KeyEvent {
-      //       code: KeyCode::Right,
-      //       modifiers: KeyModifiers::NONE,
-      //     } => {
-      //       event_consumed = true;
-      //       self.switch_focus(KeyCode::Right);
-      //       debug_log_has_focus(
-      //         stringify!(AppWithLayout::app_handle_event).into(),
-      //         &self.has_focus,
-      //       );
-      //     }
-      //     _ => {}
-      //   }
-      // }
-
-      // if event_consumed {
-      //   return Ok(EventPropagation::ConsumedRerender);
-      // }
-
-      if let Continuation::Break = self.handle_left_right_input_to_switch_focus(input_event) {
+      // Try to handle left and right arrow key input events & return if handled.
+      if let Continuation::Return = self.handle_left_right_input_to_switch_focus(input_event) {
         return Ok(EventPropagation::ConsumedRerender);
       }
 
-      if let Some(_shared_component_has_focus) =
+      // If component has focus, then route input_event to it. Return its propagation enum.
+      if let Some(shared_component_has_focus) =
         self.component_registry.get_has_focus(&self.has_focus)
       {
-        // FIXME: route event to component_registry[id w/ focus]
+        let result_event_propagation = shared_component_has_focus
+          .write()
+          .await
+          .handle_event(input_event, _state, _shared_store)
+          .await?;
+        return Ok(result_event_propagation);
       };
 
+      // input_event not handled, propagate it.
       EventPropagation::Propagate
     });
   }
@@ -161,7 +134,7 @@ impl AppWithLayout {
     }
 
     if event_consumed {
-      Continuation::Break
+      Continuation::Return
     } else {
       Continuation::Continue
     }
@@ -184,12 +157,12 @@ impl AppWithLayout {
     let shared_component_r1 = Arc::new(RwLock::new(_component));
     let shared_component_r2 = shared_component_r1.clone();
 
-    // Construct "col_1".
+    // Construct COL_1_ID.
     if self.component_registry.id_does_not_exist(COL_1_ID) {
       self.component_registry.put(COL_1_ID, shared_component_r1);
     }
 
-    // Construct "col_2".
+    // Construct COL_2_ID.
     if self.component_registry.id_does_not_exist(COL_2_ID) {
       self.component_registry.put(COL_2_ID, shared_component_r2);
     }
@@ -224,8 +197,8 @@ impl AppWithLayout {
 
   /// Left column COL_1_ID.
   async fn create_left_col<'a>(
-    &mut self, tw_surface: &mut TWSurface, _state: &'a AppWithLayoutState,
-    _shared_store: &'a SharedStore<AppWithLayoutState, AppWithLayoutAction>,
+    &mut self, tw_surface: &mut TWSurface, state: &'a AppWithLayoutState,
+    shared_state: &'a SharedStore<AppWithLayoutState, AppWithLayoutAction>,
   ) -> CommonResult<()> {
     throws!({
       tw_surface.box_start(TWBoxProps {
@@ -235,13 +208,12 @@ impl AppWithLayout {
         req_size: (50, 100).try_into()?,
       })?;
 
-      // UGLY: consider adding a macro for this block
       if let Some(shared_component) = self.component_registry.get(COL_1_ID) {
         let current_box = tw_surface.current_box()?;
         let queue = shared_component
           .write()
           .await
-          .render(current_box, _state, _shared_store)
+          .render(&self.has_focus, current_box, state, shared_state)
           .await?;
         tw_surface.render_buffer += queue;
       }
@@ -263,13 +235,12 @@ impl AppWithLayout {
         req_size: (50, 100).try_into()?,
       })?;
 
-      // UGLY: consider adding a macro for this block
       if let Some(shared_component) = self.component_registry.get(COL_2_ID) {
         let current_box = tw_surface.current_box()?;
         let queue = shared_component
           .write()
           .await
-          .render(current_box, _state, _shared_store)
+          .render(&self.has_focus, current_box, _state, _shared_store)
           .await?;
         tw_surface.render_buffer += queue;
       }
@@ -279,6 +250,10 @@ impl AppWithLayout {
   }
 
   fn create_stylesheet(&mut self) -> CommonResult<Stylesheet> {
+    // Turquoise:  Color::Rgb { r: 51, g: 255, b: 255 }
+    // Pink:       Color::Rgb { r: 252, g: 157, b: 248 }
+    // Blue:       Color::Rgb { r: 55, g: 55, b: 248 }
+    // Faded blue: Color::Rgb { r: 85, g: 85, b: 255 }
     throws_with_return!({
       let mut stylesheet = Stylesheet::new();
 
@@ -286,14 +261,12 @@ impl AppWithLayout {
         style! {
           id: style1
           margin: 1
-          color_fg: Color::Rgb { r: 51, g: 255, b: 255 } /* Turquoise. */
-          color_bg: Color::Rgb { r: 252, g: 157, b: 248 } /* Pink. */
+          color_bg: Color::Rgb { r: 55, g: 55, b: 248 }
         },
         style! {
           id: style2
           margin: 1
-          color_fg: Color::White
-          color_bg: Color::Magenta
+          color_bg: Color::Rgb { r: 85, g: 85, b: 255 }
         },
       ])?;
 

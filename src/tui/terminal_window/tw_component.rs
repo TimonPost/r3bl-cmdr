@@ -48,7 +48,7 @@ where
   /// Clipping, scrolling, overdrawing:
   ///   - Each implementation of this trait is solely responsible of taking care of these behaviors
   async fn render(
-    &mut self, current_box: &TWBox, state: &S, shared_store: &SharedStore<S, A>,
+    &mut self, has_focus: &HasFocus, current_box: &TWBox, state: &S, shared_store: &SharedStore<S, A>,
   ) -> CommonResult<TWCommandQueue>;
 
   async fn handle_event(
