@@ -156,7 +156,13 @@ impl Component<AppWithLayoutState, AppWithLayoutAction> for ColumnRenderComponen
       call_if_true!(DEBUG, {
         log_no_err! {
           INFO,
-          "🦜 ColumnComponent::render ->\n  - current_box: {:?},\n  - box_origin_pos: {:?},\n  - box_bounding_size: {:?},\n  - content_pos: {:?},\n  - queue: {:?}",
+          "\
+🦜 ColumnComponent::render ->
+  - current_box: {:?},
+  - box_origin_pos: {:?},
+  - box_bounding_size: {:?},
+  - content_pos: {:?},
+  - queue: {:?}",
           current_box,
           box_origin_pos,
           box_bounding_size,
