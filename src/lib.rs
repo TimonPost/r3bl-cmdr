@@ -36,7 +36,5 @@
 //!   - A lolcat implementation w/ a rainbow color-wheel palette.
 
 // Attach sources.
-pub mod tui;
 
 // Re-export.
-pub use tui::*;

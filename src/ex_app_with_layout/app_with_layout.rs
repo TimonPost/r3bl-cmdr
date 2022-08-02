@@ -19,7 +19,6 @@ use std::{fmt::Debug, sync::Arc};
 
 use async_trait::async_trait;
 use crossterm::event::*;
-use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 use tokio::sync::RwLock;
 

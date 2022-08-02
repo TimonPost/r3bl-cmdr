@@ -16,7 +16,6 @@
  */
 
 use crossterm::event::*;
-use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
 use super::*;

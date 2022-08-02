@@ -1,6 +1,13 @@
 ╭┄┄┄┄┄┄┄┄┄┄┄╮
 │ r3bl-cmdr │
 ╯           ╰┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+documentation, move:
+  ✔ copy some of this content over to the r3bl_rs_utils README @done(22-08-02 13:40)
+  ✔ move `lolcat` module to `r3bl_rs_utils_core::tui` module @done(22-08-02 13:47)
+  ✔ move tests to `r3bl_rs_utils` @done(22-08-02 13:47)
+  ✔ move `tui` module to `r3bl_rs_utils::tui` module @done(22-08-02 15:04)
+  ☐ publish crate *after* r3bl_rs_utils is published
+
 graphemes & focus mgmt support demo:
   ☐ create a POC `RenderComponent` that shows a cursor & graphemes
     - display a string eg: `Hi 📦 🙏🏽 👨🏾‍🤝‍👨🏿.`

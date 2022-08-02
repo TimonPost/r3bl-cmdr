@@ -17,7 +17,6 @@
 
 use std::borrow::Cow;
 
-use r3bl_cmdr::*;
 use r3bl_rs_utils::*;
 
 // Attach sources.
