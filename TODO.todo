@@ -6,6 +6,7 @@ documentation, move:
   ✔ move `lolcat` module to `r3bl_rs_utils_core::tui` module @done(22-08-02 13:47)
   ✔ move tests to `r3bl_rs_utils` @done(22-08-02 13:47)
   ✔ move `tui` module to `r3bl_rs_utils::tui` module @done(22-08-02 15:04)
+  ☐ docs.rs link is missing from crate (on crates.io)
   ☐ publish crate *after* r3bl_rs_utils is published
 
 graphemes & focus mgmt support demo:
@@ -32,6 +33,9 @@ support for text wrapping:
 
 routing:
   ☐ introduce routing concept to switch between apps (with + without layout)
+    - "in-app": shared state among all components, route in state? OR
+    - "tmux style": have totally separate apps (each w/ separate redux stores, etc)
+  ☐ build out the address book app (with routing) & use it to test out ideas
   
 pre built components - editor:
   ☐ example editor Sodium: https://github.com/redox-os/sodium
