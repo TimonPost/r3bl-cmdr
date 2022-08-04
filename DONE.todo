@@ -1,3 +1,11 @@
+documentation, move:
+  ✔ copy some of this content over to the r3bl_rs_utils README @done(22-08-02 13:40)
+  ✔ move `lolcat` module to `r3bl_rs_utils_core::tui` module @done(22-08-02 13:47)
+  ✔ move tests to `r3bl_rs_utils` @done(22-08-02 13:47)
+  ✔ move `tui` module to `r3bl_rs_utils::tui` module @done(22-08-02 15:04)
+  ✔ docs.rs link is missing from crate (on crates.io) @done(22-08-04 10:34)
+  ✔ publish crate *after* r3bl_rs_utils is published @done(22-08-04 10:34)
+
 focus mgmt support:
   ✔ extend `StateManageFocus` (🔱 statemanagefocus-cursor-support) @done(22-07-27 18:36)
     - add methods that allow access to a `HashMap<String, Position>`

@@ -22,7 +22,7 @@ use crossterm::event::*;
 use r3bl_rs_utils::*;
 use tokio::sync::RwLock;
 
-use super::*;
+use crate::*;
 
 /// Async trait object that implements the [TWApp] trait.
 #[derive(Default)]

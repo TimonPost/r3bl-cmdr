@@ -1,13 +1,13 @@
 [package]
 name = "r3bl-cmdr"
-version = "0.0.4" # remember to update README
+version = "0.0.5" # remember to update README
 readme = "README.md"
 edition = "2021"
 homepage = "https://r3bl.com"
 license = "Apache-2.0"
 
 description = """
-WIP: a TUI layout manager for the Rust programming language.
+WIP: a TUI app suite for developers built in Rust
 """
 
 # TODO: Replace the following commented lines w/ real values
@@ -34,8 +34,7 @@ tokio = { version = "1.20.1", features = ["full"] }
 async-trait = "0.1.57"
 
 # Latest r3bl_rs_utils.
-r3bl_rs_utils = { version = "*", path = "../r3bl_rs_utils" }
-# r3bl_rs_utils = { version = "0.7.40", path = "../r3bl_rs_utils" }
+r3bl_rs_utils = { version = "0.7.41", path = "../r3bl_rs_utils" }
 
 # Reedline.
 reedline = "0.9.0"
