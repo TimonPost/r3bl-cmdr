@@ -1,3 +1,12 @@
+introduce first DSL (JSX-like syntax):
+  ✔ implement `style!` proc macro as first DSL JSX like syntax for TUI @done(22-07-06 15:29)
+  ✔ split `tui_core` from `tui` and move it into `r3bl_rs_utils` @done(22-07-06 15:29)
+  ✔ replace all use of `Style` with this macro @done(22-07-06 16:05)
+  ✔ write DL tutorial on create DSL in Rust @done(22-08-06 20:16)
+    - based on: https://github.com/r3bl-org/r3bl-rs-utils/blob/main/macro/src/make_style/mod.rs
+    - create tui category in DL
+    - make sure to publicize this article on mailchimp, reddit, users.rust-lang.org
+    
 documentation, move:
   ✔ copy some of this content over to the r3bl_rs_utils README @done(22-08-02 13:40)
   ✔ move `lolcat` module to `r3bl_rs_utils_core::tui` module @done(22-08-02 13:47)

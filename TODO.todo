@@ -11,15 +11,6 @@ graphemes & focus mgmt support demo:
   ☐ implement simplest editor component (single line text field)
   ☐ implement simplest checkbox selection component (modal?)
     
-introduce first DSL (JSX-like syntax):
-  ✔ implement `style!` proc macro as first DSL JSX like syntax for TUI @done(22-07-06 15:29)
-  ✔ split `tui_core` from `tui` and move it into `r3bl_rs_utils` @done(22-07-06 15:29)
-  ✔ replace all use of `Style` with this macro @done(22-07-06 16:05)
-  ☐ write DL tutorial on create DSL in Rust
-    - based on: https://github.com/r3bl-org/r3bl-rs-utils/blob/main/macro/src/make_style/mod.rs
-    - create tui category in DL
-    - make sure to publicize this article on mailchimp, reddit, users.rust-lang.org
-    
 support for text wrapping:
   ☐ `textwrap` crate
 

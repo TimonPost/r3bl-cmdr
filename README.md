@@ -1,12 +1,14 @@
+<p align="center"><img src="r3bl-term.svg" height="256px"></p>
+
 # r3bl-cmdr
 <a id="markdown-r3bl-cmdr" name="r3bl-cmdr"></a>
 
 
 <!-- TOC -->
 
-- [1. What is it?](#1-what-is-it)
-- [2. r3bl_rs_utils crate](#2-r3bl_rs_utils-crate)
-- [3. This project is currently WIP](#3-this-project-is-currently-wip)
+- [What is it?](#what-is-it)
+- [r3bl_rs_utils crate](#r3bl_rs_utils-crate)
+- [This project is currently WIP](#this-project-is-currently-wip)
 
 <!-- /TOC -->
 
