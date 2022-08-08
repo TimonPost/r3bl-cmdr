@@ -1,27 +1,10 @@
 ╭┄┄┄┄┄┄┄┄┄┄┄╮
 │ r3bl-cmdr │
 ╯           ╰┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-graphemes & focus mgmt support demo:
-  ☐ create a POC `RenderComponent` that shows a cursor & graphemes
-    - display a string eg: `Hi 📦 🙏🏽 👨🏾‍🤝‍👨🏿.`
-    - allow component to have focus
-    - allow component to have a cursor position
-    - show cursor moving around the string (respecting grapheme clusters)
-      - use JT's approach that's outlined in the README.md? or use `UnicodeStringExt`?
-  ☐ implement simplest editor component (single line text field)
-  ☐ implement simplest checkbox selection component (modal?)
-    
-support for text wrapping:
-  ☐ `textwrap` crate
-
-routing:
-  ☐ introduce routing concept to switch between apps (with + without layout)
-    - "in-app": shared state among all components, route in state? OR
-    - "tmux style": have totally separate apps (each w/ separate redux stores, etc)
-  ☐ build out the address book app (with routing) & use it to test out ideas
-  
-pre built components - editor:
-  ☐ example editor Sodium: https://github.com/redox-os/sodium
+editor research:
+  ☐ look at simple hex editor heh: https://github.com/ndd7xv/heh
+    - https://www.reddit.com/r/rust/comments/wj7wm4/media_i_created_a_rudimentary_terminal_ui_hex/
+  ☐ look at editor w/ syntax highlighting Sodium: https://github.com/redox-os/sodium
   ☐ syntax highlighting video: https://youtu.be/4vw5iJMLQx0
   ☐ syntax highlighting crate: https://docs.rs/syntect/latest/syntect/
   ☐ scrolling: data buffer, cursor pos (row, col), scrolling (row offset, col offset)
@@ -30,21 +13,42 @@ pre built components - editor:
     - [editor tutorial](https://tinyurl.com/2b72v7u6)
     - [search tutorial](https://tinyurl.com/27eukjbp)
     - [syntax highlighting tutorial](https://tinyurl.com/2burb3by)
-  ☐ undo & redo
 
-pre built components - multi select chooser:
-  ☐ TODO
+text editor ex (no: save/load, undo/redo, search):
+  ☐ 2 col layout w/ 2 editor components (2 separate buffers), 50% width each
+  ☐ switch focus between editors, support for independent cursors (insertion points)
+  ☐ minimal grapheme cluster support
+  ☐ minimal syntax highlighting support (text spans)
+  ☐ minimal line wrapping support (text wrapping)
 
-pre built components - autocompletion provider:
-  ☐ TODO
+more editor features:
+  ☐ undo, redo
+  ☐ word wrap (use `textwrap` crate?)
+  ☐ syntax highlighting
+    - create text span
+    - figure out how to maintain cursor positions (display, raw text, ANSI formatted text?)
+  ☐ markdown syntax highlighting
+    - support for code block syntax highlighting
+  ☐ search
+  ☐ multi user cursor support
+  ☐ multi user editing support
+
+routing:
+  ☐ introduce routing concept to switch between apps (with + without layout)
+    - "in-app": shared state among all components, route in state? OR
+    - "tmux style": have totally separate apps (each w/ separate redux stores, etc)
+  ☐ build out the address book app (with routing) & use it to test out ideas
+
+host components:
+  ☐ multi select chooser (w/ option to select a single item)
+  ☐ autocompletion provider
+
+new ideas:
+  ☐ flow editor (pagination / scrolling on wide screens)
+  ☐ diagrams https://github.com/r3bl-org/r3bl-cmdr/issues/4
+  ☐ desktop notifications https://crates.io/crates/notify-rust
 
 mdns & p2p:
   ☐ Ideate on what this might look like
     - local service discovery
     - easy authentication (cloud auth provider login?)
-
-new stuff:
-  ☐ flow editor
-  ☐ diagrams
-  ☐ desktop notifications https://crates.io/crates/notify-rust
-
