@@ -18,7 +18,7 @@
 use async_trait::async_trait;
 use crossterm::event::*;
 
-use crate::{*, utils::show_quit_msg_center_bottom};
+use crate::{*, utils::append_quit_msg_center_bottom};
 
 /// Async trait object that implements the [Render] trait.
 #[derive(Default, Debug, Clone, Copy)]
@@ -49,7 +49,7 @@ impl TWApp<AppNoLayoutState, AppNoLayoutAction> for AppNoLayout {
         TWCommand::ResetColor
       );
 
-      show_quit_msg_center_bottom(&mut queue, window_size);
+      append_quit_msg_center_bottom(&mut queue, window_size);
 
       call_if_true!(DEBUG, {
         log_no_err!(

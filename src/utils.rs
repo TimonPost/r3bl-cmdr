@@ -1,7 +1,7 @@
 use r3bl_rs_utils::{TWCommand, TWCommandQueue, Size};
 
 /// Appends commands to the queue that display a 'quit' hint at the center, bottom.
-pub fn show_quit_msg_center_bottom(queue: &mut TWCommandQueue, size: Size)  {
+pub fn append_quit_msg_center_bottom(queue: &mut TWCommandQueue, size: Size)  {
     let message: String = "Press Ctrl + q to exit!".into();
 
     [

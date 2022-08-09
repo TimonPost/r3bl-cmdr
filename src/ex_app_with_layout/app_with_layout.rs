@@ -22,7 +22,7 @@ use crossterm::event::*;
 use r3bl_rs_utils::*;
 use tokio::sync::RwLock;
 
-use crate::{*, utils::show_quit_msg_center_bottom};
+use crate::{*, utils::append_quit_msg_center_bottom};
 
 /// Async trait object that implements the [TWApp] trait.
 #[derive(Default)]
@@ -191,7 +191,7 @@ impl AppWithLayout {
         .create_right_col(tw_surface, state, shared_store)
         .await?;
 
-      show_quit_msg_center_bottom(&mut tw_surface.render_buffer, tw_surface.box_size);
+      append_quit_msg_center_bottom(&mut tw_surface.render_buffer, tw_surface.box_size);
 
       tw_surface.box_end()?;
     });
