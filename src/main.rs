@@ -25,6 +25,8 @@ pub mod ex_app_with_layout;
 pub mod ex_editor;
 pub mod ex_lolcat;
 
+mod utils;
+
 // Use things from sources.
 pub use ex_app_no_layout::*;
 pub use ex_app_with_layout::*;

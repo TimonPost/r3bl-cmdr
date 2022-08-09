@@ -18,7 +18,7 @@
 use async_trait::async_trait;
 use crossterm::event::*;
 
-use crate::*;
+use crate::{*, utils::show_quit_msg_center_bottom};
 
 /// Async trait object that implements the [Render] trait.
 #[derive(Default, Debug, Clone, Copy)]
@@ -41,13 +41,15 @@ impl TWApp<AppNoLayoutState, AppNoLayoutAction> for AppNoLayout {
 
       let colored_content = colorize_using_lolcat!(&mut self.lolcat, "{}", state);
 
-      let queue = tw_command_queue!(
+      let mut queue = tw_command_queue!(
         TWCommand::ClearScreen,
         TWCommand::ResetColor,
         TWCommand::MoveCursorPositionAbs((col, row).into()),
         TWCommand::PrintWithAttributes(colored_content, None),
         TWCommand::ResetColor
       );
+
+      show_quit_msg_center_bottom(&mut queue, window_size);
 
       call_if_true!(DEBUG, {
         log_no_err!(
